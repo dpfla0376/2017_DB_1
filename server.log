@@ -1,0 +1,40 @@
+Performing system checks...
+
+System check identified no issues (0 silenced).
+Unhandled exception in thread started by <function wrapper at 0x7f3dd39541b8>
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/django/utils/autoreload.py", line 222, in wrapper
+    fn(*args, **kwargs)
+  File "/usr/local/lib/python2.7/dist-packages/django/core/management/commands/runserver.py", line 107, in inner_run
+    self.check_migrations()
+  File "/usr/local/lib/python2.7/dist-packages/django/core/management/commands/runserver.py", line 159, in check_migrations
+    executor = MigrationExecutor(connections[DEFAULT_DB_ALIAS])
+  File "/usr/local/lib/python2.7/dist-packages/django/db/migrations/executor.py", line 17, in __init__
+    self.loader = MigrationLoader(self.connection)
+  File "/usr/local/lib/python2.7/dist-packages/django/db/migrations/loader.py", line 48, in __init__
+    self.build_graph()
+  File "/usr/local/lib/python2.7/dist-packages/django/db/migrations/loader.py", line 183, in build_graph
+    self.applied_migrations = recorder.applied_migrations()
+  File "/usr/local/lib/python2.7/dist-packages/django/db/migrations/recorder.py", line 59, in applied_migrations
+    self.ensure_schema()
+  File "/usr/local/lib/python2.7/dist-packages/django/db/migrations/recorder.py", line 49, in ensure_schema
+    if self.Migration._meta.db_table in self.connection.introspection.get_table_list(self.connection.cursor()):
+  File "/usr/local/lib/python2.7/dist-packages/django/db/backends/__init__.py", line 165, in cursor
+    cursor = self.make_debug_cursor(self._cursor())
+  File "/usr/local/lib/python2.7/dist-packages/django/db/backends/__init__.py", line 138, in _cursor
+    self.ensure_connection()
+  File "/usr/local/lib/python2.7/dist-packages/django/db/backends/__init__.py", line 133, in ensure_connection
+    self.connect()
+  File "/usr/local/lib/python2.7/dist-packages/django/db/utils.py", line 94, in __exit__
+    six.reraise(dj_exc_type, dj_exc_value, traceback)
+  File "/usr/local/lib/python2.7/dist-packages/django/db/backends/__init__.py", line 133, in ensure_connection
+    self.connect()
+  File "/usr/local/lib/python2.7/dist-packages/django/db/backends/__init__.py", line 122, in connect
+    self.connection = self.get_new_connection(conn_params)
+  File "/usr/local/lib/python2.7/dist-packages/django/db/backends/mysql/base.py", line 472, in get_new_connection
+    conn = Database.connect(**conn_params)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/__init__.py", line 81, in Connect
+    return Connection(*args, **kwargs)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 187, in __init__
+    super(Connection, self).__init__(*args, **kwargs2)
+django.db.utils.OperationalError: (1049, "Unknown database 'dbTeam3'")
