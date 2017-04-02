@@ -253,8 +253,5 @@ $(function(){
   };
 })(jQuery);
 
-$(window).resize(function(){
-  drawChart1();
-});
 
 // Reminder: you need to put https://www.google.com/jsapi in the head of your document or as an external resource on codepen //
