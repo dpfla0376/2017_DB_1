@@ -3,9 +3,8 @@
 
 <head>
     <title>site title</title>
-
-    <script src="js/jquery-3.2.0.js"></script>
-    <script src="js/bootstrap.js"></script>
+    <script src="{% static '/dbApp/js/jquery-3.2.0.js' %}"></script>
+    <script src="{% static 'dbApp/js/bootstrap.js' %}"></script>
     <link rel="stylesheet" href="{% static 'dbApp/css/bootstrap.css' %}">
     <link rel="stylesheet" href="{% static 'dbApp/css/bootstrap-theme.css' %}">
 </head>
@@ -13,33 +12,6 @@
 <body>
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container">
-<<<<<<< HEAD
-            
-          <h2 class="sub-header">ASSETS</h2>
-          <div class="table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Header</th>
-                  <th>Header</th>
-                  <th>Header</th>
-                  <th>Header</th>
-                </tr>
-              </thead>
-              <tbody>
-                  {% if asset_total_list %}
-                    {% for asset in asset_total_list %}
-                      <tr>
-                          <td>{{ asset.assetName }}</td>
-                          <td>{{ asset.assetNum }}</td>
-                          <td>{{ asset.standard }}</td>
-                          <td>{{ asset.maintenanceYear }}</td>
-                      </tr>
-                    {% endfor %}
-                  {% endif %}
-              </tbody>
-=======
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
             <span class="sr-only">Toggle navigation</span>
@@ -47,14 +19,14 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-                <a class="navbar-brand" href="#">2조 아니고 3조</a>
+                <a class="navbar-brand" href="./">2조 아니고 3조</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="#">Asset</a></li>
-                    <li><a href="#about">Server</a></li>
-                    <li><a href="#contact">Switch</a></li>
-                    <li><a href="#contact">Rack</a></li>
+                    <li class="active"><a href="#asset_total">Asset</a></li>
+                    <li><a href="#server_total">Server</a></li>
+                    <li><a href="#switch_total">Switch</a></li>
+                    <li><a href="#rack_total">Rack</a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dropdown <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
@@ -84,134 +56,35 @@
         </div>
     </nav>
     <div class="container">
-
-        <h2 class="sub-header">Section title</h2>
-        <div class="table-responsive">
+          <h2 class="sub-header">ASSETS</h2>
+          <div class="table-responsive">
             <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Header</th>
-                        <th>Header</th>
-                        <th>Header</th>
-                        <th>Header</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1,001</td>
-                        <td>Lorem</td>
-                        <td>ipsum</td>
-                        <td>dolor</td>
-                        <td>sit</td>
-                    </tr>
-                    <tr>
-                        <td>1,002</td>
-                        <td>amet</td>
-                        <td>consectetur</td>
-                        <td>adipiscing</td>
-                        <td>elit</td>
-                    </tr>
-                    <tr>
-                        <td>1,003</td>
-                        <td>Integer</td>
-                        <td>nec</td>
-                        <td>odio</td>
-                        <td>Praesent</td>
-                    </tr>
-                    <tr>
-                        <td>1,003</td>
-                        <td>libero</td>
-                        <td>Sed</td>
-                        <td>cursus</td>
-                        <td>ante</td>
-                    </tr>
-                    <tr>
-                        <td>1,004</td>
-                        <td>dapibus</td>
-                        <td>diam</td>
-                        <td>Sed</td>
-                        <td>nisi</td>
-                    </tr>
-                    <tr>
-                        <td>1,005</td>
-                        <td>Nulla</td>
-                        <td>quis</td>
-                        <td>sem</td>
-                        <td>at</td>
-                    </tr>
-                    <tr>
-                        <td>1,006</td>
-                        <td>nibh</td>
-                        <td>elementum</td>
-                        <td>imperdiet</td>
-                        <td>Duis</td>
-                    </tr>
-                    <tr>
-                        <td>1,007</td>
-                        <td>sagittis</td>
-                        <td>ipsum</td>
-                        <td>Praesent</td>
-                        <td>mauris</td>
-                    </tr>
-                    <tr>
-                        <td>1,008</td>
-                        <td>Fusce</td>
-                        <td>nec</td>
-                        <td>tellus</td>
-                        <td>sed</td>
-                    </tr>
-                    <tr>
-                        <td>1,009</td>
-                        <td>augue</td>
-                        <td>semper</td>
-                        <td>porta</td>
-                        <td>Mauris</td>
-                    </tr>
-                    <tr>
-                        <td>1,010</td>
-                        <td>massa</td>
-                        <td>Vestibulum</td>
-                        <td>lacinia</td>
-                        <td>arcu</td>
-                    </tr>
-                    <tr>
-                        <td>1,011</td>
-                        <td>eget</td>
-                        <td>nulla</td>
-                        <td>Class</td>
-                        <td>aptent</td>
-                    </tr>
-                    <tr>
-                        <td>1,012</td>
-                        <td>taciti</td>
-                        <td>sociosqu</td>
-                        <td>ad</td>
-                        <td>litora</td>
-                    </tr>
-                    <tr>
-                        <td>1,013</td>
-                        <td>torquent</td>
-                        <td>per</td>
-                        <td>conubia</td>
-                        <td>nostra</td>
-                    </tr>
-                    <tr>
-                        <td>1,014</td>
-                        <td>per</td>
-                        <td>inceptos</td>
-                        <td>himenaeos</td>
-                        <td>Curabitur</td>
-                    </tr>
-                    <tr>
-                        <td>1,015</td>
-                        <td>sodales</td>
-                        <td>ligula</td>
-                        <td>in</td>
-                        <td>libero</td>
-                    </tr>
-                </tbody>
->>>>>>> 304cba71603735d4be802feb53c6ab1ea0f88ba9
+              <thead>
+                <tr>
+                    <th>자산번호</th>
+                    <th>취득일</th>
+                    <th>자산명</th>
+                    <th>규격</th>
+                    <th>취득원가</th>
+                    <th>구입처</th>
+                    <th>내용연수</th>
+                </tr>
+              </thead>
+              <tbody>
+                  {% if asset_total_list %}
+                    {% for asset in asset_total_list %}
+                      <tr>
+                          <td>{{ asset.assetNum }}</td>
+                          <td>{{ asset.acquisitionDate }}</td>
+                          <td>{{ asset.assetName }}</td>
+                          <td>{{ asset.standard }}</td>
+                          <td>{{ asset.acquisitionCost }}</td>
+                          <td>{{ asset.purchaseLocation }}</td>
+                          <td>{{ asset.maintenanceYear }}</td>
+                      </tr>
+                    {% endfor %}
+                  {% endif %}
+              </tbody>
             </table>
         </div>
     </div>
