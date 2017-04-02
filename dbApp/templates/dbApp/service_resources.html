@@ -10,60 +10,89 @@
     <link rel="stylesheet" href="{% static '/dbApp/css/chart_resource.css' %}">
     <link rel="stylesheet" href="{% static 'dbApp/css/bootstrap.css' %}">
     <link rel="stylesheet" href="{% static 'dbApp/css/bootstrap-theme.css' %}">
+
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+        google.load("visualization", "1", {packages: ["corechart"]});
+        google.setOnLoadCallback(drawChart1);
+        function drawChart1() {
+            var data = google.visualization.arrayToDataTable([
+                ['storage', '사용량', '가용량'],
+                ['SAN', 1000, 400],
+                ['NAS', 1170, 460],
+                ['TAPE', 660, 1120],
+            ]);
+
+            var options = {
+                title: '',
+                hAxis: {title: 'Stortage', titleTextStyle: {color: 'Pink'}}
+            };
+
+            var chart = new google.visualization.ColumnChart(document.getElementById('chart_div2'));
+            chart.draw(data, options);
+        }
+    </script>
+
 </head>
 
 <body>
-    <nav class="navbar navbar-default navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-                <a class="navbar-brand" href="/dbApp">2조 아니고 3조</a>
-            </div>
-            <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li class="active"><a href="/dbApp/asset">Asset</a></li>
-                    <li><a href="#server_total">Server</a></li>
-                    <li><a href="#switch_total">Switch</a></li>
-                    <li><a href="#rack_total">Rack</a></li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dropdown <span class="caret"></span></a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a href="#">Action</a></li>
-                            <li><a href="#">Another action</a></li>
-                            <li><a href="#">Something else here</a></li>
-                            <li class="divider"></li>
-                            <li class="dropdown-header">Nav header</li>
-                            <li><a href="#">Separated link</a></li>
-                            <li><a href="#">One more separated link</a></li>
-                        </ul>
-                    </li>
-                </ul>
-                <form class="navbar-form navbar-left" role="search">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Search">
-                    </div>
-                    <button type="button" class="btn btn-default">search</button>
-                </form>
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#">OOO님</a></li>
-                    <li><a href="#">Log out</a></li>
-                    <li><a href="#">Setting</a></li>
-                </ul>
-            </div>
-            <!--/.nav-collapse -->
-        </div>
-    </nav>
+<nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
-
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/dbApp">2조 아니고 3조</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="/dbApp/asset">Asset</a></li>
+                <li><a href="#server_total">Server</a></li>
+                <li><a href="#switch_total">Switch</a></li>
+                <li><a href="#rack_total">Rack</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dropdown
+                        <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="#">Action</a></li>
+                        <li><a href="#">Another action</a></li>
+                        <li><a href="#">Something else here</a></li>
+                        <li class="divider"></li>
+                        <li class="dropdown-header">Nav header</li>
+                        <li><a href="#">Separated link</a></li>
+                        <li><a href="#">One more separated link</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <form class="navbar-form navbar-left" role="search">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Search">
+                </div>
+                <button type="button" class="btn btn-default">search</button>
+            </form>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#">OOO님</a></li>
+                <li><a href="#">Log out</a></li>
+                <li><a href="#">Setting</a></li>
+            </ul>
+        </div>
+        <!--/.nav-collapse -->
     </div>
-    <div id="doughnutChart" class="chart">
-
+</nav>
+<div class="row">
+    <div class="col-md-6">
+        <div id="doughnutChart" class="chart"></div>
     </div>
+    <div class="col-md-6">
+        <div id="chart_div2" class="StorageBarChart"></div>
+    </div>
+</div>
+
+
 </body>
 
 </html>

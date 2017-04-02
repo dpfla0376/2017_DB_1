@@ -27,7 +27,7 @@ $(function(){
       PI = Math.PI,
       settings = $.extend({
         segmentShowStroke : true,
-        segmentStrokeColor : "#0C1013",
+       // segmentStrokeColor : "#0C1013",
         segmentStrokeWidth : 1,
         baseColor: "rgba(0,0,0,0.5)",
         baseOffset: 4,
@@ -246,3 +246,9 @@ $(function(){
     return $this;
   };
 })(jQuery);
+
+$(window).resize(function(){
+  drawChart1();
+});
+
+// Reminder: you need to put https://www.google.com/jsapi in the head of your document or as an external resource on codepen //
