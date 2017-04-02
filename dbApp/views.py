@@ -13,7 +13,7 @@ def asset_total(request):
     return render(request, 'dbApp/asset_total.html', context)
 
 def switch_asset(request):
-    switch_asset_list = Switch.objects.select_related('location','assetInfo','location__rack').all()
+    switch_asset_list = Switch.objects.all()
     temp_list = []
     for switch in switch_asset_list:
         temp_dict = {}
@@ -21,11 +21,6 @@ def switch_asset(request):
         temp_dict['manageNum']=switch.manageNum
         temp_dict['manageSpec']=switch.manageSpec
         temp_dict['ip']=switch.ip
-        temp_location = switch.location
-        if temp_location.rack is not None:
-            temp_dict['location']=temp_location.rack.location
-        else:
-            temp_dict['location']=temp_location.realLocation
         temp_dict['onOff']=True
         temp_list.append(temp_dict)
     context = {'switch_asset_list': temp_list}
@@ -59,7 +54,13 @@ def service_resources(request):
     return render(request, 'dbApp/service_resources.html', {});
 
 def service_detail(request):
-    return render(request, 'dpApp/service_detail.html', {});
+    server_list = ServerService.objects.all()
+    storage_list = StorageService.objects.all()
+    data = json.loads(request.POST.get('data'))
+    #server_service_list = ServerService.objects.get(service=data[???])
+    #storage_service_list = StorageService.objects.get(service=data[???])
+    context = {'server_service_list': server_service_list, 'storage_service_list' : storage_service_list}
+    return render(request, 'dpApp/service_detail.html', context);
 
 def insert_asset(request):
     asset_total_list = Asset.objects.all()
@@ -69,3 +70,6 @@ def insert_asset(request):
 
 def sign_up(request):
     return render(request, 'dbApp/resistration.html')
+
+def welcome(request):
+    return render(request, 'dbApp/welcome_page.html', {});
