@@ -108,7 +108,13 @@ $(function(){
                      "margin-top": -(summarySize / 2) + "px"
                    });
     var $summaryTitle = $('<p class="' + settings.summaryTitleClass + '">' + settings.summaryTitle + '</p>').appendTo($summary);
-    var $summaryNumber = $('<p class="' + settings.summaryNumberClass + '"></p>').appendTo($summary).css({opacity: 0});
+    $summaryTitle.on('click', function(){
+         window.location = "./service_detail";    
+    });
+    var $summaryNumber = $('<p class="' + settings.summaryNumberClass + '"></p>').appendTo($summary).css({opacity: 0});    
+    $summaryNumber.on('click', function(){
+         window.location = "./service_detail";    
+    });
 
     for (var i = 0, len = data.length; i < len; i++) {
       segmentTotal += data[i].value;

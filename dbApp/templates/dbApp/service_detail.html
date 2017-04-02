@@ -1,7 +1,11 @@
 {% extends 'dbApp/navigation_bar.html' %}
 
 {% block content %}
-    <div class="container">
+    <div id="doughnutChart" class="chartDetail">
+
+    </div>
+
+    <div class="serviceDetailContent">
         <h2 class="sub-header">Service Name</h2>
         
         <h3>Server</h3>
@@ -16,17 +20,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% if asset_total_list %} {% for asset in asset_total_list %}
-                    <tr>
-                        <td>{{ asset.assetNum }}</td>
-                        <td>{{ asset.acquisitionDate }}</td>
-                        <td>{{ asset.assetName }}</td>
-                        <td>{{ asset.standard }}</td>
-                        <td>{{ asset.acquisitionCost }}</td>
-                        <td>{{ asset.purchaseLocation }}</td>
-                        <td>{{ asset.maintenanceYear }}</td>
-                    </tr>
-                    {% endfor %} {% endif %}
                 </tbody>
             </table>
         </div>
