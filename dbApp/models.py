@@ -18,13 +18,13 @@ class Service(models.Model):
 	color = models.IntegerField()
 	
 class Asset(models.Model):
-	assetName = models.CharField(max_length=45)
+	assetNum = models.CharField(max_length=45,db_index=True)
 	acquisitionDate = models.DateField(auto_now_add = True)
-	assetNum = models.CharField(max_length=45)
-	purchaseLocation = models.CharField(max_length=45)
-	maintenanceYear = models.IntegerField()
+	assetName = models.CharField(max_length=45)
 	standard = models.CharField(max_length=45)
 	acquisitionCost = models.IntegerField()
+	purchaseLocation = models.CharField(max_length=45)
+	maintenanceYear = models.IntegerField()
 
 class StorageAsset(models.Model):
 	manageNum =models.CharField(max_length=45)
