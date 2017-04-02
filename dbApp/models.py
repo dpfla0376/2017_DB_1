@@ -39,10 +39,8 @@ class Server(models.Model):
 	manageSpec = models.CharField(max_length=45)
 	isInRack = models.BooleanField(default=1)
 	size = models.IntegerField()
-	location = models.CharField(max_length=45)
 	core = models.IntegerField()
 	IP = models.IntegerField(null=True)
-	serviceOn = models.BooleanField(default=1)
 
 class Switch(models.Model):
 	manageNum = models.CharField(max_length=45)
