@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from dbApp.models import Asset
+from dbApp.models import *
 
 # Create your views here.
 
@@ -9,7 +9,7 @@ def asset_total(request):
     return render(request, 'dbApp/asset_total.html', context)
 
 def server_asset(request):
-    server_asset_list = Asset.objects.all()
+    server_asset_list = Server.objects.all()
     context = {'server_asset_list': server_asset_list}
     return render(request, 'dbApp/server_asset.html', context)
 
