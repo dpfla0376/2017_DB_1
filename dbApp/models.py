@@ -61,7 +61,7 @@ class Rack(models.Model):
 class Storage(models.Model):
 	storageAsset = models.ForeignKey(StorageAsset)
 	enrollDate = models.DateField()
-	diskSpec = models.FloatField()
+	diskSpec = models.CharField(max_length=45)
 	allocUnitSize = models.FloatField()
 	Vol = models.FloatField()
 	
