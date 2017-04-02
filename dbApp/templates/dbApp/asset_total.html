@@ -16,7 +16,8 @@
                 </tr>
             </thead>
             <tbody>
-                {% if asset_total_list %} {% for asset in asset_total_list %}
+                {% if asset_total_list %}
+                {% for asset in asset_total_list %}
                 <tr>
                     <td>{{ asset.assetNum }}</td>
                     <td>{{ asset.acquisitionDate }}</td>
