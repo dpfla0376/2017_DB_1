@@ -25,7 +25,7 @@ class Asset(models.Model):
 	maintenanceYear = models.IntegerField()
 	standard = models.CharField(max_length=45)
 	acquisitionCost = models.IntegerField()
-	
+
 class StorageAsset(models.Model):
 	manageNum =models.CharField(max_length=45)
 	assetInfo = models.ForeignKey(Asset)
@@ -94,7 +94,7 @@ class StorageService(models.Model):
 class UserService(models.Model):
 	user = models.ForeignKey(User)
 	service = models.ForeignKey(Service)
-	grant =  models.IntegerField(max_length=45)
+	grant =  models.IntegerField()
 	serviceName =  models.CharField(max_length=45)
 
 	
