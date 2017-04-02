@@ -72,7 +72,7 @@ class ServerService(models.Model):
 	Use	= models.BooleanField(default=1)
 
 class ServerLocation(models.Model):
-	server_pk = models.OneToOneField(Server)
+	server_pk = models.OneToOneField(Server,related_name = 'location')
 	rack_pk = models.ForeignKey(Rack,null=True)
 	rackLocation = models.IntegerField(null=True)
 	realLocation =  models.CharField(max_length=45,null=True)
@@ -94,9 +94,3 @@ class UserService(models.Model):
 	service = models.ForeignKey(Service)
 	grant =  models.IntegerField()
 	serviceName =  models.CharField(max_length=45)
-
-	
-
-
-
-		
