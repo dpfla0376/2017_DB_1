@@ -11,6 +11,20 @@ def asset_total(request):
     context = {'asset_total_list': asset_total_list}
     return render(request, 'dbApp/asset_total.html', context)
 
+def switch_asset(request):
+    switch_asset_list = Switch.objects.all()
+    temp_list = []
+    for switch in switch_asset_list:
+        temp_dict = {}
+        temp_dict['assetNum']=switch.assetInfo.assetNum
+        temp_dict['manageNum']=switch.manageNum
+        temp_dict['manageSpec']=switch.manageSpec
+        temp_dict['ip']=switch.ip
+        temp_dict['onOff']=True
+        temp_list.append(temp_dict)
+    context = {'switch_asset_list': temp_list}
+    return render(request, 'dbApp/switch_asset.html', context)
+
 def server_asset(request):
     server_asset_list = Server.objects.select_related().all()
     temp_list = []
