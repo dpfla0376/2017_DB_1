@@ -13,6 +13,33 @@
 <body>
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container">
+<<<<<<< HEAD
+            
+          <h2 class="sub-header">ASSETS</h2>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Header</th>
+                  <th>Header</th>
+                  <th>Header</th>
+                  <th>Header</th>
+                </tr>
+              </thead>
+              <tbody>
+                  {% if asset_total_list %}
+                    {% for asset in asset_total_list %}
+                      <tr>
+                          <td>{{ asset.assetName }}</td>
+                          <td>{{ asset.assetNum }}</td>
+                          <td>{{ asset.standard }}</td>
+                          <td>{{ asset.maintenanceYear }}</td>
+                      </tr>
+                    {% endfor %}
+                  {% endif %}
+              </tbody>
+=======
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
             <span class="sr-only">Toggle navigation</span>
@@ -184,6 +211,7 @@
                         <td>libero</td>
                     </tr>
                 </tbody>
+>>>>>>> 304cba71603735d4be802feb53c6ab1ea0f88ba9
             </table>
         </div>
     </div>
