@@ -23,7 +23,7 @@
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li class><a href="/dbApp/asset">Asset</a></li>
+                    <li><a href="/dbApp/asset">Asset</a></li>
                     <li><a href="#server_total">Server</a></li>
                     <li><a href="#switch_total">Switch</a></li>
                     <li><a href="#rack_total">Rack</a></li>
@@ -55,8 +55,36 @@
             <!--/.nav-collapse -->
         </div>
     </nav>
-    {% block content %}
-    {% endblock %}
+    <div class="container">
+<h2 class="sub-header">Service Name</h2>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                    <th>관리번호</th>
+                    <th>이름</th>
+                    <th>위치</th>
+                    <th>core</th>
+                </tr>
+              </thead>
+              <tbody>
+                  {% if asset_total_list %}
+                    {% for asset in asset_total_list %}
+                      <tr>
+                          <td>{{ asset.assetNum }}</td>
+                          <td>{{ asset.acquisitionDate }}</td>
+                          <td>{{ asset.assetName }}</td>
+                          <td>{{ asset.standard }}</td>
+                          <td>{{ asset.acquisitionCost }}</td>
+                          <td>{{ asset.purchaseLocation }}</td>
+                          <td>{{ asset.maintenanceYear }}</td>
+                      </tr>
+                    {% endfor %}
+                  {% endif %}
+              </tbody>
+            </table>
+        </div>
+    </div>
 </body>
 
 </html>
