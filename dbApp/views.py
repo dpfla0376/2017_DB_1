@@ -20,6 +20,7 @@ def server_asset(request):
         temp_dict['managenum']=server.manageNum
         temp_dict['managespec']=server.manageSpec
         temp_dict['core']=server.core
+        temp_dict['ip']=server.ip
         temp_location = server.serverlocation
         if temp_location.rack_pk is not None:
             temp_dict['location']=temp_location.rack_pk.location
