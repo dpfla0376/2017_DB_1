@@ -36,3 +36,4 @@ test/dummy_rails/log/*.log
 test/dummy_rails/public/assets/
 .DS_Store
 /.idea
+/dbvenv
