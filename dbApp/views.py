@@ -70,3 +70,6 @@ def insert_asset(request):
 
 def sign_up(request):
     return render(request, 'dbApp/resistration.html')
+
+def welcome(request):
+    return render(request, 'dbApp/welcome_page.html', {});
