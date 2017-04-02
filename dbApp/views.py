@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from dbApp.models import *
+import json
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core import serializers
@@ -69,6 +70,11 @@ def insert_asset(request):
 
 
 def sign_up(request):
+    data = request.POST
+    username = data['inputUserName']
+    password = data['inputPassword']
+    print(username)
+    print(password)
     return render(request, 'dbApp/resistration.html')
 
 def welcome(request):
