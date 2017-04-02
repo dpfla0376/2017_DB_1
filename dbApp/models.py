@@ -31,7 +31,7 @@ class StorageAsset(models.Model):
 	assetInfo = models.ForeignKey(Asset)
 	manageSpec =models.CharField(max_length=45)
 	location = models.CharField(max_length=45)
-	storageForm = models.IntegerField()
+	storageForm = models.CharField(max_length=45)
 	
 class Server(models.Model):
 	manageNum =models.CharField(max_length=45)
