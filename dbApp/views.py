@@ -12,7 +12,7 @@ def asset_total(request):
     return render(request, 'dbApp/asset_total.html', context)
 
 def server_asset(request):
-    server_asset_list = Server.objects.all()
+    server_asset_list = Server.objects.select_related().all()
     temp_list = []
     for server in server_asset_list:
         temp_dict = {}
