@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from dbApp.models import *
+import json
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core import serializers
@@ -54,13 +55,13 @@ def service_resources(request):
     return render(request, 'dbApp/service_resources.html', {});
 
 def service_detail(request):
-    server_list = ServerService.objects.all()
-    storage_list = StorageService.objects.all()
-    data = json.loads(request.POST.get('data'))
+    #server_list = ServerService.objects.all()
+    #storage_list = StorageService.objects.all()
+    #data = json.loads(request.POST.get('data'))
     #server_service_list = ServerService.objects.get(service=data[???])
     #storage_service_list = StorageService.objects.get(service=data[???])
-    context = {'server_service_list': server_service_list, 'storage_service_list' : storage_service_list}
-    return render(request, 'dpApp/service_detail.html', context);
+    #context = {'server_service_list': server_service_list, 'storage_service_list' : storage_service_list}
+    return render(request, 'dbApp/service_detail.html', {});
 
 def insert_asset(request):
     asset_total_list = Asset.objects.all()
@@ -69,6 +70,11 @@ def insert_asset(request):
 
 
 def sign_up(request):
+    data = request.POST
+    username = data['inputUserName']
+    password = data['inputPassword']
+    print(username)
+    print(password)
     return render(request, 'dbApp/resistration.html')
 
 def welcome(request):

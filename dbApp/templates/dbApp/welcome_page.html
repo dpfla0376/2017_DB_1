@@ -10,14 +10,29 @@
   <body>
 
     <div class="container">
-      <form class="form-signin">
+      <form class="form-signin" action="/dbApp/aaaa/" method="post">
+          {% csrf_token %}
         <h2 class="form-signin-heading">Please sign in</h2>
+
         <label for="userName" class="sr-only">User name</label>
-        <input type="text" id="inputUserName" class="form-control" placeholder="User name" required autofocus>
+
+        <input type="text"
+               id="inputUserName"
+               name="inputUserName"
+               class="form-control"  value=""
+               placeholder="User name" required autofocus>
+
         <label for="inputPassword" class="sr-only">Password</label>
-        <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
-        <button class="form-button btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-        </div>
+
+        <input type="password"
+               id="inputPassword"
+               name="inputPassword"
+               value=""
+               class="form-control"
+               placeholder="Password" required >
+
+        <button class="form-button btn btn-lg btn-primary btn-block" type="submit" value="submit">Sign in</button>
+
       </form>
     </div> <!-- /container -->
   </body>
