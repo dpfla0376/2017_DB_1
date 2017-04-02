@@ -36,6 +36,11 @@ def service_resources(request):
     return render(request, 'dbApp/service_resources.html', {});
 
 def service_detail(request):
+    server_list = ServerService.objects.all()
+    storage_list = StorageService.objects.all()
+    data = json.loads(request.POST.get('data'))
+    server_service_list = ServerService.objects.get(service=data[???])
+    storage_storage_list = StorageService.objects.get(service=data[???])
     return render(request, 'dpApp/service_detail.html', {});
 
 def insert_asset(request):
