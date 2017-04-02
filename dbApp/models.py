@@ -78,7 +78,7 @@ class ServerLocation(models.Model):
 	realLocation =  models.CharField(max_length=45,null=True)
 	
 class SwitchLocation(models.Model):
-	switch = models.OneToOneField(Switch)
+	switch = models.OneToOneField(Switch,related_name = 'location')
 	rack = models.ForeignKey(Rack,null=True)
 	rackLocation = models.IntegerField(null=True)
 	realLocation =  models.CharField(max_length=45,null=True)

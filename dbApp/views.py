@@ -13,7 +13,7 @@ def asset_total(request):
     return render(request, 'dbApp/asset_total.html', context)
 
 def switch_asset(request):
-    switch_asset_list = Switch.objects.all()
+    switch_asset_list = Switch.objects.select_related('location','assetInfo','location__rack').all()
     temp_list = []
     for switch in switch_asset_list:
         temp_dict = {}
@@ -21,6 +21,11 @@ def switch_asset(request):
         temp_dict['manageNum']=switch.manageNum
         temp_dict['manageSpec']=switch.manageSpec
         temp_dict['ip']=switch.ip
+        temp_location = switch.location
+        if temp_location.rack is not None:
+            temp_dict['location']=temp_location.rack.location
+        else:
+            temp_dict['location']=temp_location.realLocation
         temp_dict['onOff']=True
         temp_list.append(temp_dict)
     context = {'switch_asset_list': temp_list}
