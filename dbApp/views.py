@@ -1,5 +1,8 @@
 from django.shortcuts import render
 from dbApp.models import *
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.core import serializers
 
 # Create your views here.
 
@@ -10,8 +13,23 @@ def asset_total(request):
 
 def server_asset(request):
     server_asset_list = Server.objects.all()
-    context = {'server_asset_list': server_asset_list}
+    temp_list = []
+    for server in server_asset_list:
+        temp_dict = {}
+        temp_dict['assetnum']=server.assetInfo.assetNum
+        temp_dict['managenum']=server.manageNum
+        temp_dict['managespec']=server.manageSpec
+        temp_dict['core']=server.core
+        temp_location = server.serverlocation
+        if temp_location.rack_pk is not None:
+            temp_dict['location']=temp_location.rack_pk.location
+        else:
+            temp_dict['location']=temp_location.realLocation
+        temp_dict['onoff']= True
+        temp_list.append(temp_dict)
+    context = {'server_asset_list': temp_list}
     return render(request, 'dbApp/server_asset.html', context)
+    # return HttpResponse(temp_list)
 
 def service_resources(request):
     return render(request, 'dbApp/service_resources.html', {});

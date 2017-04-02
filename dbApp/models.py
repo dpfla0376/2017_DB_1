@@ -72,13 +72,13 @@ class ServerService(models.Model):
 	Use	= models.BooleanField(default=1)
 
 class ServerLocation(models.Model):
-	server_pk = models.ForeignKey(Server)
+	server_pk = models.OneToOneField(Server)
 	rack_pk = models.ForeignKey(Rack,null=True)
 	rackLocation = models.IntegerField(null=True)
 	realLocation =  models.CharField(max_length=45,null=True)
 	
 class SwitchLocation(models.Model):
-	switch = models.ForeignKey(Switch)
+	switch = models.OneToOneField(Switch)
 	rack = models.ForeignKey(Rack,null=True)
 	rackLocation = models.IntegerField(null=True)
 	realLocation =  models.CharField(max_length=45,null=True)
