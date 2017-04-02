@@ -1,12 +1,17 @@
+{% load staticfiles %}
 <html>
-    <head>
-        <title>site title</title>
-        
-        <script src="js/jquery-3.2.0.js"></script>
-        <script src="js/bootstrap.js"></script>
-    </head>
-    <body>
-        <nav class="navbar navbar-default navbar-fixed-top">
+
+<head>
+    <title>site title</title>
+
+    <script src="js/jquery-3.2.0.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <link rel="stylesheet" href="{% static 'dbApp/css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'dbApp/css/bootstrap-theme.css' %}">
+</head>
+
+<body>
+    <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -19,7 +24,7 @@
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="#asset_total">Asset</a></li>
+                    <li class="active"><a href="/dbApp/asset">Asset</a></li>
                     <li><a href="#server_total">Server</a></li>
                     <li><a href="#switch_total">Switch</a></li>
                     <li><a href="#rack_total">Rack</a></li>
@@ -51,8 +56,9 @@
             <!--/.nav-collapse -->
         </div>
     </nav>
-        <div class="container">
+    <div class="container">
 
-        </div>
-    </body>
+    </div>
+</body>
+
 </html>

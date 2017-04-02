@@ -39,10 +39,8 @@ class Server(models.Model):
 	manageSpec = models.CharField(max_length=45)
 	isInRack = models.BooleanField(default=1)
 	size = models.IntegerField()
-	location = models.CharField(max_length=45)
 	core = models.IntegerField()
-	IP = models.IntegerField(null=True)
-	serviceOn = models.BooleanField(default=1)
+	ip = models.CharField(max_length=45,null=True)
 
 class Switch(models.Model):
 	manageNum = models.CharField(max_length=45)
@@ -50,7 +48,7 @@ class Switch(models.Model):
 	manageSpec = models.CharField(max_length=45)
 	isInRack = models.BooleanField(default=1)
 	size = models.IntegerField()
-	IP = models.IntegerField(null=True)
+	ip = models.CharField(max_length=45,null=True)
 	serviceOn = models.BooleanField(default=1)
 	
 class Rack(models.Model):
@@ -58,7 +56,7 @@ class Rack(models.Model):
 	assetInfo = models.ForeignKey(Asset)
 	manageSpec = models.CharField(max_length=45)
 	size = models.IntegerField()
-	location = models.CharField(max_length=45)
+	location = models.CharField(max_length=45,null=True)
 
 class Storage(models.Model):
 	storageAsset = models.ForeignKey(StorageAsset)
