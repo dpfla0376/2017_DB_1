@@ -5,8 +5,10 @@
     <title>site title</title>
 
     <script src="js/jquery-3.2.0.js"></script>
+    <script src="js/resources_chart.js"></script>
     <script src="js/bootstrap.js"></script>
     <link rel="stylesheet" href="{% static 'dbApp/css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'dbApp/css/resources_chart.css' %}">
     <link rel="stylesheet" href="{% static 'dbApp/css/bootstrap-theme.css' %}">
 </head>
 
@@ -53,6 +55,8 @@
                     <li><a href="#">Setting</a></li>
                 </ul>
             </div>
+            <div id="doughnutChart" class="chart"></div>
+
             <!--/.nav-collapse -->
         </div>
     </nav>
