@@ -3,6 +3,7 @@ from dbApp.models import *
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core import serializers
+import time
 
 # Create your views here.
 
@@ -11,17 +12,32 @@ def asset_total(request):
     context = {'asset_total_list': asset_total_list}
     return render(request, 'dbApp/asset_total.html', context)
 
-def server_asset(request):
-    server_asset_list = Server.objects.all()
+def switch_asset(request):
+    switch_asset_list = Switch.objects.all()
     temp_list = []
-    for server in server_asset_list:
+    for switch in switch_asset_list:
         temp_dict = {}
+        temp_dict['assetNum']=switch.assetInfo.assetNum
+        temp_dict['manageNum']=switch.manageNum
+        temp_dict['manageSpec']=switch.manageSpec
+        temp_dict['ip']=switch.ip
+        temp_dict['onOff']=True
+        temp_list.append(temp_dict)
+    context = {'switch_asset_list': temp_list}
+    return render(request, 'dbApp/switch_asset.html', context)
+
+def server_asset(request):
+    start_time = time.time()
+    server_asset_list = Server.objects.select_related('location','assetInfo','location__rack_pk').all()
+    temp_list = list()
+    for server in server_asset_list:
+        temp_dict = dict()
         temp_dict['assetnum']=server.assetInfo.assetNum
         temp_dict['managenum']=server.manageNum
         temp_dict['managespec']=server.manageSpec
         temp_dict['core']=server.core
         temp_dict['ip']=server.ip
-        temp_location = server.serverlocation
+        temp_location = server.location
         if temp_location.rack_pk is not None:
             temp_dict['location']=temp_location.rack_pk.location
         else:
@@ -29,7 +45,9 @@ def server_asset(request):
         temp_dict['onoff']= True
         temp_list.append(temp_dict)
     context = {'server_asset_list': temp_list}
-    return render(request, 'dbApp/server_asset.html', context)
+    temppp = render(request, 'dbApp/server_asset.html', context)
+    print("--- %s seconds ---" % (time.time() - start_time))
+    return temppp
     # return HttpResponse(temp_list)
 
 def service_resources(request):
