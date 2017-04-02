@@ -16,4 +16,5 @@ def server_asset(request):
 def service_resources(request):
     return render(request, 'dbApp/service_resources.html', {});
 
-
+def service_detail(request):
+    return render(request, 'dpApp/service_detail.html', {});
