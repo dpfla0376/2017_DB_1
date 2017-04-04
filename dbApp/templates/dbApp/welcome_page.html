@@ -8,9 +8,8 @@
     <link rel="stylesheet" href="{% static 'dbApp/css/signIn.css' %}">
   </head>
   <body>
-
     <div class="container">
-      <form class="form-signin" action="/dbApp/aaaa/" method="post">
+      <form class="form-signin" action="/dbApp/resource/" method="post">
           {% csrf_token %}
         <h2 class="form-signin-heading">Please sign in</h2>
 
@@ -32,7 +31,7 @@
                placeholder="Password" required >
 
         <button class="form-button btn btn-lg btn-primary btn-block" type="submit" value="submit">Sign in</button>
-
+          <button class="btn-link form-signup" onclick="location.href='sign_up'">Sign up</button>
       </form>
     </div> <!-- /container -->
   </body>
