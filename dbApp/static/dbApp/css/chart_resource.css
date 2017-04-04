@@ -2,10 +2,10 @@
 
 .StorageBarChart {
     position: absolute;
-    width: 350px;
-    height: 350px;
+    width: 400px;
+    height: 400px;
     top: 300px;
-    left: 150px;
+    left: 50%;
     margin: -225px 0 0 -225px;
 }
 
@@ -19,7 +19,7 @@ body {
     width: 350px;
     height: 350px;
     top: 300px;
-    left: 400px;
+    left: 50%;
     margin: -225px 0 0 -225px;
 }
 
