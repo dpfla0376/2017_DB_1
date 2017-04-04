@@ -1,17 +1,21 @@
+{% load staticfiles %}
 <html>
-    <head>
-        <title>site title</title>
-        
-        <script src="js/jquery-3.2.0.js"></script>
-        <script src="js/bootstrap.js"></script>
-        <link rel="stylesheet" href="css/bootstrap.css">
-        <link rel="stylesheet" href="css/bootstrap-theme.css">
-    </head>
-    <body>
-        <div class="container">
-            <ul> 
-               
-            </ul>
-        </div>
-    </body>
+<head>
+    <title>Add Asset</title>
+
+    <script src="js/jquery-3.2.0.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <link rel="stylesheet" href="{% static 'dbApp/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dbApp/css/signIn.css' %}">
+</head>
+<body>
+<div class="container">
+    <div>
+        <button class="form-button btn btn-lg btn-danger">SERVER</button>
+        <button class="form-button btn btn-lg btn-warning">SWITCH</button>
+        <button class="form-button btn btn-lg btn-primary">STORAGE</button>
+        <button class="form-button btn btn-lg btn-success">RACK</button>
+    </div>
+</div>
+</body>
 </html>

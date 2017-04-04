@@ -9,5 +9,7 @@ urlpatterns = [
     url(r'service_detail/$', views.service_detail, name='service_detail'),
     url(r'resource/$', views.service_resources, name='service_resources'),
     url(r'aaaa/$', views.SignUp.as_view(), name='sign_up'),
-    url(r'sign_up/$', views.SignUp.as_view(), name='sign_up')
+    url(r'sign_up/$', views.SignUp.as_view(), name='sign_up'),
+    url(r'add/$', views.add, name='add'),
+
 ]

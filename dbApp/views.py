@@ -97,3 +97,7 @@ class SignUp(View):
     def post(self, request):
         print(request.POST)
         return HttpResponse("request.POST")
+
+
+def add(request):
+    return render(request, 'dbApp/add_asset.html')
