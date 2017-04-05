@@ -22,3 +22,12 @@ By: dave-cheon
 .btn.active span.fa {
 	opacity: 1;
 }
+
+.btn-circle{
+    width:150px;
+    height:150px;
+    border-radius:75px;
+    font-size:20px;
+    line-height:150px;
+    text-align:center;
+}

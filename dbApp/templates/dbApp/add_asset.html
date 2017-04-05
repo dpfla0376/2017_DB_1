@@ -1,21 +1,15 @@
+{% extends 'dbApp/navigation_bar.html' %}
 {% load staticfiles %}
-<html>
-<head>
-    <title>Add Asset</title>
 
-    <script src="js/jquery-3.2.0.js"></script>
-    <script src="js/bootstrap.js"></script>
-    <link rel="stylesheet" href="{% static 'dbApp/css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'dbApp/css/signIn.css' %}">
-</head>
-<body>
+{% block content %}
 <div class="container">
-    <div>
-        <button class="form-button btn btn-lg btn-danger">SERVER</button>
-        <button class="form-button btn btn-lg btn-warning">SWITCH</button>
-        <button class="form-button btn btn-lg btn-primary">STORAGE</button>
-        <button class="form-button btn btn-lg btn-success">RACK</button>
+     <h2 class="sub-header">추가하기</h2>
+    <div class="container">
+        <button class="form-button btn btn-circle btn-danger">SERVER</button>
+        <button class="form-button btn btn-circle btn-warning">SWITCH</button>
+        <button class="form-button btn btn-circle btn-primary">STORAGE</button>
+        <button class="form-button btn btn-circle btn-success">RACK</button>
+        <button class="form-button btn btn-circle btn-default">SERVICE</button>
     </div>
 </div>
-</body>
-</html>
+{% endblock content %}
