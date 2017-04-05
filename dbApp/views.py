@@ -1,5 +1,8 @@
 from django.shortcuts import render
 from dbApp.models import *
+
+from django.views.generic import View
+import json
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core import serializers
@@ -7,10 +10,12 @@ import time
 
 # Create your views here.
 
+
 def asset_total(request):
     asset_total_list = Asset.objects.all()
     context = {'asset_total_list': asset_total_list}
     return render(request, 'dbApp/asset_total.html', context)
+
 
 def switch_asset(request):
     switch_asset_list = Switch.objects.all()
@@ -25,6 +30,7 @@ def switch_asset(request):
         temp_list.append(temp_dict)
     context = {'switch_asset_list': temp_list}
     return render(request, 'dbApp/switch_asset.html', context)
+
 
 def server_asset(request):
     start_time = time.time()
@@ -50,8 +56,10 @@ def server_asset(request):
     return temppp
     # return HttpResponse(temp_list)
 
+
 def service_resources(request):
     return render(request, 'dbApp/service_resources.html', {});
+
 
 def service_detail(request):
     #server_list = ServerService.objects.all()
@@ -62,14 +70,34 @@ def service_detail(request):
     #context = {'server_service_list': server_service_list, 'storage_service_list' : storage_service_list}
     return render(request, 'dbApp/service_detail.html', {});
 
+
 def insert_asset(request):
     asset_total_list = Asset.objects.all()
     context = {'asset_total_list': asset_total_list}
     return render(request, 'dbApp/asset_total.html', context)
 
 
-def sign_up(request):
-    return render(request, 'dbApp/resistration.html')
+def sign_in(request):
+    data = request.POST
+    username = data['inputUserName']
+    password = data['inputPassword']
+    print(username)
+    print(password)
+    return render(request, 'dbApp/service_resources.html')
+
 
 def welcome(request):
-    return render(request, 'dbApp/welcome_page.html', {});
+    return render(request, 'dbApp/welcome_page.html', {})
+
+
+class SignUp(View):
+    def get(self, request):
+        return render(request, 'dbApp/resistration.html')
+
+    def post(self, request):
+        print(request.POST)
+        return HttpResponse("request.POST")
+
+
+def add(request):
+    return render(request, 'dbApp/add_asset.html')
