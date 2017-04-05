@@ -2,5 +2,11 @@
 
 {% block content %}
     <div id="doughnutChart" class="chart">
+        <script>
+            var div = document.getElementById('doughnutChart');
+            div.addEventListener('click', function() {
+                window.location = "./service_detail";
+            });
+        </script>
     </div>
 {% endblock content %}
