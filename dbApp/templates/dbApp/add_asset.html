@@ -2,14 +2,135 @@
 {% load staticfiles %}
 
 {% block content %}
-<div class="container">
-     <h2 class="sub-header">추가하기</h2>
+    <script>
+        $(document).ready(function(){
+            $(".btn-circle").click(function(){
+                var unselected = $(this).hasClass("unselected");
+                var type = $(this).attr("target");
+                if(unselected){
+                    $("#"+type).show(1234);
+                    $(this).removeClass("unselected");
+                } else {
+                    $("#" + type).hide(1234);
+                    $(this).addClass("unselected");
+                }
+            });
+        });
+    </script>
     <div class="container">
-        <button class="form-button btn btn-circle btn-danger">SERVER</button>
-        <button class="form-button btn btn-circle btn-warning">SWITCH</button>
-        <button class="form-button btn btn-circle btn-primary">STORAGE</button>
-        <button class="form-button btn btn-circle btn-success">RACK</button>
-        <button class="form-button btn btn-circle btn-default">SERVICE</button>
+        <h2 class="page-header">추가하기</h2>
+        <div class="container">
+            <a href="{% url 'select' add_type="asset"%}">
+                <button class="form-button btn btn-circle btn-danger" id="asset" name="asset" type="submit">ASSET</button>
+            </a>
+            <a href="{% url 'select' add_type="service"%}">
+                <button class="form-button btn btn-circle btn-default unselected" id="service" name="service" type="submit">SERVICE</button>
+            </a>
+        </div>
+        <div class="container">
+            <h2 class="sub-header">자산 정보</h2>
+            <form class="form-horizontal" method="post" action="{%  url 'add' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="assetName">자산명</label>
+                    <div class="col-sm-6">
+                        <input class="form-control" id="assetName" type="text" name="assetName" placeholder="자산명을 입력하세요. 예)서버">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="acquisitionDate">취득일</label>
+                    <div class="col-sm-6">
+                        <input class="form-control" id="acquisitionDate" type="date" name="acquisitionDate" placeholder="취득일자">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="standard">규격</label>
+                    <div class="col-sm-6">
+                        <input class="form-control" id="standard" type="text" name="standard" placeholder="규격을 입력하세요. 예)Hitachi VSP Hardware">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="acquisitionCost">취득원가</label>
+                    <div class="col-sm-6">
+                        <input class="form-control" id="acquisitionCost" type="number" name="acquisitionCost" placeholder="취득원가를 입력하세요.">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="acquisitionLocation">구입처</label>
+                    <div class="col-sm-6">
+                        <input class="form-control" id="acquisitionLocation" type="text" name="acquisitionLocation" placeholder="구입처를 입력하세요.">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="maintenanceYear">내용연수</label>
+                    <div class="col-sm-6">
+                        <input class="form-control" id="maintenanceYear" type="number" name="maintenanceYear" placeholder="내용연수를 입력하세요.">
+                    </div>
+                </div>
+                <h2 class="sub-header">상세정보</h2>
+                <div class="center-block add-buttons-container">
+                    <p class="form-button btn btn-circle btn-danger unselected" target="server_spec">SERVER</p>
+                    <p class="form-button btn btn-circle btn-warning unselected" target="switch_spec">SWITCH</p>
+                    <p class="form-button btn btn-circle btn-primary unselected">STORAGE</p>
+                    <p class="form-button btn btn-circle btn-success unselected">RACK</p>
+                </div>
+
+                <div class="container asset-spec" id="server_spec" >
+                    <h2 class="sub-header">서버</h2>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="server_ip">IP</label>
+                        <div class="col-sm-6">
+                            <input class="form-control" id="server_ip" type="text" name="server_ip" placeholder="자동할당이면 이거안넣어도되나여 IP 예)127.0.0.1">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="server_size">사이즈</label>
+                        <div class="col-sm-6">
+                            <input class="form-control" id="server_size" type="number" name="server_size" placeholder="사이즈">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="server_location">위치</label>
+                        <div class="col-sm-6">
+                            <input class="form-control" id="server_location" type="text" name="server_location" placeholder="랙/기타 고르기..">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="server_core_num">코어</label>
+                        <div class="col-sm-6">
+                            <input class="form-control" id="server_core_num" type="number" name="server_core_num" placeholder="코어 갯수">
+                        </div>
+                    </div>
+                </div>
+                <div class="container asset-spec" id="switch_spec" >
+                    <h2 class="sub-header">스위치</h2>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="switch_ip">IP</label>
+                        <div class="col-sm-6">
+                            <input class="form-control" id="switch_ip" type="text" name="switch_ip" placeholder="자동할당이면 이거안넣어도되나여 IP 예)127.0.0.1">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="switch_size">사이즈</label>
+                        <div class="col-sm-6">
+                            <input class="form-control" id="switch_size" type="number" name="switch_size" placeholder="사이즈">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="switch_location">위치</label>
+                        <div class="col-sm-6">
+                            <input class="form-control" id="switch_location" type="text" name="switch_location" placeholder="랙/기타 고르기..">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-12 text-center">
+                        <button class="btn btn-primary" type="submit">등록하기<i class="fa fa-check spaceLeft"></i></button>
+                        <button class="btn btn-danger" type="submit">취소<i class="fa fa-times spaceLeft"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
+    </div>
 {% endblock content %}

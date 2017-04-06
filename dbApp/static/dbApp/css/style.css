@@ -9,20 +9,20 @@ By: dave-cheon
 * { font-family: 'Nanum Gothic', sans-serif; }
 
 .spaceLeft {
-  margin-left: 10px;
+    margin-left: 10px;
 }
 .spaceRight {
-  margin-right: 10px;
+    margin-right: 10px;
 }
 
 /* custom checkbox */
 .btn span.fa {
-	opacity: 0;
+    opacity: 0;
 }
 .btn.active span.fa {
-	opacity: 1;
+    opacity: 1;
 }
-
+/* circle button shape*/
 .btn-circle{
     width:150px;
     height:150px;
@@ -30,4 +30,24 @@ By: dave-cheon
     font-size:20px;
     line-height:150px;
     text-align:center;
+}
+
+/* add page buttons layout*/
+.add-buttons-container{
+    width: 70%;
+    margin-bottom: 2%;
+    margin-top: 2%;
+    padding-right: 15px;
+    padding-left: 15px;
+
+}
+
+.asset-spec{
+    display: none;
+}
+
+.unselected{
+    background-color: #5e5e5e !important;
+    background-image: none;
+    border-color: transparent;
 }

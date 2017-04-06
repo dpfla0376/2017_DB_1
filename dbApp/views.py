@@ -100,4 +100,11 @@ class SignUp(View):
 
 
 def add(request):
-    return render(request, 'dbApp/add_asset.html')
+        return render(request, 'dbApp/add_asset.html')
+
+
+def select(request, add_type):
+    if add_type == "asset":
+        return render(request, 'dbApp/add_asset.html')
+    elif add_type == "service":
+        return render(request, 'dbApp/add_service.html')
