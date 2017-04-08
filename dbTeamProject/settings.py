@@ -22,7 +22,6 @@ SECRET_KEY = 'qkm+1=%phi$a!(uw9hd%fv!j*f7_q#kbz227xy(yquaf*k0&=g'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -65,6 +64,9 @@ DATABASES = {
         'PASSWORD': 'sangwon0001',
         'HOST': 'sangwon0001.hopto.org',
         'PORT': '3306',
+         'OPTIONS' : {
+             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+         },
     }
 }
 

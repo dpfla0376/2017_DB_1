@@ -81,7 +81,7 @@ class ServerService(models.Model):
 
 class ServerLocation(models.Model):
 	server_pk = models.OneToOneField(Server,related_name = 'location')
-	rack_pk = models.ForeignKey(Rack,null=True)
+	rack_pk = models.ForeignKey(Rack, related_name='locationRack',null=True)
 	rackLocation = models.IntegerField(null=True)
 	realLocation =  models.CharField(max_length=45,null=True)
 

@@ -1,6 +1,12 @@
-from django.shortcuts import render
-from dbApp.models import *
+import json
+import time
 
+from django.db import connection
+from django.http import HttpResponse
+from django.shortcuts import render
+from django.views.generic import View
+
+from dbApp.models import *
 from django.views.generic import View
 import json
 from django.http import HttpResponseRedirect, HttpResponse
@@ -9,10 +15,13 @@ from django.db import connection
 import time
 from datetime import datetime
 
-
 # Create your views here.
 
 # Private Methods
+
+
+
+
 def dictFetchall(cursor):
     columns = [col[0] for col in cursor.description]
     return [
@@ -142,6 +151,71 @@ def service_detail(request):
     # context = {'server_service_list': server_service_list, 'storage_service_list' : storage_service_list}
     return render(request, 'dbApp/service_detail.html', {});
 
+def rack_info(request):
+    rack_total = list(Rack.objects.values('manageNum'))
+    rack_list = {}
+    rack_name = {}
+    for rack in rack_total:
+        temp = rack['manageNum']    # ex) R11001
+        temp_name = Rack.objects.get(manageNum=temp).location[-3:]  # ex) C03
+        rack_list[rack['manageNum']] = []
+        rack_name[temp_name] = rack['manageNum']
+    print(rack_list)
+    print(rack_name)
+
+    server_asset_list = Server.objects.select_related('location', 'location__rack_pk').all()
+    switch_asset_list = Switch.objects.select_related('location', 'location__rack').all()
+    # make server list for rack
+    for server in server_asset_list:
+        temp_subDict = dict()
+        temp_subDict['manageNum'] = server.manageNum
+        temp_subDict['manageSpec'] = server.manageSpec
+        temp_subDict['ip'] = server.ip
+        temp_subDict['size'] = server.size
+        temp_service = ServerService.objects.get(server=server)
+        temp_subDict['serviceName'] = temp_service.service.serviceName
+        temp_subDict['use'] = temp_service.Use
+
+        temp_location = server.location
+        if temp_location.rack_pk is not None:
+            temp_subDict['rack_pk'] = temp_location.rack_pk.manageNum
+            temp_subDict['rackLocation'] = temp_location.rackLocation
+        #print(temp_subDict)
+        rack_list[temp_subDict['rack_pk']].append(temp_subDict)
+        #print(rack_list)
+
+    # make server list for rack
+    for switch in switch_asset_list:
+        temp_subDict = dict()
+        temp_subDict['manageNum'] = switch.manageNum
+        temp_subDict['manageSpec'] = switch.manageSpec
+        temp_subDict['ip'] = switch.ip
+        temp_subDict['use'] = switch.serviceOn
+
+        temp_location = switch.location
+        if temp_location.rack is not None:
+            temp_subDict['rack_pk'] = temp_location.rack.manageNum
+            temp_subDict['rackLocation'] = temp_location.rackLocation
+        print(temp_subDict)
+        rack_list[temp_subDict['rack_pk']].append(temp_subDict)
+        print(rack_list)
+
+    rack_total = []
+    for rack in rack_name:
+        temp = {}
+        temp['id'] = rack_name[rack]
+        temp['list'] = sorted(rack_list[temp['id']], key=lambda k: k['rackLocation'], reverse=True)
+        temp['name'] = rack
+        rack_total.append(temp)
+
+
+    print(list(rack_list.keys()))
+    print(rack_total)
+    context = {'rack_list': rack_total, 'loop_times' : range(42, 0, -1)}
+    return render(request, 'dbApp/rack_info.html', context)
+
+def sub42(value):
+    return 42 - value
 
 def insert_asset(request):
     asset_total_list = Asset.objects.all()
@@ -171,6 +245,7 @@ class SignUp(View):
         return HttpResponse("request.POST")
 
 
+<<<<<<< HEAD
 def add(request, add_type):
     if request.method == "POST":
         if add_type == "asset":
@@ -284,3 +359,14 @@ def add_racks(request, new_asset):
                                        size=request.POST.get("rack_size"),
                                        location=request.POST.get("rack_location"))
         this_rack_manage_num = "R" + str(int(temp_rack.manageNum[1:]) + 1)
+=======
+def add(request):
+        return render(request, 'dbApp/add_asset.html')
+
+
+def select(request, add_type):
+    if add_type == "asset":
+        return render(request, 'dbApp/add_asset.html')
+    elif add_type == "service":
+        return render(request, 'dbApp/add_service.html')
+>>>>>>> c8b9e35f437b694af5f27ec51d537ea4e97a6d23

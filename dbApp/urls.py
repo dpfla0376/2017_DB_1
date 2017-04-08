@@ -13,5 +13,6 @@ urlpatterns = [
     url(r'^resource/$', views.service_resources, name='service_resources'),
     url(r'^aaaa/$', views.SignUp.as_view(), name='sign_up'),
     url(r'^sign_up/$', views.SignUp.as_view(), name='sign_up'),
-    url(r'^add/(?P<add_type>[\w]+)/$', views.add, name='add'),
+    url(r'^add/$', views.add, name='add'),
+    url(r'^add/(?P<add_type>[\w]+)/$', views.select, name='select'),
 ]

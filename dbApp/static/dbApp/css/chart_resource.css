@@ -24,26 +24,8 @@ body {
     /*margin: -225px 0 0 -225px;*/
 }
 
-.smallDoughnutChart {
-    /*position: absolute;*/
-    width: 250px;
-    height: 250px;
-    /*top: 900px;*/
-    /*left: 70%;*/
-    /*margin: -225px 0 0 -225px;*/
-}
-
 .container {
     margin: 0 40px;
-}
-
-.smallBarChart{
-    /*position: absolute;*/
-    width: 250px;
-    height: 250px;
-    /*top: 900px;*/
-    /*left: 40%;*/
-    /*margin: -225px 0 0 -225px;*/
 }
 
 .chartDetail {
