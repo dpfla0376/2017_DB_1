@@ -230,7 +230,7 @@ def sign_in(request):
     user = authenticate(username=email, password=password)
     if user is None:
         context = {'messages': 'login failed'}
-        return render(request, 'dbApp/welcome_page.html',context)
+        return render(request, 'dbApp/welcome_page.html', context)
     return render(request, 'dbApp/service_resources.html')
 
 
@@ -253,6 +253,7 @@ class SignUp(View):
 
 def add(request, add_type):
     if request.method == "POST":
+
         if add_type == "asset":
             # add asset
             acq_year = str(request.POST.get("acquisition_date"))[0:4]
@@ -280,7 +281,8 @@ def add(request, add_type):
             if request.POST.get("rack_button") == "on":
                 add_racks(request, new_asset)
 
-            return HttpResponse("ASSET")
+            context = {'messages': '완료되었습니다.'}
+            return render(request, 'dbApp/add_asset.html', context)
 
         elif add_type == "service":
 
@@ -291,10 +293,8 @@ def add(request, add_type):
                                                   makeDate=request.POST.get("service_make_date"),
                                                   color=request.POST.get("service_color"))
 
-            print("<" + temp_service.serviceName + ">")
-            print("<" + temp_service.makeDate + ">")
-            print("<" + temp_service.color + ">")
-            return HttpResponse("SERVICE")
+            context = {'messages': '완료되었습니다.'}
+            return render(request, 'dbApp/add_service.html', context)
     else:
         if add_type == "asset":
             return render(request, 'dbApp/add_asset.html')
