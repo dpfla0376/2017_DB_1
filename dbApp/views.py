@@ -270,9 +270,15 @@ def add(request, add_type):
                                              acquisitionCost=request.POST.get("acquisition_cost"),
                                              purchaseLocation=request.POST.get("acquisition_location"),
                                              maintenanceYear=request.POST.get("maintenance_year"))
-            add_servers(request, new_asset)
-            #add_switches(request, new_asset)
-            #add_racks(request, new_asset)
+
+            if request.POST.get("server_button") == "on":
+                add_servers(request, new_asset)
+
+            if request.POST.get("switch_button") == "on":
+                add_switches(request, new_asset)
+
+            if request.POST.get("rack_button") == "on":
+                add_racks(request, new_asset)
 
             return HttpResponse("ASSET")
 

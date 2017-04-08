@@ -1,10 +1,10 @@
 {% extends 'dbApp/navigation_bar.html' %}
 {% block content %}
-<div class="container">
-          <h2 class="page-header">SWITCH</h2>
-          <div class="table-responsive">
+    <div class="container">
+        <h2 class="page-header">SWITCH</h2>
+        <div class="table-responsive">
             <table class="table table-striped">
-              <thead>
+                <thead>
                 <tr>
                     <th>자산번호</th>
                     <th>관리번호</th>
@@ -13,20 +13,20 @@
                     <th>IP</th>
                     <th>ON/OFF</th>
                 </tr>
-              </thead>
-              <tbody>
-                  {% if switch_asset_list %}
+                </thead>
+                <tbody>
+                {% if switch_asset_list %}
                     {% for switch in switch_asset_list %}
-                      <tr>
-                          <td>{{ switch.assetNum }}</td>
-                          <td>{{ switch.manageNum }}</td>
-                          <td>{{ switch.manageSpec }}</td>
-                          <td>{{ switch.location }}</td>
-                          <td>{{ switch.ip }}</td>
-                          <td>{{ switch.onOff }}</td>
+                        <tr>
+                        <td><a herf="#">{{ switch.assetNum }}</a></td>
+                        <td><a herf="#">{{ switch.manageNum }}</a></td>
+                        <td>{{ switch.manageSpec }}</td>
+                        <td><a herf="#">{{ switch.location }}</a></td>
+                        <td>{{ switch.ip }}</td>
+                        <td>{{ switch.onOff }}</td>
                     {% endfor %}
-                  {% endif %}
-              </tbody>
+                {% endif %}
+                </tbody>
             </table>
         </div>
     </div>
