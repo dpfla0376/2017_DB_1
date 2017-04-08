@@ -1,27 +1,20 @@
-import json
-import time
+# -*- coding: utf-8 -*-
 
-from django.db import connection
-from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.generic import View
-
-from dbApp.models import *
-from django.views.generic import View
-import json
+from django.contrib.auth import authenticate
 from django.http import HttpResponseRedirect, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db import connection
-from django.contrib.auth import authenticate
-import time
+
+from dbApp.models import *
+
+import json,jwt,time
 from datetime import datetime
 
 # Create your views here.
 
 # Private Methods
-
-
-
 
 def dictFetchall(cursor):
     columns = [col[0] for col in cursor.description]
@@ -29,6 +22,9 @@ def dictFetchall(cursor):
         dict(zip(columns, row))
         for row in cursor.fetchall()
     ]
+
+def sub42(value):
+    return 42 - value
 
 
 # API
@@ -84,6 +80,34 @@ def api_graph_service_info(request):
 
 
 # Logic
+
+class SignUp(View):# 회원가입
+    def get(self, request):
+        return render(request, 'dbApp/resistration.html')
+    def post(self, request):
+        data = request.POST
+        name = data['name']
+        password = data['password']
+        email = data['email']
+        user = User.objects.create_user(username = email,email = email,password=password)
+        user.first_name = name
+        return HttpResponseRedirect('/dbApp/')
+
+
+def sign_in(request):
+    data = request.POST
+    email = data['email']
+    password = data['password']
+    user = authenticate(username=email, password=password)
+    if user is None:
+        context = {'messages': 'login failed'}
+        return render(request, 'dbApp/welcome_page.html',context)
+    return HttpResponseRedirect('/dbApp/resource/')
+
+
+def welcome(request):
+    return render(request, 'dbApp/welcome_page.html', {})
+
 
 def asset_total(request):
     asset_total_list = Asset.objects.all()
@@ -244,42 +268,13 @@ def rack_info(request):
         for inrack in rack['list']:
             position[inrack["rackLocation"]] = inrack
         data.append({'data': reversed(position), 'rack': rack})
-
     context = {'rack_list': rack_total, 'data' : data}
     return render(request, 'dbApp/rack_info.html', context)
-
+    
 def insert_asset(request):
     asset_total_list = Asset.objects.all()
     context = {'asset_total_list': asset_total_list}
     return render(request, 'dbApp/asset_total.html', context)
-
-def sign_in(request):
-    data = request.POST
-    email = data['email']
-    password = data['password']
-    user = authenticate(username=email, password=password)
-    if user is None:
-        context = {'messages': 'login failed'}
-        return render(request, 'dbApp/welcome_page.html',context)
-    return service_resources(request)
-
-
-def welcome(request):
-    return render(request, 'dbApp/welcome_page.html', {})
-
-
-class SignUp(View):
-    def get(self, request):
-        return render(request, 'dbApp/resistration.html')
-    def post(self, request):
-        data = request.POST
-        name = data['name']
-        password = data['password']
-        email = data['email']
-        user = User.objects.create_user(username = email,email = email,password=password)
-        user.first_name = name
-        return welcome(request)
-
 
 def add(request, add_type):
     if request.method == "POST":

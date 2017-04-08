@@ -1,10 +1,10 @@
 {% extends 'dbApp/navigation_bar.html' %}
 {% block content %}
-<div class="container">
-          <h2 class="page-header">SERVER</h2>
-          <div class="table-responsive">
+    <div class="container">
+        <h2 class="page-header">SERVER</h2>
+        <div class="table-responsive">
             <table class="table table-striped">
-              <thead>
+                <thead>
                 <tr>
                     <th>자산번호</th>
                     <th>관리번호</th>
@@ -14,22 +14,22 @@
                     <th>IP</th>
                     <th>ON/OFF</th>
                 </tr>
-              </thead>
-              <tbody>
-                  {% if server_asset_list %}
+                </thead>
+                <tbody>
+                {% if server_asset_list %}
                     {% for server in server_asset_list %}
-                      <tr>
-                          <td>{{ server.assetnum }}</td>
-                          <td>{{ server.managenum }}</td>
-                          <td>{{ server.managespec }}</td>
-                          <td>{{ server.location }}</td>
-                          <td>{{ server.core }}</td>
-                          <td>{{ server.ip }}</td>
-                          <td>{{ server.onoff }}</td>
-                      </tr>
+                        <tr>
+                            <td><a href="#">{{ server.assetnum }}</a></td>
+                            <td><a href="#">{{ server.managenum }}</a></td>
+                            <td>{{ server.managespec }}</td>
+                            <td><a href="#">{{ server.location }}</a></td>
+                            <td>{{ server.core }}</td>
+                            <td>{{ server.ip }}</td>
+                            <td>{{ server.onoff }}</td>
+                        </tr>
                     {% endfor %}
-                  {% endif %}
-              </tbody>
+                {% endif %}
+                </tbody>
             </table>
         </div>
     </div>

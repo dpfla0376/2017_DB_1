@@ -7,6 +7,8 @@
             $(".btn-circle").click(function(){
                 var unselected = $(this).hasClass("unselected");
                 var type = $(this).attr("target");
+                var checkbox = $("#"+$(this).attr("check_target"));
+                $(checkbox).prop("checked", unselected);
                 if(unselected){
                     $("#"+type).show(1234);
                     $(this).removeClass("unselected");
@@ -69,11 +71,15 @@
                 </div>
                 <h2 class="sub-header">상세정보</h2>
                 <div class="center-block add-buttons-container">
-                    <p class="form-button btn btn-circle btn-danger unselected" target="server_spec">SERVER</p>
-                    <p class="form-button btn btn-circle btn-warning unselected" target="switch_spec">SWITCH</p>
-                    <p class="form-button btn btn-circle btn-primary unselected" target="storage_spec">STORAGE</p>
-                    <p class="form-button btn btn-circle btn-success unselected" target="rack_spec">RACK</p>
+                    <p class="form-button btn btn-circle btn-danger unselected" target="server_spec" check_target="server_button">SERVER</p>
+                    <p class="form-button btn btn-circle btn-warning unselected" target="switch_spec" check_target="switch_button">SWITCH</p>
+                    <p class="form-button btn btn-circle btn-primary unselected" target="storage_spec" check_target="storage_button">STORAGE</p>
+                    <p class="form-button btn btn-circle btn-success unselected" target="rack_spec" check_target="rack_button">RACK</p>
                 </div>
+                <input hidden type="checkbox" name="server_button" id="server_button">
+                <input hidden type="checkbox" name="switch_button" id="switch_button">
+                <input hidden type="checkbox" name="storage_button" id="storage_button">
+                <input hidden type="checkbox" name="rack_button" id="rack_button">
 
                 <div class="container asset-spec" id="server_spec" >
                     <h2 class="sub-header">서버</h2>
@@ -147,7 +153,7 @@
                 <div class="form-group">
                     <div class="col-sm-12 text-center">
                         <button class="btn btn-primary" type="submit">등록하기<i class="fa fa-check spaceLeft"></i></button>
-                        <button class="btn btn-danger" type="submit">취소<i class="fa fa-times spaceLeft"></i></button>
+                        <button class="btn btn-danger" type="button">취소<i class="fa fa-times spaceLeft"></i></button>
                     </div>
                 </div>
             </form>
