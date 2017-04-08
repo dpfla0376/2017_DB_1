@@ -249,12 +249,13 @@ def add(request, add_type):
     if request.method == "POST":
         if add_type == "asset":
             # add asset
-            temp_asset = Asset.objects.filter(assetNum__startswith=datetime.now().year).order_by('-assetNum').first()
+            acq_year = str(request.POST.get("acquisition_date"))[0:4]
+            temp_asset = Asset.objects.filter(assetNum__startswith=acq_year).order_by('-assetNum').first()
 
             if temp_asset:
                 this_asset_num = str(int(temp_asset.assetNum) + 1)
             else:
-                this_asset_num = str(datetime.now().year * 1000000 + 1)
+                this_asset_num = int(str(request.POST.get("acquisition_date"))[0:4])*1000000+1
 
             new_asset = Asset.objects.create(assetNum=this_asset_num,
                                              acquisitionDate=request.POST.get("acquisition_date"),
@@ -292,12 +293,12 @@ def add(request, add_type):
 def add_servers(request, new_asset):
     # add servers
     server_number = request.POST.get("server_number")
-    temp_server = Server.objects.filter(manageNum__startswith="S" + str(datetime.now().year)[2:]).order_by(
+    temp_server = Server.objects.filter(manageNum__startswith="S" + str(new_asset.acquisitionDate)[2:4]).order_by(
         '-manageNum').first()
     if temp_server:
         this_server_manage_num = int(temp_server.manageNum[1:]) + 1
     else:
-        this_server_manage_num = int(str(datetime.now().year)[2:])*1000+1
+        this_server_manage_num = int(str(new_asset.acquisitionDate)[2:4])*1000+1
     for i in range(0, int(server_number)):
         new_server = Server.objects.create(manageNum="S"+str(this_server_manage_num),
                                            assetInfo=new_asset,
@@ -318,7 +319,7 @@ def add_servers(request, new_asset):
 def add_switches(request, new_asset):
     # add switches
     switch_number = request.POST.get("switch_number")
-    temp_switch = Service.objects.filter(manageNum__startswith="N" + str(datetime.now().year)[2:]).order_by(
+    temp_switch = Service.objects.filter(manageNum__startswith="N" + str(new_asset.acquisitionDate)[2:4]).order_by(
         '-manageNum').first()
     if temp_switch:
         this_switch_manage_num = int(temp_switch.manageNum[1:]) + 1
@@ -344,20 +345,20 @@ def add_switches(request, new_asset):
 def add_racks(request, new_asset):
     # add racks
     rack_number = request.POST.get("rack_number")
-    temp_rack = Rack.objects.filter(manageNum__startswith="R" + str(datetime.now().year)[2:]).order_by(
+    temp_rack = Rack.objects.filter(manageNum__startswith="R" + str(new_asset.acquisitionDate)[2:4]).order_by(
         '-manageNum').first()
     if temp_rack:
-        this_rack_manage_num = "R" + str(int(temp_rack.manageNum[1:]) + 1)
+        this_rack_manage_num = int(temp_rack.manageNum[1:]) + 1
     else:
-        this_rack_manage_num = "R" + str(datetime.now().year)[2:] + "001"
+        this_rack_manage_num = int(str(new_asset.acquisitionDate)[2:4]) * 1000 + 1
 
     for i in range(0, rack_number):
-        new_rack = Rack.objects.create(manageNum=this_rack_manage_num,
-                                       assetInfo=new_asset.id,
+        new_rack = Rack.objects.create(manageNum="R"+str(this_rack_manage_num),
+                                       assetInfo=new_asset,
                                        manageSpec=new_asset.assetName,
                                        size=request.POST.get("rack_size"),
                                        location=request.POST.get("rack_location"))
-        this_rack_manage_num = "R" + str(int(temp_rack.manageNum[1:]) + 1)
+        this_rack_manage_num += 1
 
 
 
