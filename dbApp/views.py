@@ -3,7 +3,7 @@ from dbApp.models import *
 
 from django.views.generic import View
 import json
-from django.http import HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core import serializers
 import time
@@ -99,12 +99,35 @@ class SignUp(View):
         return HttpResponse("request.POST")
 
 
-def add(request):
-        return render(request, 'dbApp/add_asset.html')
+def add(request, add_type):
+    if request.method == "POST":
+        if add_type == "asset":
+            new_asset = Asset()
+            new_asset.assetNum = 2016
+            new_asset.acquisitionDate = request.POST.get("")
+            new_asset.assetName = models.CharField(max_length=45)
+            new_asset.standard = models.CharField(max_length=45)
+            new_asset.acquisitionCost = models.IntegerField()
+            new_asset.purchaseLocation = models.CharField(max_length=45)
+            new_asset.maintenanceYear = models.IntegerField()
+            #a.save()
+            return HttpResponse("ASSET")
+        elif add_type == "service":
+            temp_service = Service.objects.create(serviceName=request.POST.get("service_name"), makeDate=request.POST.get("service_make_date"), color=request.POST.get("service_color"))
+            #
+            # tempService = Service.objects.get(id=1)
+            # tempService.serviceName = request.POST.get("service_name")
+            # tempService.makeDate = request.POST.get("service_make_date")
+            # tempService.color = request.POST.get("service_color")
+            # tempService.save()
 
-
-def select(request, add_type):
-    if add_type == "asset":
-        return render(request, 'dbApp/add_asset.html')
-    elif add_type == "service":
-        return render(request, 'dbApp/add_service.html')
+            # new_service.save()
+            print("<"+temp_service.serviceName+">")
+            print("<"+temp_service.makeDate+">")
+            print("<"+temp_service.color+">")
+            return HttpResponse("SERVICE")
+    else:
+        if add_type == "asset":
+            return render(request, 'dbApp/add_asset.html')
+        elif add_type == "service":
+            return render(request, 'dbApp/add_service.html')
