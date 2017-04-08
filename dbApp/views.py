@@ -5,11 +5,70 @@ from django.views.generic import View
 import json
 from django.http import HttpResponseRedirect, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.core import serializers
+from django.db import connection
 import time
 
 # Create your views here.
 
+# Private Methods
+def dictFetchall(cursor):
+    columns = [col[0] for col in cursor.description]
+    return [
+        dict(zip(columns, row))
+        for row in cursor.fetchall()
+    ]
+
+# API
+def api_graph_storage_total(request):
+    cursor = connection.cursor()
+    cursor.execute('SELECT sa.storageForm as name, SUM(ss.allocSize) as size FROM `dbApp_storageasset` sa ' +
+        'INNER JOIN `dbApp_storage` s ON s.storageAsset_id = sa.id ' +
+        'INNER JOIN `dbApp_storageservice` ss ON ss.storage_id = s.id ' +
+        'group by sa.storageForm')
+    usage_sum_list = dictFetchall(cursor)
+
+    cursor.execute('SELECT sa.storageForm as name, SUM(s.Vol) as size FROM `dbApp_storageasset` sa ' +
+        'INNER JOIN `dbApp_storage` s ON s.storageAsset_id = sa.id ' +
+        'group by sa.storageForm')
+    total_sum_list = dictFetchall(cursor)
+
+    return HttpResponse(json.dumps({ 'total': total_sum_list, 'usage': usage_sum_list }))
+
+def api_graph_service_info(request):
+    service_list = []
+    for service in Service.objects.all():
+        temp_dict = {}
+        temp_dict['id'] = service.id
+        temp_dict['name'] = service.serviceName
+        service_list.append(temp_dict)
+
+    cursor = connection.cursor()
+    cursor.execute('SELECT sv.id, ss.Use, SUM(core) AS core ' +
+                   'FROM `dbApp_service` sv ' +
+                   'INNER JOIN `dbApp_serverservice` ss on ss.service_id = sv.id ' +
+                   'INNER JOIN `dbApp_server` sr on sr.id = ss.server_id ' +
+                   'GROUP BY sv.id, ss.Use')
+    service_core_info_data = dictFetchall(cursor)
+
+    service_core_info = []
+    for core in service_core_info_data:
+        core_info = {}
+        core_info['id'] = core.get('id')
+        core_info['use'] = core.get('Use')
+        core_info['core'] = int(core.get('core'))
+        service_core_info.append(core_info)
+
+    cursor.execute('SELECT sv.id, sa.storageForm AS type, SUM(ss.allocSize) as size ' +
+                   'FROM `dbApp_service` sv ' +
+                   'INNER JOIN `dbApp_storageservice` ss ON ss.service_id = sv.id ' +
+                   'INNER JOIN `dbApp_storage` st ON st.id = ss.storage_id ' +
+                   'INNER JOIN `dbApp_storageasset` sa ON sa.id = st.storageAsset_id ' +
+                   'GROUP BY sv.id, sa.storageForm')
+    service_storage_info = dictFetchall(cursor)
+
+    return HttpResponse(json.dumps({ 'list': service_list, 'core': service_core_info, 'storage': service_storage_info }))
+
+# Logic
 
 def asset_total(request):
     asset_total_list = Asset.objects.all()
@@ -58,7 +117,15 @@ def server_asset(request):
 
 
 def service_resources(request):
-    return render(request, 'dbApp/service_resources.html', {});
+    service_list = Service.objects.all()
+    temp_list = []
+    for service in service_list:
+        temp_dict = {}
+        temp_dict['id'] = service.id
+        temp_dict['name'] = service.serviceName
+        temp_list.append(temp_dict)
+    context = {'service_list': temp_list}
+    return render(request, 'dbApp/service_resources.html', context)
 
 
 def service_detail(request):
