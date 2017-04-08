@@ -26,7 +26,12 @@ def dictFetchall(cursor):
 def sub42(value):
     return 42 - value
 
-
+def getUser(session):
+     try:
+         username = session['usertoken']
+         return User.objects.get(username=username)
+     except KeyError:
+         return None
 # API
 def api_graph_storage_total(request):
     cursor = connection.cursor()
@@ -102,6 +107,7 @@ def sign_in(request):
     if user is None:
         context = {'messages': 'login failed'}
         return render(request, 'dbApp/welcome_page.html',context)
+    request.session['usertoken']=email
     return HttpResponseRedirect('/dbApp/resource/')
 
 
@@ -155,7 +161,10 @@ def server_asset(request):
     # return HttpResponse(temp_list)
 
 
-def service_resources(request):
+def service_resources(request):#서비스의 리소스를 보여준다.
+    user = getUser(request.session) #여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
+    if user is None:
+        return HttpResponseRedirect('/dbApp/')
     service_list = Service.objects.all()
     temp_list = []
     for service in service_list:
