@@ -9,30 +9,31 @@
   </head>
   <body>
     <div class="container">
-      <form class="form-signin" action="/dbApp/resource/" method="post">
+      <form class="form-signin" action="/dbApp/sign_in/" method="post">
           {% csrf_token %}
         <h2 class="form-signin-heading">Please sign in</h2>
 
         <label for="userName" class="sr-only">User name</label>
 
-        <input type="text"
-               id="inputUserName"
-               name="inputUserName"
+        <input type="email"
+               id="id_email"               name="email"
                class="form-control"  value=""
-               placeholder="User name" required autofocus>
+               placeholder="User email" required autofocus>
 
         <label for="inputPassword" class="sr-only">Password</label>
 
         <input type="password"
-               id="inputPassword"
-               name="inputPassword"
-               value=""
-               class="form-control"
+               id="id_password"               name="password"
+               value=""               class="form-control"
                placeholder="Password" required >
-
-        <button class="form-button btn btn-lg btn-primary btn-block" type="submit" value="submit">Sign in</button>
-          <button class="btn-link form-signup" onclick="location.href='sign_up'">Sign up</button>
+          <button class="form-button btn btn-lg btn-primary btn-block" type="submit" value="submit">Sign in</button>
+          <button class="btn-link form-signup" onclick="location.href='/dbApp/sign_up/'">Sign up</button>
       </form>
     </div> <!-- /container -->
   </body>
+    {% if messages %}
+        <script>
+          alert('{{ messages }}');
+        </script>
+    {% endif %}
 </html>

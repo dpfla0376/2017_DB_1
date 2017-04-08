@@ -12,6 +12,7 @@ import json
 from django.http import HttpResponseRedirect, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db import connection
+from django.contrib.auth import authenticate
 import time
 from datetime import datetime
 
@@ -222,13 +223,14 @@ def insert_asset(request):
     context = {'asset_total_list': asset_total_list}
     return render(request, 'dbApp/asset_total.html', context)
 
-
 def sign_in(request):
     data = request.POST
-    username = data['inputUserName']
-    password = data['inputPassword']
-    print(username)
-    print(password)
+    email = data['email']
+    password = data['password']
+    user = authenticate(username=email, password=password)
+    if user is None:
+        context = {'messages': 'login failed'}
+        return render(request, 'dbApp/welcome_page.html',context)
     return render(request, 'dbApp/service_resources.html')
 
 
@@ -239,10 +241,14 @@ def welcome(request):
 class SignUp(View):
     def get(self, request):
         return render(request, 'dbApp/resistration.html')
-
     def post(self, request):
-        print(request.POST)
-        return HttpResponse("request.POST")
+        data = request.POST
+        name = data['name']
+        password = data['password']
+        email = data['email']
+        user = User.objects.create_user(username = email,email = email,password=password)
+        user.first_name = name
+        return welcome(request)
 
 
 def add(request, add_type):

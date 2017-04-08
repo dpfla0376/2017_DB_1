@@ -28,7 +28,7 @@
         <div class="page-header">
             <h1>회원가입</h1>
         </div>
-        <form class="form-horizontal" method="post" action="{%  url 'sign_up' %}">
+        <form class="form-horizontal" method="post" action="/dbApp/sign_up/">
             {% csrf_token %}
             <div class="form-group">
                 <label class="col-sm-3 control-label" for="inputEmail">이메일</label>
@@ -51,7 +51,7 @@
             <div class="form-group">
                 <div class="col-sm-12 text-center">
                     <button class="btn btn-primary" type="submit">회원가입<i class="fa fa-check spaceLeft"></i></button>
-                    <button class="btn btn-danger" type="submit">가입취소<i class="fa fa-times spaceLeft"></i></button>
+                    <button class="btn btn-danger " type ="button" onclick="location.href='/dbApp/'">가입취소<i class="fa fa-times spaceLeft"></i></button>
                 </div>
             </div>
         </form>
