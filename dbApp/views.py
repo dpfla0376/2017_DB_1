@@ -199,6 +199,8 @@ def rack_info(request):
         temp_service = ServerService.objects.get(server=server)
         temp_subDict['serviceName'] = temp_service.service.serviceName
         temp_subDict['use'] = temp_service.Use
+        temp_subDict['color'] = Service.objects.get(serviceName=temp_subDict['serviceName']).color
+
 
         temp_location = server.location
         if temp_location.rack_pk is not None:
@@ -215,6 +217,7 @@ def rack_info(request):
         temp_subDict['manageSpec'] = switch.manageSpec
         temp_subDict['ip'] = switch.ip
         temp_subDict['use'] = switch.serviceOn
+        temp_subDict['color'] = '255,204,255'
 
         temp_location = switch.location
         if temp_location.rack is not None:
@@ -235,11 +238,15 @@ def rack_info(request):
 
     print(list(rack_list.keys()))
     print(rack_total)
-    context = {'rack_list': rack_total, 'loop_times' : range(42, 0, -1)}
-    return render(request, 'dbApp/rack_info.html', context)
+    data = []
+    for rack in rack_total:
+        position = [None] * 42
+        for inrack in rack['list']:
+            position[inrack["rackLocation"]] = inrack
+        data.append({'data': reversed(position), 'rack': rack})
 
-def sub42(value):
-    return 42 - value
+    context = {'rack_list': rack_total, 'data' : data}
+    return render(request, 'dbApp/rack_info.html', context)
 
 def insert_asset(request):
     asset_total_list = Asset.objects.all()

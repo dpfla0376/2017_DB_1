@@ -1,23 +1,26 @@
 {% extends 'dbApp/navigation_bar.html' %}
 {% load define %}
-{% block content %}
-    <div style="width:100%; height:100%; overflow:scroll ">
-        <style type="text/css">
-            .tab_center {
-                text-align: center;
-                margin-right: 1%;
-            }
-
+{%  block head %}
+    <style type="text/css">
             .tb {
                 text-align: center;
                 float: left;
-                margin-right: 2%;
+                margin: 5px;
+                height:100%;
+                width: 500px;
+            }
+            .table-wrapper {
+                text-align: center;
+                display:inline-block;
             }
         </style>
-
+{%  endblock %}
+{% block content %}
+    <div style="width:200%; height:100%; overflow-x:scroll ">
         {% if rack_list %}
-            {% for rack in rack_list %}
-                <h2>{{ rack.name }} - {{ rack.id }}</h2>
+            {% for rack in data %}
+                <div class="table-wrapper">
+                <h2>{{ rack.rack.name }} - {{ rack.rack.id }}</h2>
                 <table border="1" class="tb">
                     <thead>
                     <tr>
@@ -27,29 +30,26 @@
                         <th>관리스펙</th>
                     </tr>
                     </thead>
-                    {% for i in loop_times %}
-                        {% for inrack in rack.list %}
-                            {% if inrack.rackLocation == i %}
-                                {% set exist = "True" %}
+                        {% for data in rack.data %}
+                            {% if data %}
+                                <tr style="background-color:rgb({{ data.color }})">
+                                    <td>{{ forloop.counter|getReverse }}</td>
+                                    <td>{{ data.ip }}</td>
+                                    <td>{{ data.manageNum }}</td>
+                                    <td>{{ data.manageSpec }}</td>
+                                </tr>
+                            {% else %}
                                 <tr>
-                                    <td>{{ existi }} {{ i }}</td>
-                                    <td>{{ inrack.ip }}</td>
-                                    <td>{{ inrack.manageNum }}</td>
-                                    <td>{{ inrack.manageSpec }}</td>
+                                    <td>{{ forloop.counter|getReverse }}</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
                                 </tr>
                             {% endif %}
                         {% endfor %}
-                        {% if exist != "True" %}
-                            <tr>
-                                <td>{{ exist }} {{ i }}</td>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                            </tr>
-                        {% endif %}
 
-                    {% endfor %}
                 </table>
+                </div>
             {% endfor %}
         {% endif %}
     </div>
