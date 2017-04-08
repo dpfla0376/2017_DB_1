@@ -12,10 +12,12 @@ class User(models.Model):
 	password = models.CharField(max_length=45)
 """
 
+
 class Service(models.Model):
 	serviceName = models.CharField(max_length=45)
 	makeDate = models.DateField()
 	color = models.CharField(max_length=10)
+
 
 class Asset(models.Model):
 	assetNum = models.CharField(max_length=45,db_index=True)
@@ -26,12 +28,14 @@ class Asset(models.Model):
 	purchaseLocation = models.CharField(max_length=45)
 	maintenanceYear = models.IntegerField()
 
+
 class StorageAsset(models.Model):
 	manageNum =models.CharField(max_length=45)
 	assetInfo = models.ForeignKey(Asset)
 	manageSpec =models.CharField(max_length=45)
 	location = models.CharField(max_length=45)
 	storageForm = models.CharField(max_length=45)
+
 
 class Server(models.Model):
 	manageNum =models.CharField(max_length=45)
@@ -42,6 +46,7 @@ class Server(models.Model):
 	core = models.IntegerField()
 	ip = models.CharField(max_length=45,null=True)
 
+
 class Switch(models.Model):
 	manageNum = models.CharField(max_length=45)
 	assetInfo = models.ForeignKey(Asset)
@@ -50,6 +55,7 @@ class Switch(models.Model):
 	size = models.IntegerField()
 	ip = models.CharField(max_length=45,null=True)
 	serviceOn = models.BooleanField(default=1)
+
 
 class Rack(models.Model):
 	manageNum = models.CharField(max_length=45)
@@ -65,11 +71,13 @@ class Storage(models.Model):
 	allocUnitSize = models.FloatField()
 	Vol = models.FloatField()
 
+
 class ServerService(models.Model):
 	server = models.ForeignKey(Server)
 	service = models.ForeignKey(Service)
 	alloclDate = models.DateField(auto_now_add = True)
 	Use	= models.BooleanField(default=1)
+
 
 class ServerLocation(models.Model):
 	server_pk = models.OneToOneField(Server,related_name = 'location')
@@ -77,17 +85,20 @@ class ServerLocation(models.Model):
 	rackLocation = models.IntegerField(null=True)
 	realLocation =  models.CharField(max_length=45,null=True)
 
+
 class SwitchLocation(models.Model):
 	switch = models.OneToOneField(Switch,related_name = 'location')
 	rack = models.ForeignKey(Rack,null=True)
 	rackLocation = models.IntegerField(null=True)
 	realLocation =  models.CharField(max_length=45,null=True)
 
+
 class StorageService(models.Model):
 	storage = models.ForeignKey(Storage)
 	service = models.ForeignKey(Service)
 	allocSize = models.FloatField()
 	usage =  models.CharField(max_length=45)
+
 
 class UserService(models.Model):
 	user = models.ForeignKey(User)
