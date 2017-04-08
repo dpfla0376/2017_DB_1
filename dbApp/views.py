@@ -16,6 +16,7 @@ from django.contrib.auth import authenticate
 import time
 from datetime import datetime
 
+
 # Create your views here.
 
 # Private Methods
@@ -144,20 +145,45 @@ def service_resources(request):
 
 
 def service_detail(request):
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM `dbApp_asset`INNER JOIN `dbApp_server` '
+                   + 'ON dbApp_asset.id = dbApp_server.assetInfo_id')
+    server_list = dictFetchall(cursor)
+    cursor.execute('SELECT * FROM `dbApp_storage` ' +
+                   'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id ' +
+                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id ' +
+                   'where dbApp_storageasset.storageForm = \'SAN\' ')
+    disk_SAN = dictFetchall(cursor)
+    cursor.execute('SELECT * FROM `dbApp_storage` ' +
+                   'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id ' +
+                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id ' +
+                   'where dbApp_storageasset.storageForm = \'NAS\' ')
+    disk_NAS = dictFetchall(cursor)
+    cursor.execute('SELECT * FROM `dbApp_storage` ' +
+                   'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id ' +
+                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id ' +
+                   'where dbApp_storageasset.storageForm = \'TAPE\' ')
+    disk_TAPE = dictFetchall(cursor)
+
+    return render(request, 'dbApp/service_detail.html', {});
+
+
+def storage_use(request):
     # server_list = ServerService.objects.all()
     # storage_list = StorageService.objects.all()
     # data = json.loads(request.POST.get('data'))
     # server_service_list = ServerService.objects.get(service=data[???])
     # storage_service_list = StorageService.objects.get(service=data[???])
     # context = {'server_service_list': server_service_list, 'storage_service_list' : storage_service_list}
-    return render(request, 'dbApp/service_detail.html', {});
+    return render(request, 'dbApp/storage_use.html', {});
+
 
 def rack_info(request):
     rack_total = list(Rack.objects.values('manageNum'))
     rack_list = {}
     rack_name = {}
     for rack in rack_total:
-        temp = rack['manageNum']    # ex) R11001
+        temp = rack['manageNum']  # ex) R11001
         temp_name = Rack.objects.get(manageNum=temp).location[-3:]  # ex) C03
         rack_list[rack['manageNum']] = []
         rack_name[temp_name] = rack['manageNum']
@@ -181,9 +207,9 @@ def rack_info(request):
         if temp_location.rack_pk is not None:
             temp_subDict['rack_pk'] = temp_location.rack_pk.manageNum
             temp_subDict['rackLocation'] = temp_location.rackLocation
-        #print(temp_subDict)
+        # print(temp_subDict)
         rack_list[temp_subDict['rack_pk']].append(temp_subDict)
-        #print(rack_list)
+        # print(rack_list)
 
     # make server list for rack
     for switch in switch_asset_list:
@@ -209,19 +235,21 @@ def rack_info(request):
         temp['name'] = rack
         rack_total.append(temp)
 
-
     print(list(rack_list.keys()))
     print(rack_total)
-    context = {'rack_list': rack_total, 'loop_times' : range(42, 0, -1)}
+    context = {'rack_list': rack_total, 'loop_times': range(42, 0, -1)}
     return render(request, 'dbApp/rack_info.html', context)
+
 
 def sub42(value):
     return 42 - value
+
 
 def insert_asset(request):
     asset_total_list = Asset.objects.all()
     context = {'asset_total_list': asset_total_list}
     return render(request, 'dbApp/asset_total.html', context)
+
 
 def sign_in(request):
     data = request.POST
@@ -231,7 +259,7 @@ def sign_in(request):
     if user is None:
         context = {'messages': 'login failed'}
         return render(request, 'dbApp/welcome_page.html', context)
-    return render(request, 'dbApp/service_resources.html')
+    return HttpResponseRedirect('/dbApp/resource/')
 
 
 def welcome(request):
@@ -241,12 +269,13 @@ def welcome(request):
 class SignUp(View):
     def get(self, request):
         return render(request, 'dbApp/resistration.html')
+
     def post(self, request):
         data = request.POST
         name = data['name']
         password = data['password']
         email = data['email']
-        user = User.objects.create_user(username = email,email = email,password=password)
+        user = User.objects.create_user(username=email, email=email, password=password)
         user.first_name = name
         return welcome(request)
 
@@ -262,7 +291,7 @@ def add(request, add_type):
             if temp_asset:
                 this_asset_num = str(int(temp_asset.assetNum) + 1)
             else:
-                this_asset_num = int(str(request.POST.get("acquisition_date"))[0:4])*1000000+1
+                this_asset_num = int(str(request.POST.get("acquisition_date"))[0:4]) * 1000000 + 1
 
             new_asset = Asset.objects.create(assetNum=this_asset_num,
                                              acquisitionDate=request.POST.get("acquisition_date"),
@@ -310,9 +339,9 @@ def add_servers(request, new_asset):
     if temp_server:
         this_server_manage_num = int(temp_server.manageNum[1:]) + 1
     else:
-        this_server_manage_num = int(str(new_asset.acquisitionDate)[2:4])*1000+1
+        this_server_manage_num = int(str(new_asset.acquisitionDate)[2:4]) * 1000 + 1
     for i in range(0, int(server_number)):
-        new_server = Server.objects.create(manageNum="S"+str(this_server_manage_num),
+        new_server = Server.objects.create(manageNum="S" + str(this_server_manage_num),
                                            assetInfo=new_asset,
                                            manageSpec=new_asset.assetName,
                                            isInRack=False,
@@ -338,7 +367,7 @@ def add_switches(request, new_asset):
     else:
         this_switch_manage_num = int(str(datetime.now().year)[2:]) * 1000 + 1
     for i in range(0, switch_number):
-        new_switch = Switch.objects.create(manageNum="N"+str(this_switch_manage_num),
+        new_switch = Switch.objects.create(manageNum="N" + str(this_switch_manage_num),
                                            assetInfo=new_asset,
                                            manageSpec=new_asset.assetName,
                                            isInRack=False,
@@ -365,12 +394,9 @@ def add_racks(request, new_asset):
         this_rack_manage_num = int(str(new_asset.acquisitionDate)[2:4]) * 1000 + 1
 
     for i in range(0, rack_number):
-        new_rack = Rack.objects.create(manageNum="R"+str(this_rack_manage_num),
+        new_rack = Rack.objects.create(manageNum="R" + str(this_rack_manage_num),
                                        assetInfo=new_asset,
                                        manageSpec=new_asset.assetName,
                                        size=request.POST.get("rack_size"),
                                        location=request.POST.get("rack_location"))
         this_rack_manage_num += 1
-
-
-
