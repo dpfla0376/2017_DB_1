@@ -45,7 +45,7 @@ def api_graph_storage_total(request):
                    'group by sa.storageForm')
     total_sum_list = dictFetchall(cursor)
 
-    return HttpResponse(json.dumps({'total': total_sum_list, 'usage': usage_sum_list}))
+    return HttpResponse(json.dumps({ 'total': total_sum_list, 'usage': usage_sum_list }))
 
 
 def api_graph_service_info(request):
@@ -144,13 +144,36 @@ def service_resources(request):
 
 
 def service_detail(request):
-    # server_list = ServerService.objects.all()
-    # storage_list = StorageService.objects.all()
-    # data = json.loads(request.POST.get('data'))
-    # server_service_list = ServerService.objects.get(service=data[???])
-    # storage_service_list = StorageService.objects.get(service=data[???])
-    # context = {'server_service_list': server_service_list, 'storage_service_list' : storage_service_list}
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM `dbApp_asset`INNER JOIN `dbApp_server` '
+    + 'ON dbApp_asset.id = dbApp_server.assetInfo_id')
+    server_list = dictFetchall(cursor)
+    cursor.execute('SELECT * FROM `dbApp_storage` ' +
+                   'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id '+
+                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id '+
+                   'where dbApp_storageasset.storageForm = \'SAN\' ' )
+    disk_SAN = dictFetchall(cursor)
+    cursor.execute('SELECT * FROM `dbApp_storage` ' +
+                   'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id '+
+                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id '+
+                   'where dbApp_storageasset.storageForm = \'NAS\' ' )
+    disk_NAS = dictFetchall(cursor)
+    cursor.execute('SELECT * FROM `dbApp_storage` ' +
+                   'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id '+
+                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id '+
+                   'where dbApp_storageasset.storageForm = \'TAPE\' ' )
+    disk_TAPE = dictFetchall(cursor)
+
     return render(request, 'dbApp/service_detail.html', {});
+
+def storage_use(request):
+    #server_list = ServerService.objects.all()
+    #storage_list = StorageService.objects.all()
+    #data = json.loads(request.POST.get('data'))
+    #server_service_list = ServerService.objects.get(service=data[???])
+    #storage_service_list = StorageService.objects.get(service=data[???])
+    #context = {'server_service_list': server_service_list, 'storage_service_list' : storage_service_list}
+    return render(request, 'dbApp/storage_use.html', {});
 
 def rack_info(request):
     rack_total = list(Rack.objects.values('manageNum'))
