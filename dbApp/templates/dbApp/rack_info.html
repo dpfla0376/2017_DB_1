@@ -2,18 +2,18 @@
 {% load define %}
 {%  block head %}
     <style type="text/css">
-            .tb {
-                text-align: center;
-                float: left;
-                margin: 5px;
-                height:100%;
-                width: 500px;
-            }
-            .table-wrapper {
-                text-align: center;
-                display:inline-block;
-            }
-        </style>
+        .tb {
+            text-align: center;
+            float: left;
+            margin: 5px;
+            height:100%;
+            width: 500px;
+        }
+        .table-wrapper {
+            text-align: center;
+            display:inline-block;
+        }
+    </style>
 {%  endblock %}
 {% block content %}
     <div style="width:200%; height:100%; overflow-x:scroll ">
@@ -30,24 +30,62 @@
                         <th>관리스펙</th>
                     </tr>
                     </thead>
-                        {% for data in rack.data %}
-                            {% if data %}
-                                <tr style="background-color:rgb({{ data.color }})">
-                                    <td>{{ forloop.counter|getReverse }}</td>
-                                    <td>{{ data.ip }}</td>
-                                    <td>{{ data.manageNum }}</td>
-                                    <td>{{ data.manageSpec }}</td>
-                                </tr>
-                            {% else %}
-                                <tr>
-                                    <td>{{ forloop.counter|getReverse }}</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                            {% endif %}
-                        {% endfor %}
-
+                    <tbody>
+                        <script language="JavaScript">
+                            <!--
+                            var rackdatalist = JSON.parse('{{ rack.data|js}}');
+                            var count = 0;
+                            var racknum=42;
+                            var colorr;
+                            for(var i in rackdatalist){
+                                if(rackdatalist[i] == null){
+                                    if(count==0){
+                                        document.write("<tr>");
+                                        document.write("<td>"+racknum.toString()+"</td>");
+                                        document.write("<td></td>");
+                                        document.write("<td></td>");
+                                        document.write("<td></td>");
+                                        document.write("</tr>");
+                                    }
+                                    else{
+                                        document.write('<tr style="background-color:rgb('+colorr+')">');
+                                        document.write("<td>");
+                                        document.write(racknum.toString());
+                                        document.write("</td>");
+                                        document.write("</tr>");
+                                        count--;
+                                    }
+                                }else{
+                                    document.write('<tr style="background-color:rgb('+rackdatalist[i].color+')">');
+                                    document.write("<td>");document.write(racknum.toString());document.write("</td>");
+                                    document.write('<td  rowspan="'+rackdatalist[i].size.toString()+'">');document.write(rackdatalist[i].ip);document.write("</td>");
+                                    document.write('<td  rowspan="'+rackdatalist[i].size.toString()+'">');document.write(rackdatalist[i].manageNum);document.write("</td>");
+                                    document.write('<td  rowspan="'+rackdatalist[i].size.toString()+'">');document.write(rackdatalist[i].manageSpec);document.write("</td>");
+                                    count=rackdatalist[i].size-1;
+                                    colorr = rackdatalist[i].color;
+                                }
+                                racknum--;
+                            }
+                            //-->
+                            </script>
+{#                        {% for data in rack.data %}#}
+{#                            {% if data %}#}
+{#                                <tr style="background-color:rgb({{ data.color }})">#}
+{#                                    <td>{{ forloop.counter|getReverse }}</td>#}
+{#                                    <td>{{ data.ip }}</td>#}
+{#                                    <td>{{ data.manageNum }}</td>#}
+{#                                    <td>{{ data.manageSpec }}</td>#}
+{#                                </tr>#}
+{#                            {% else %}#}
+{#                                <tr>#}
+{#                                    <td>{{ forloop.counter|getReverse }}</td>#}
+{#                                    <td></td>#}
+{#                                    <td></td>#}
+{#                                    <td></td>#}
+{#                                </tr>#}
+{#                            {% endif %}#}
+{#                        {% endfor %}#}
+                    </tbody>
                 </table>
                 </div>
             {% endfor %}
