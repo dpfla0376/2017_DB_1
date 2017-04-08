@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate
 from django.http import HttpResponseRedirect, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db import connection
+from django.db.models import Q
 
 from dbApp.models import *
 
@@ -432,3 +433,42 @@ def add_racks(request, new_asset):
                                        size=request.POST.get("rack_size"),
                                        location=request.POST.get("rack_location"))
         this_rack_manage_num += 1
+
+def rack_detail(request):
+    searchText = request.GET.get("data")
+    rackname = None
+    try:
+        rack = Rack.objects.filter(Q(manageNum=searchText)|Q(manageSpec=searchText)|Q(location=searchText))[0]
+        rackname = rack.manageNum
+    except:
+        return HttpResponse("찾으시는 제품이 없습니다.")
+    return HttpResponse("랙 디테일 페이지 이고 랙 관리번호는 "+rackname+"입니다.")
+
+def server_detail(request):
+    searchText = request.GET.get("data")
+    serverList=Server.objects.filter(Q(manageNum=searchText)|Q(manageSpec=searchText)|Q(ip=searchText))
+    if serverList.count()== 0:
+        return HttpResponse("찾으시는 제품이 없습니다.")
+    server=serverList[0]
+    return HttpResponse("서버 디테일 페이지 이고 서버 관리번호는"+server.manageNum+"입니다.")
+
+def switch_detail(request):
+    searchText = request.GET.get("data")
+    switchList=Asset.objects.filter(Q(manageNum=searchText)|Q(manageSpec=searchText)|Q(ip=searchText))
+    if switchList.count()== 0:
+        return HttpResponse("찾으시는 제품이 없습니다.")
+    switch=switchList[0]
+    return HttpResponse("스위치 디테일 페이지 이고 스위치 이름은"+switch.manageNum+"입니다.")
+
+def asset_detail(request):
+    searchText = request.GET.get("data")
+    assetList=Asset.objects.filter(Q(assetNum=searchText)|Q(assetName=searchText)|Q(standard=searchText))
+    if assetList.count()== 0:
+        return HttpResponse("찾으시는 제품이 없습니다.")
+    asset=assetList[0]
+    return HttpResponse("에셋 디테일 페이지 이고 자산번호는"+ asset.assetNum+"입니다.")
+
+def search_assets(request):
+    searchText = request.GET.get("searchText")
+    print(searchText)
+    return render(request, 'dbApp/searchResult.html', {})
