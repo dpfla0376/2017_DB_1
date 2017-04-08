@@ -7,6 +7,8 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db import connection
 import time
+from datetime import datetime
+
 
 # Create your views here.
 
@@ -18,21 +20,23 @@ def dictFetchall(cursor):
         for row in cursor.fetchall()
     ]
 
+
 # API
 def api_graph_storage_total(request):
     cursor = connection.cursor()
     cursor.execute('SELECT sa.storageForm as name, SUM(ss.allocSize) as size FROM `dbApp_storageasset` sa ' +
-        'INNER JOIN `dbApp_storage` s ON s.storageAsset_id = sa.id ' +
-        'INNER JOIN `dbApp_storageservice` ss ON ss.storage_id = s.id ' +
-        'group by sa.storageForm')
+                   'INNER JOIN `dbApp_storage` s ON s.storageAsset_id = sa.id ' +
+                   'INNER JOIN `dbApp_storageservice` ss ON ss.storage_id = s.id ' +
+                   'group by sa.storageForm')
     usage_sum_list = dictFetchall(cursor)
 
     cursor.execute('SELECT sa.storageForm as name, SUM(s.Vol) as size FROM `dbApp_storageasset` sa ' +
-        'INNER JOIN `dbApp_storage` s ON s.storageAsset_id = sa.id ' +
-        'group by sa.storageForm')
+                   'INNER JOIN `dbApp_storage` s ON s.storageAsset_id = sa.id ' +
+                   'group by sa.storageForm')
     total_sum_list = dictFetchall(cursor)
 
-    return HttpResponse(json.dumps({ 'total': total_sum_list, 'usage': usage_sum_list }))
+    return HttpResponse(json.dumps({'total': total_sum_list, 'usage': usage_sum_list}))
+
 
 def api_graph_service_info(request):
     service_list = []
@@ -66,7 +70,8 @@ def api_graph_service_info(request):
                    'GROUP BY sv.id, sa.storageForm')
     service_storage_info = dictFetchall(cursor)
 
-    return HttpResponse(json.dumps({ 'list': service_list, 'core': service_core_info, 'storage': service_storage_info }))
+    return HttpResponse(json.dumps({'list': service_list, 'core': service_core_info, 'storage': service_storage_info}))
+
 
 # Logic
 
@@ -81,11 +86,11 @@ def switch_asset(request):
     temp_list = []
     for switch in switch_asset_list:
         temp_dict = {}
-        temp_dict['assetNum']=switch.assetInfo.assetNum
-        temp_dict['manageNum']=switch.manageNum
-        temp_dict['manageSpec']=switch.manageSpec
-        temp_dict['ip']=switch.ip
-        temp_dict['onOff']=True
+        temp_dict['assetNum'] = switch.assetInfo.assetNum
+        temp_dict['manageNum'] = switch.manageNum
+        temp_dict['manageSpec'] = switch.manageSpec
+        temp_dict['ip'] = switch.ip
+        temp_dict['onOff'] = True
         temp_list.append(temp_dict)
     context = {'switch_asset_list': temp_list}
     return render(request, 'dbApp/switch_asset.html', context)
@@ -93,21 +98,21 @@ def switch_asset(request):
 
 def server_asset(request):
     start_time = time.time()
-    server_asset_list = Server.objects.select_related('location','assetInfo','location__rack_pk').all()
+    server_asset_list = Server.objects.select_related('location', 'assetInfo', 'location__rack_pk').all()
     temp_list = list()
     for server in server_asset_list:
         temp_dict = dict()
-        temp_dict['assetnum']=server.assetInfo.assetNum
-        temp_dict['managenum']=server.manageNum
-        temp_dict['managespec']=server.manageSpec
-        temp_dict['core']=server.core
-        temp_dict['ip']=server.ip
+        temp_dict['assetnum'] = server.assetInfo.assetNum
+        temp_dict['managenum'] = server.manageNum
+        temp_dict['managespec'] = server.manageSpec
+        temp_dict['core'] = server.core
+        temp_dict['ip'] = server.ip
         temp_location = server.location
         if temp_location.rack_pk is not None:
-            temp_dict['location']=temp_location.rack_pk.location
+            temp_dict['location'] = temp_location.rack_pk.location
         else:
-            temp_dict['location']=temp_location.realLocation
-        temp_dict['onoff']= True
+            temp_dict['location'] = temp_location.realLocation
+        temp_dict['onoff'] = True
         temp_list.append(temp_dict)
     context = {'server_asset_list': temp_list}
     temppp = render(request, 'dbApp/server_asset.html', context)
@@ -129,12 +134,12 @@ def service_resources(request):
 
 
 def service_detail(request):
-    #server_list = ServerService.objects.all()
-    #storage_list = StorageService.objects.all()
-    #data = json.loads(request.POST.get('data'))
-    #server_service_list = ServerService.objects.get(service=data[???])
-    #storage_service_list = StorageService.objects.get(service=data[???])
-    #context = {'server_service_list': server_service_list, 'storage_service_list' : storage_service_list}
+    # server_list = ServerService.objects.all()
+    # storage_list = StorageService.objects.all()
+    # data = json.loads(request.POST.get('data'))
+    # server_service_list = ServerService.objects.get(service=data[???])
+    # storage_service_list = StorageService.objects.get(service=data[???])
+    # context = {'server_service_list': server_service_list, 'storage_service_list' : storage_service_list}
     return render(request, 'dbApp/service_detail.html', {});
 
 
@@ -169,32 +174,113 @@ class SignUp(View):
 def add(request, add_type):
     if request.method == "POST":
         if add_type == "asset":
-            new_asset = Asset()
-            new_asset.assetNum = 2016
-            new_asset.acquisitionDate = request.POST.get("")
-            new_asset.assetName = models.CharField(max_length=45)
-            new_asset.standard = models.CharField(max_length=45)
-            new_asset.acquisitionCost = models.IntegerField()
-            new_asset.purchaseLocation = models.CharField(max_length=45)
-            new_asset.maintenanceYear = models.IntegerField()
-            #a.save()
-            return HttpResponse("ASSET")
-        elif add_type == "service":
-            temp_service = Service.objects.create(serviceName=request.POST.get("service_name"), makeDate=request.POST.get("service_make_date"), color=request.POST.get("service_color"))
-            #
-            # tempService = Service.objects.get(id=1)
-            # tempService.serviceName = request.POST.get("service_name")
-            # tempService.makeDate = request.POST.get("service_make_date")
-            # tempService.color = request.POST.get("service_color")
-            # tempService.save()
+            # add asset
+            temp_asset = Asset.objects.filter(assetNum__startswith=datetime.now().year).order_by('-assetNum').first()
 
-            # new_service.save()
-            print("<"+temp_service.serviceName+">")
-            print("<"+temp_service.makeDate+">")
-            print("<"+temp_service.color+">")
+            if temp_asset:
+                this_asset_num = str(int(temp_asset.assetNum) + 1)
+            else:
+                this_asset_num = str(datetime.now().year * 1000000 + 1)
+
+            new_asset = Asset.objects.create(assetNum=this_asset_num,
+                                             acquisitionDate=request.POST.get("acquisition_date"),
+                                             assetName=request.POST.get("asset_name"),
+                                             standard=request.POST.get("standard"),
+                                             acquisitionCost=request.POST.get("acquisition_cost"),
+                                             purchaseLocation=request.POST.get("acquisition_location"),
+                                             maintenanceYear=request.POST.get("maintenance_year"))
+            add_servers(request, new_asset)
+            #add_switches(request, new_asset)
+            #add_racks(request, new_asset)
+
+            return HttpResponse("ASSET")
+
+        elif add_type == "service":
+
+            hex_color = request.POST.get("service_color").lstrip('#')
+            rgb = tuple(int(hex_color[i:i + 2], 16) for i in (0, 2, 4))
+
+            temp_service = Service.objects.create(serviceName=request.POST.get("service_name"),
+                                                  makeDate=request.POST.get("service_make_date"),
+                                                  color=request.POST.get("service_color"))
+
+            print("<" + temp_service.serviceName + ">")
+            print("<" + temp_service.makeDate + ">")
+            print("<" + temp_service.color + ">")
             return HttpResponse("SERVICE")
     else:
         if add_type == "asset":
             return render(request, 'dbApp/add_asset.html')
         elif add_type == "service":
             return render(request, 'dbApp/add_service.html')
+
+
+def add_servers(request, new_asset):
+    # add servers
+    server_number = request.POST.get("server_number")
+    temp_server = Server.objects.filter(manageNum__startswith="S" + str(datetime.now().year)[2:]).order_by(
+        '-manageNum').first()
+    if temp_server:
+        this_server_manage_num = int(temp_server.manageNum[1:]) + 1
+    else:
+        this_server_manage_num = int(str(datetime.now().year)[2:])*1000+1
+    for i in range(0, int(server_number)):
+        new_server = Server.objects.create(manageNum="S"+str(this_server_manage_num),
+                                           assetInfo=new_asset,
+                                           manageSpec=new_asset.assetName,
+                                           isInRack=False,
+                                           size=request.POST.get("server_size"),
+                                           core=request.POST.get("server_core_num"),
+                                           ip="127.0.0.1")
+        this_server_manage_num += 1
+
+        ServerLocation.objects.create(
+            server_pk=new_server,
+            rack_pk=None,
+            rackLocation=None,
+            realLocation=request.POST.get('server_location'))
+
+
+def add_switches(request, new_asset):
+    # add switches
+    switch_number = request.POST.get("switch_number")
+    temp_switch = Service.objects.filter(manageNum__startswith="N" + str(datetime.now().year)[2:]).order_by(
+        '-manageNum').first()
+    if temp_switch:
+        this_switch_manage_num = int(temp_switch.manageNum[1:]) + 1
+    else:
+        this_switch_manage_num = int(str(datetime.now().year)[2:]) * 1000 + 1
+    for i in range(0, switch_number):
+        new_switch = Switch.objects.create(manageNum="N"+str(this_switch_manage_num),
+                                           assetInfo=new_asset,
+                                           manageSpec=new_asset.assetName,
+                                           isInRack=False,
+                                           size=request.POST.get("switch_size"),
+                                           serviceOn=False,
+                                           ip="127.0.0.1")
+        this_switch_manage_num += 1
+
+        SwitchLocation.objects.create(
+            switch_pk=new_switch,
+            rack_pk=None,
+            rackLocation=None,
+            realLocation=request.POST.get('switch_location'))
+
+
+def add_racks(request, new_asset):
+    # add racks
+    rack_number = request.POST.get("rack_number")
+    temp_rack = Rack.objects.filter(manageNum__startswith="R" + str(datetime.now().year)[2:]).order_by(
+        '-manageNum').first()
+    if temp_rack:
+        this_rack_manage_num = "R" + str(int(temp_rack.manageNum[1:]) + 1)
+    else:
+        this_rack_manage_num = "R" + str(datetime.now().year)[2:] + "001"
+
+    for i in range(0, rack_number):
+        new_rack = Rack.objects.create(manageNum=this_rack_manage_num,
+                                       assetInfo=new_asset.id,
+                                       manageSpec=new_asset.assetName,
+                                       size=request.POST.get("rack_size"),
+                                       location=request.POST.get("rack_location"))
+        this_rack_manage_num = "R" + str(int(temp_rack.manageNum[1:]) + 1)

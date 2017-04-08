@@ -32,15 +32,15 @@
             <form class="form-horizontal" method="post" action="{%  url 'add' add_type="asset"%}">
                 {% csrf_token %}
                 <div class="form-group">
-                    <label class="col-sm-3 control-label" for="assetName">자산명</label>
+                    <label class="col-sm-3 control-label" for="asset_name">자산명</label>
                     <div class="col-sm-6">
-                        <input class="form-control" id="assetName" type="text" name="assetName" placeholder="자산명을 입력하세요. 예)서버">
+                        <input class="form-control" id="asset_name" type="text" name="asset_name" placeholder="자산명을 입력하세요. 예)서버">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-3 control-label" for="acquisitionDate">취득일</label>
+                    <label class="col-sm-3 control-label" for="acquisition_date">취득일</label>
                     <div class="col-sm-6">
-                        <input class="form-control" id="acquisitionDate" type="date" name="acquisitionDate" placeholder="취득일자">
+                        <input class="form-control" id="acquisition_date" type="date" name="acquisition_date" placeholder="취득일자">
                     </div>
                 </div>
                 <div class="form-group">
@@ -50,21 +50,21 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-3 control-label" for="acquisitionCost">취득원가</label>
+                    <label class="col-sm-3 control-label" for="acquisition_cost">취득원가</label>
                     <div class="col-sm-6">
-                        <input class="form-control" id="acquisitionCost" type="number" name="acquisitionCost" placeholder="취득원가를 입력하세요.">
+                        <input class="form-control" id="acquisition_cost" type="number" name="acquisition_cost" placeholder="취득원가를 입력하세요.">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-3 control-label" for="acquisitionLocation">구입처</label>
+                    <label class="col-sm-3 control-label" for="acquisition_location">구입처</label>
                     <div class="col-sm-6">
-                        <input class="form-control" id="acquisitionLocation" type="text" name="acquisitionLocation" placeholder="구입처를 입력하세요.">
+                        <input class="form-control" id="acquisition_location" type="text" name="acquisition_location" placeholder="구입처를 입력하세요.">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-3 control-label" for="maintenanceYear">내용연수</label>
+                    <label class="col-sm-3 control-label" for="maintenance_year">내용연수</label>
                     <div class="col-sm-6">
-                        <input class="form-control" id="maintenanceYear" type="number" name="maintenanceYear" placeholder="내용연수를 입력하세요.">
+                        <input class="form-control" id="maintenance_year" type="number" name="maintenance_year" placeholder="내용연수를 입력하세요.">
                     </div>
                 </div>
                 <h2 class="sub-header">상세정보</h2>
