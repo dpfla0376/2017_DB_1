@@ -231,7 +231,7 @@ def sign_in(request):
     if user is None:
         context = {'messages': 'login failed'}
         return render(request, 'dbApp/welcome_page.html',context)
-    return render(request, 'dbApp/service_resources.html')
+    return service_resources(request)
 
 
 def welcome(request):
