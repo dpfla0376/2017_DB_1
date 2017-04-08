@@ -270,7 +270,7 @@ def rack_info(request):
         data.append({'data': reversed(position), 'rack': rack})
     context = {'rack_list': rack_total, 'data' : data}
     return render(request, 'dbApp/rack_info.html', context)
-    
+
 def insert_asset(request):
     asset_total_list = Asset.objects.all()
     context = {'asset_total_list': asset_total_list}
