@@ -245,7 +245,6 @@ class SignUp(View):
         return HttpResponse("request.POST")
 
 
-<<<<<<< HEAD
 def add(request, add_type):
     if request.method == "POST":
         if add_type == "asset":
@@ -359,14 +358,6 @@ def add_racks(request, new_asset):
                                        size=request.POST.get("rack_size"),
                                        location=request.POST.get("rack_location"))
         this_rack_manage_num = "R" + str(int(temp_rack.manageNum[1:]) + 1)
-=======
-def add(request):
-        return render(request, 'dbApp/add_asset.html')
 
 
-def select(request, add_type):
-    if add_type == "asset":
-        return render(request, 'dbApp/add_asset.html')
-    elif add_type == "service":
-        return render(request, 'dbApp/add_service.html')
->>>>>>> c8b9e35f437b694af5f27ec51d537ea4e97a6d23
+
