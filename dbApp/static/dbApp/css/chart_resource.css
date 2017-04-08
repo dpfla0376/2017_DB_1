@@ -1,12 +1,12 @@
 @import url(http://fonts.googleapis.com/css?family=Oswald:400);
 
 .StorageBarChart {
-    position: absolute;
+    /*position: absolute;*/
     width: 400px;
     height: 400px;
-    top: 300px;
-    left: 50%;
-    margin: -225px 0 0 -225px;
+    /*top: 300px;*/
+    /*left: 40%;*/
+    /*margin: -225px 0 0 -225px;*/
 }
 
 body {
@@ -15,12 +15,35 @@ body {
 }
 
 .chart {
-    position: absolute;
+    /*position: absolute;*/
     width: 350px;
     height: 350px;
-    top: 300px;
-    left: 50%;
-    margin: -225px 0 0 -225px;
+    /*top: 300px;*/
+    /*left: 70%;*/
+    margin: 25px auto 0 auto;
+    /*margin: -225px 0 0 -225px;*/
+}
+
+.smallDoughnutChart {
+    /*position: absolute;*/
+    width: 250px;
+    height: 250px;
+    /*top: 900px;*/
+    /*left: 70%;*/
+    /*margin: -225px 0 0 -225px;*/
+}
+
+.container {
+    margin: 0 40px;
+}
+
+.smallBarChart{
+    /*position: absolute;*/
+    width: 250px;
+    height: 250px;
+    /*top: 900px;*/
+    /*left: 40%;*/
+    /*margin: -225px 0 0 -225px;*/
 }
 
 .chartDetail {

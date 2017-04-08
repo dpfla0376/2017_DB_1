@@ -1,10 +1,3 @@
-$(function(){
-  $("#doughnutChart").drawDoughnutChart([
-    { title: "SAN",         value : 120,  color: "#2C3E50" },
-    { title: "NAS",      value:  70,   color: "#6DBCDB" },
-    { title: "TAPE",        value : 40,   color: "#D7DADB" },
-  ]);
-});
 /*!
  * jquery.drawDoughnutChart.js
  * Version: 0.4.1(Beta)
@@ -109,6 +102,13 @@ $(function(){
                    });
     var $summaryTitle = $('<p class="' + settings.summaryTitleClass + '">' + settings.summaryTitle + '</p>').appendTo($summary);
     var $summaryNumber = $('<p class="' + settings.summaryNumberClass + '"></p>').appendTo($summary).css({opacity: 0});
+    $summaryTitle.on('click', function(){
+         window.location = "./service_detail";
+    });
+    var $summaryNumber = $('<p class="' + settings.summaryNumberClass + '"></p>').appendTo($summary).css({opacity: 0});
+    $summaryNumber.on('click', function(){
+         window.location = "./service_detail";
+    });
 
     for (var i = 0, len = data.length; i < len; i++) {
       segmentTotal += data[i].value;
@@ -246,6 +246,104 @@ $(function(){
     return $this;
   };
 })(jQuery);
+
+function drawChart1() {
+    $.ajax({
+        url: '../api/graph/total/storage/'
+    }).done(function (response) {
+        var jsonData = JSON.parse(response);
+
+        (function DoughnutChart() {
+            var colorList = ['#2C3E50', '#6DBCDB', '#D7DADB'];
+            var doughnutChart = $("#doughnutChart");
+            doughnutChart.drawDoughnutChart(
+                jsonData.total.map(function (d, i) {
+                    return {
+                        title: d.name,
+                        value: Math.round(d.size),
+                        color: colorList[i]
+                    }
+                })
+            );
+        })();
+
+        (function StorageBarChart() {
+            var data = google.visualization.arrayToDataTable(
+                [['Storage', 'Use', 'Unuse']].concat(
+                    jsonData.total.map(function (d, i) {
+                        return [d.name, Math.round(jsonData.usage[i].size), Math.round(d.size - jsonData.usage[i].size)];
+                    })
+                )
+            );
+            var options = {
+                title: 'Company Performance',
+                hAxis: {title: 'Year', titleTextStyle: {color: 'red'}}
+            };
+            var chart = new google.visualization.ColumnChart(document.getElementById('chart_div2'));
+            chart.draw(data, options);
+        })();
+    });
+
+    $.ajax({
+        url: '../api/graph/service/'
+    }).done(function (response) {
+        var jsonData = JSON.parse(response);
+
+        jsonData.list.forEach(function (service) {
+            (function ServiceGraph1() {
+                var usedData = 0;
+                var unusedData = 0;
+                jsonData.core.forEach(function (data) {
+                    if (data.id !== service.id)
+                        return;
+
+                    if (data.Use)
+                        usedData = data.core;
+                    else
+                        unusedData = data.core;
+                });
+
+                var doughnutChart = $("#service_graph1_" + service.id.toString());
+                doughnutChart.drawDoughnutChart(
+                    {
+                        title: 'Used',
+                        value: usedData,
+                        color: '#2C3E50'
+                    },
+                    {
+                        title: 'Unused',
+                        value: unusedData,
+                        color: '#6DBCDB'
+                    }
+                );
+            })();
+            (function ServiceGraph2() {
+                var typeList = []
+                jsonData.storage.forEach(function (data) {
+                    if (data.id !== service.id)
+                        return;
+
+                    typeList.push({
+                        type: data.type,
+                        size: data.size
+                    });
+                });
+
+                var colorList = ['#2C3E50', '#6DBCDB', '#D7DADB'];
+                var doughnutChart = $("#service_graph2_" + service.id.toString());
+                doughnutChart.drawDoughnutChart(
+                    typeList.map(function (data, i) {
+                        return {
+                            title: data.type,
+                            value: data.size,
+                            color: colorList[i]
+                        }
+                    })
+                );
+            })();
+        });
+    });
+}
 
 
 // Reminder: you need to put https://www.google.com/jsapi in the head of your document or as an external resource on codepen //

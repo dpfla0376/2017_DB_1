@@ -1,19 +1,39 @@
 {% extends 'dbApp/navigation_bar.html' %}
 {% block content %}
-    <div class="row">
-        <div class="col-md-6">
-            <div id="doughnutChart" class="chart"></div>
-            <script>
-            var div = document.getElementById('doughnutChart');
-            div.addEventListener('click', function() {
-                window.location = "./service_detail";
-            });
-        </script>
-        </div>
-        <div class="col-md-6">
-            <div id="chart_div2" class="StorageBarChart">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-6">
+                <div id="doughnutChart" class="chart"></div>
+                <script type="text/javascript">
+                    $('#doughnutChart').click(function () {
+                        window.location = './service_detail';
+                    });
+                </script>
             </div>
+            <div class="col-md-6">
+                <div id="chart_div2" class="StorageBarChart"></div>
+            </div>
+            <div class="clearfix"></div>
         </div>
+
+        {% if service_list %}
+            {% for service in service_list %}
+                <div class="row">
+                    <div class="col-md-12">{{ service.name }}</div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div id="service_graph1_{{ service.id }}" class="chart"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <div id="service_graph2_{{ service.id }}" class="chart"></div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            {% endfor %}
+        {% endif %}
     </div>
 
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
