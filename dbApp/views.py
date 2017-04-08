@@ -261,7 +261,7 @@ def rack_info(request):
         temp_service = ServerService.objects.get(server=server)
         temp_subDict['serviceName'] = temp_service.service.serviceName
         temp_subDict['use'] = temp_service.Use
-        temp_subDict['color'] = Service.objects.get(serviceName=temp_subDict['serviceName']).color
+        temp_subDict['color'] = temp_service.service.color
 
         temp_location = server.location
         if temp_location.rack_pk is not None:
@@ -278,6 +278,7 @@ def rack_info(request):
         temp_subDict['manageSpec'] = switch.manageSpec
         temp_subDict['ip'] = switch.ip
         temp_subDict['use'] = switch.serviceOn
+        temp_subDict['size'] = switch.size
         temp_subDict['color'] = '255,204,255'
 
         temp_location = switch.location
@@ -303,9 +304,10 @@ def rack_info(request):
         position = [None] * 42
         for inrack in rack['list']:
             position[inrack["rackLocation"]] = inrack
-        data.append({'data': reversed(position), 'rack': rack})
+        data.append({'data': list(reversed(position)), 'rack': rack})
     context = {'rack_list': rack_total, 'data': data}
     return render(request, 'dbApp/rack_info.html', context)
+    # return HttpResponse(json.dumps(data))
 
 
 def insert_asset(request):
