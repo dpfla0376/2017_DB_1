@@ -1,0 +1,56 @@
+{% extends 'dbApp/navigation_bar.html' %}
+{% load define %}
+{% block content %}
+    <div style="width:100%; height:100%; overflow:scroll ">
+        <style type="text/css">
+            .tab_center {
+                text-align: center;
+                margin-right: 1%;
+            }
+
+            .tb {
+                text-align: center;
+                float: left;
+                margin-right: 2%;
+            }
+        </style>
+
+        {% if rack_list %}
+            {% for rack in rack_list %}
+                <h2>{{ rack.name }} - {{ rack.id }}</h2>
+                <table border="1" class="tb">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>ip</th>
+                        <th>관리번호</th>
+                        <th>관리스펙</th>
+                    </tr>
+                    </thead>
+                    {% for i in loop_times %}
+                        {% for inrack in rack.list %}
+                            {% if inrack.rackLocation == i %}
+                                {% set exist = "True" %}
+                                <tr>
+                                    <td>{{ existi }} {{ i }}</td>
+                                    <td>{{ inrack.ip }}</td>
+                                    <td>{{ inrack.manageNum }}</td>
+                                    <td>{{ inrack.manageSpec }}</td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                        {% if exist != "True" %}
+                            <tr>
+                                <td>{{ exist }} {{ i }}</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                        {% endif %}
+
+                    {% endfor %}
+                </table>
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endblock content %}
