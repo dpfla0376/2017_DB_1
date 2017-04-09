@@ -765,4 +765,20 @@ def delete_one_asset(request, asset_type, manage_num):
             return HttpResponse("error", 404)
         rack.delete()
 
+    server_prefetch = Prefetch('server', to_attr='servers')
+    switch_prefetch = Prefetch('switch', to_attr='switches')
+    storage_prefetch = Prefetch('storageasset', to_attr='storages')
+    rack_prefetch = Prefetch('rack', to_attr='racks')
+
+    asset_total_list = Asset.objects.all().prefetch_related(server_prefetch, switch_prefetch, storage_prefetch,
+                                                            rack_prefetch)
+    for asset in asset_total_list:
+        server_num = len(asset.servers)
+        switch_num = len(asset.switches)
+        storage_num = len(asset.storages)
+        rack_num = len(asset.racks)
+        total_num = server_num + switch_num + storage_num + rack_num
+        if total_num == 0:
+            target_asset = Asset.objects.filter(assetNum=asset.assetNum)
+            target_asset.delete()
     return HttpResponse("ok")
