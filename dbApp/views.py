@@ -124,11 +124,12 @@ def welcome(request):
 
 
 def asset_total(request):
-    server_prefetch= Prefetch('server',to_attr='servers')
-    switch_prefetch= Prefetch('switch',to_attr='switches')
-    storage_prefetch= Prefetch('storageasset',to_attr='storages')
-    rack_prefetch= Prefetch('rack',to_attr='racks')
-    asset_total_list = Asset.objects.all().prefetch_related(server_prefetch,switch_prefetch,storage_prefetch,rack_prefetch)
+    server_prefetch = Prefetch('server', to_attr='servers')
+    switch_prefetch = Prefetch('switch', to_attr='switches')
+    storage_prefetch = Prefetch('storageasset', to_attr='storages')
+    rack_prefetch = Prefetch('rack', to_attr='racks')
+    asset_total_list = Asset.objects.all().prefetch_related(server_prefetch, switch_prefetch, storage_prefetch,
+                                                            rack_prefetch)
     temp_list = []
     for asset in asset_total_list:
         server_num = len(asset.servers)
@@ -302,10 +303,11 @@ def rack_info(request):
         temp_name = rack.location[-3:]  # ex) C03
         rack_list[temp] = []
         rack_name[temp_name] = temp
-    my_prefetch = Prefetch('ss_server',queryset=ServerService.objects.select_related('service'),to_attr="services")
+    my_prefetch = Prefetch('ss_server', queryset=ServerService.objects.select_related('service'), to_attr="services")
     # server_asset_list = Server.objects.select_related('location', 'location__rack_pk').all()
     # server_asset_list = Server.objects.select_related('location', 'location__rack_pk').all().prefetch_related(None)
-    server_asset_list = Server.objects.select_related('location', 'location__rack_pk').prefetch_related(my_prefetch).all()
+    server_asset_list = Server.objects.select_related('location', 'location__rack_pk').prefetch_related(
+        my_prefetch).all()
 
     switch_asset_list = Switch.objects.select_related('location', 'location__rack').all()
     # make server list for rack
@@ -431,7 +433,7 @@ def add(request, add_type):
 
             hex_color = request.POST.get("service_color").lstrip('#')
             rgb_tuple = tuple(int(hex_color[i:i + 2], 16) for i in (0, 2, 4))
-            rgb = str(rgb_tuple[0])+","+str(rgb_tuple[1])+","+str(rgb_tuple[2])
+            rgb = str(rgb_tuple[0]) + "," + str(rgb_tuple[1]) + "," + str(rgb_tuple[2])
 
             temp_service = Service.objects.create(serviceName=request.POST.get("service_name"),
                                                   makeDate=request.POST.get("service_make_date"),
