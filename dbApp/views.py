@@ -123,13 +123,17 @@ def welcome(request):
 
 
 def asset_total(request):
-    asset_total_list = Asset.objects.all()
+    server_prefetch= Prefetch('server',to_attr='servers')
+    switch_prefetch= Prefetch('switch',to_attr='switches')
+    storage_prefetch= Prefetch('storageasset',to_attr='storages')
+    rack_prefetch= Prefetch('rack',to_attr='racks')
+    asset_total_list = Asset.objects.all().prefetch_related(server_prefetch,switch_prefetch,storage_prefetch,rack_prefetch)
     temp_list = []
     for asset in asset_total_list:
-        server_num = Server.objects.filter(assetInfo=asset.id).count()
-        switch_num = Switch.objects.filter(assetInfo=asset.id).count()
-        storage_num = StorageAsset.objects.filter(assetInfo=asset.id).count()
-        rack_num = Rack.objects.filter(assetInfo=asset.id).count()
+        server_num = len(asset.servers)
+        switch_num = len(asset.switches)
+        storage_num = len(asset.storages)
+        rack_num = len(asset.racks)
         temp_dict = dict()
         temp_dict['assetNum'] = asset.assetNum
         temp_dict['acquisitionDate'] = asset.acquisitionDate
