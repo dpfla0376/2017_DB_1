@@ -9,7 +9,7 @@
                     <th>자산번호</th>
                     <th>취득일</th>
                     <th>자산명</th>
-                    <th>규격</th>
+                    <th class="hitachi">규격</th>
                     <th>취득원가</th>
                     <th>구입처</th>
                     <th>내용연수</th>
@@ -26,11 +26,12 @@
                 <tbody>
                 {% if asset_total_list %}
                     {% for asset in asset_total_list %}
-                        <tr>
-                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')" ><a  onclick="td_click_detail_asset(this)">{{ asset.assetNum }}</a></td>
+                        <tr id="asset-id-{{asset.assetNum}}">
+                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a
+                                    onclick="td_click_detail_asset(this)">{{ asset.assetNum }}</a></td>
                             <td>{{ asset.acquisitionDate }}</td>
                             <td>{{ asset.assetName }}</td>
-                            <td>{{ asset.standard }}</td>
+                            <td class="hitachi">{{ asset.standard }}</td>
                             <td>{{ asset.acquisitionCost }}</td>
                             <td>{{ asset.purchaseLocation }}</td>
                             <td>{{ asset.maintenanceYear }}</td>
@@ -39,6 +40,8 @@
                             <td>{{ asset.storageNum }}</td>
                             <td>{{ asset.rackNum }}</td>
                             <td>{{ asset.totalNum }}</td>
+                            <td><a onclick="td_click_edit_asset({{asset.assetNum}})">수정</a></td>
+                            <td><a onclick="td_click_delete_asset({{asset.assetNum}})">삭제</a></td>
                         </tr>
                     {% endfor %} {% endif %}
                 </tbody>
