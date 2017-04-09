@@ -3,14 +3,14 @@
 
 {% block content %}
     <script>
-        $(document).ready(function(){
-            $(".btn-circle").click(function(){
+        $(document).ready(function () {
+            $(".btn-circle").click(function () {
                 var unselected = $(this).hasClass("unselected");
                 var type = $(this).attr("target");
-                var checkbox = $("#"+$(this).attr("check_target"));
+                var checkbox = $("#" + $(this).attr("check_target"));
                 $(checkbox).prop("checked", unselected);
-                if(unselected){
-                    $("#"+type).show(1234);
+                if (unselected) {
+                    $("#" + type).show(1234);
                     $(this).removeClass("unselected");
                 } else {
                     $("#" + type).hide(1234);
@@ -22,119 +22,192 @@
     <div class="container">
         <h2 class="page-header">추가하기</h2>
         <div class="container">
-            <a href="{% url 'add' add_type="asset"%}">
-                <button class="form-button btn btn-circle btn-danger" id="asset" name="asset" type="submit">ASSET</button>
+            <a href="{% url 'add' add_type="asset" %}">
+                <button class="form-button btn btn-circle btn-danger" id="asset" name="asset" type="submit">ASSET
+                </button>
             </a>
-            <a href="{% url 'add' add_type="service"%}">
-                <button class="form-button btn btn-circle btn-default unselected" id="service" name="service" type="submit">SERVICE</button>
+            <a href="{% url 'add' add_type="service" %}">
+                <button class="form-button btn btn-circle btn-default unselected" id="service" name="service"
+                        type="submit">SERVICE
+                </button>
             </a>
         </div>
         <div class="container">
             <h2 class="sub-header">자산 정보</h2>
-            <form class="form-horizontal" method="post" action="{%  url 'add' add_type="asset"%}">
+            <form class="form-horizontal" method="post" action="{% url 'add' add_type="asset" %}">
                 {% csrf_token %}
                 <div class="form-group">
                     <label class="col-sm-3 control-label" for="asset_name">자산명</label>
                     <div class="col-sm-6">
-                        <input class="form-control" id="asset_name" type="text" name="asset_name" placeholder="자산명을 입력하세요. 예)서버">
+                        <input class="form-control" id="asset_name" type="text" name="asset_name"
+                               placeholder="자산명을 입력하세요. 예)서버">
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-3 control-label" for="acquisition_date">취득일</label>
                     <div class="col-sm-6">
-                        <input class="form-control" id="acquisition_date" type="date" name="acquisition_date" placeholder="취득일자">
+                        <input class="form-control" id="acquisition_date" type="date" name="acquisition_date"
+                               placeholder="취득일자">
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-3 control-label" for="standard">규격</label>
                     <div class="col-sm-6">
-                        <input class="form-control" id="standard" type="text" name="standard" placeholder="규격을 입력하세요. 예)Hitachi VSP Hardware">
+                        <input class="form-control" id="standard" type="text" name="standard"
+                               placeholder="규격을 입력하세요. 예)Hitachi VSP Hardware">
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-3 control-label" for="acquisition_cost">취득원가</label>
                     <div class="col-sm-6">
-                        <input class="form-control" id="acquisition_cost" type="number" name="acquisition_cost" placeholder="취득원가를 입력하세요.">
+                        <input class="form-control" id="acquisition_cost" type="number" name="acquisition_cost"
+                               placeholder="취득원가를 입력하세요.">
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-3 control-label" for="acquisition_location">구입처</label>
                     <div class="col-sm-6">
-                        <input class="form-control" id="acquisition_location" type="text" name="acquisition_location" placeholder="구입처를 입력하세요.">
+                        <input class="form-control" id="acquisition_location" type="text" name="acquisition_location"
+                               placeholder="구입처를 입력하세요.">
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-3 control-label" for="maintenance_year">내용연수</label>
                     <div class="col-sm-6">
-                        <input class="form-control" id="maintenance_year" type="number" name="maintenance_year" placeholder="내용연수를 입력하세요.">
+                        <input class="form-control" id="maintenance_year" type="number" name="maintenance_year"
+                               placeholder="내용연수를 입력하세요.">
                     </div>
                 </div>
                 <h2 class="sub-header">상세정보</h2>
                 <div class="center-block add-buttons-container">
-                    <p class="form-button btn btn-circle btn-danger unselected" target="server_spec" check_target="server_button">SERVER</p>
-                    <p class="form-button btn btn-circle btn-warning unselected" target="switch_spec" check_target="switch_button">SWITCH</p>
-                    <p class="form-button btn btn-circle btn-primary unselected" target="storage_spec" check_target="storage_button">STORAGE</p>
-                    <p class="form-button btn btn-circle btn-success unselected" target="rack_spec" check_target="rack_button">RACK</p>
+                    <p class="form-button btn btn-circle btn-danger unselected" target="server_spec"
+                       check_target="server_button">SERVER</p>
+                    <p class="form-button btn btn-circle btn-warning unselected" target="switch_spec"
+                       check_target="switch_button">SWITCH</p>
+                    <p class="form-button btn btn-circle btn-primary unselected" target="storage_spec"
+                       check_target="storage_button">STORAGE</p>
+                    <p class="form-button btn btn-circle btn-success unselected" target="rack_spec"
+                       check_target="rack_button">RACK</p>
                 </div>
                 <input hidden type="checkbox" name="server_button" id="server_button">
                 <input hidden type="checkbox" name="switch_button" id="switch_button">
                 <input hidden type="checkbox" name="storage_button" id="storage_button">
                 <input hidden type="checkbox" name="rack_button" id="rack_button">
 
-                <div class="container asset-spec" id="server_spec" >
+                <div class="container asset-spec" id="server_spec">
                     <h2 class="sub-header">서버</h2>
                     <div class="form-group">
                         <label class="col-sm-3 control-label" for="server_number">갯수</label>
                         <div class="col-sm-6">
-                            <input class="form-control" id="server_number" type="number" name="server_number" placeholder="자산의 갯수를 입력하세요.">
+                            <input class="form-control" id="server_number" type="number" name="server_number"
+                                   placeholder="자산의 갯수를 입력하세요.">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label" for="server_size">사이즈</label>
                         <div class="col-sm-6">
-                            <input class="form-control" id="server_size" type="number" name="server_size" placeholder="사이즈">
+                            <input class="form-control" id="server_size" type="number" name="server_size"
+                                   placeholder="사이즈">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label" for="server_location">위치</label>
                         <div class="col-sm-6">
-                            <input class="form-control" id="server_location" type="text" name="server_location" placeholder="랙/기타 고르기..">
+                            <input class="form-control" id="server_location" type="text" name="server_location"
+                                   placeholder="랙/기타 고르기..">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label" for="server_core_num">코어</label>
                         <div class="col-sm-6">
-                            <input class="form-control" id="server_core_num" type="number" name="server_core_num" placeholder="코어 갯수">
+                            <input class="form-control" id="server_core_num" type="number" name="server_core_num"
+                                   placeholder="코어 갯수">
                         </div>
                     </div>
                 </div>
-                <div class="container asset-spec" id="switch_spec" >
+                <div class="container asset-spec" id="switch_spec">
                     <h2 class="sub-header">스위치</h2>
                     <div class="form-group">
                         <label class="col-sm-3 control-label" for="switch_number">갯수</label>
                         <div class="col-sm-6">
-                            <input class="form-control" id="switch_number" type="number" name="switch_number" placeholder="자산의 갯수를 입력하세요.">
+                            <input class="form-control" id="switch_number" type="number" name="switch_number"
+                                   placeholder="자산의 갯수를 입력하세요.">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label" for="switch_size">사이즈</label>
                         <div class="col-sm-6">
-                            <input class="form-control" id="switch_size" type="number" name="switch_size" placeholder="사이즈">
+                            <input class="form-control" id="switch_size" type="number" name="switch_size"
+                                   placeholder="사이즈">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label" for="switch_location">위치</label>
                         <div class="col-sm-6">
-                            <input class="form-control" id="switch_location" type="text" name="switch_location" placeholder="랙/기타 고르기..">
+                            <input class="form-control" id="switch_location" type="text" name="switch_location"
+                                   placeholder="랙/기타 고르기..">
                         </div>
                     </div>
                 </div>
-                <div class="container asset-spec" id="rack_spec" >
+                <div class="container asset-spec" id="storage_spec">
+                    <h2 class="sub-header">스토리지</h2>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="storage_number">갯수</label>
+                        <div class="col-sm-6">
+                            <input class="form-control" id="storage_number" type="number" name="storage_number"
+                                   placeholder="자산의 갯수를 입력하세요.">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="manage_spec">관리스펙</label>
+                        <div class="col-sm-6">
+                            <input class="form-control" id="manage_spec" type="text" name="manage_spec"
+                                   placeholder="관리스펙">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="disk_type">디스크 형식</label>
+                        <div class="col-sm-6">
+                            <input class="form-control" id="disk_type" type="text" name="disk_type"
+                                   placeholder="SAN / NAS / TAPE">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="disk_spec">디스크 사양</label>
+                        <div class="col-sm-6">
+                            <input class="form-control" id="disk_spec" type="text" name="disk_spec"
+                                   placeholder="디스크 사양">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="alloc_size">할당 크기</label>
+                        <div class="col-sm-6">
+                            <input class="form-control" id="alloc_size" type="text" name="alloc_size"
+                                   placeholder="할당 크기">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="disk_vol">용량</label>
+                        <div class="col-sm-6">
+                            <input class="form-control" id="disk_vol" type="text" name="disk_vol"
+                                   placeholder="용량">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="storage_location">위치</label>
+                        <div class="col-sm-6">
+                            <input class="form-control" id="storage_location" type="text" name="storage_location"
+                                   placeholder="위치 예)창고3 / 세부 위치는 수정을 통해...">
+                        </div>
+                    </div>
+                </div>
+                <div class="container asset-spec" id="rack_spec">
                     <h2 class="sub-header">랙</h2>
-                      <div class="form-group">
+                    <div class="form-group">
                         <label class="col-sm-3 control-label" for="rack_number">갯수</label>
                         <div class="col-sm-6">
-                            <input class="form-control" id="rack_number" type="number" name="rack_number" placeholder="자산의 갯수를 입력하세요.">
+                            <input class="form-control" id="rack_number" type="number" name="rack_number"
+                                   placeholder="자산의 갯수를 입력하세요.">
                         </div>
                     </div>
                     <div class="form-group">
@@ -146,7 +219,8 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label" for="rack_location">위치</label>
                         <div class="col-sm-6">
-                            <input class="form-control" id="rack_location" type="text" name="rack_location" placeholder="랙 위치">
+                            <input class="form-control" id="rack_location" type="text" name="rack_location"
+                                   placeholder="랙 위치">
                         </div>
                     </div>
                 </div>
