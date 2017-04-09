@@ -543,7 +543,7 @@ def asset_detail(request):
                'asset_storage_list' : asset_storage_list, 'asset_rack_list' : asset_rack_list}
     return render(request, 'dbApp/asset_detail.html', context)
 
-#
+# 
 def rack_detail(request):
     searchText = request.GET.get("data")
     rackname = None
