@@ -341,6 +341,7 @@ def add(request, add_type):
     if request.method == "POST":
         if add_type == "asset":
             # add asset
+            print(request.POST.get("acquisition_date"))
             acq_year = str(request.POST.get("acquisition_date"))[0:4]
             temp_asset = Asset.objects.filter(assetNum__startswith=acq_year).order_by('-assetNum').first()
 
@@ -512,7 +513,7 @@ def asset_detail(request):
     asset_temp_list = Switch.objects.select_related('location', 'assetInfo', 'location__rack').filter(assetInfo=asset)
     temp_list = []
     for switch in asset_temp_list:
-        temp_dict = {}
+        temp_dict = dict()
         #temp_dict['assetNum'] = switch.assetInfo.assetNum
         temp_dict['manageNum'] = switch.manageNum
         temp_dict['manageSpec'] = switch.manageSpec
@@ -531,7 +532,7 @@ def asset_detail(request):
     asset_temp_list = Rack.objects.filter(assetInfo=asset.id)
     temp_list = []
     for rack in asset_temp_list:
-        temp_dict = {}
+        temp_dict = dict()
         # temp_dict['assetNum'] = rack.assetInfo.assetNum
         temp_dict['manageNum'] = rack.manageNum
         temp_dict['manageSpec'] = rack.manageSpec
@@ -595,4 +596,7 @@ def edit_asset(request):
 
 def delete_asset(request):
     selected = request.GET.get("data")
-    return HttpResponse("자산번호" + selected + "를 삭제하고싶니?")
+    Asset.objects.filter(assetNum=selected).delete()
+    context = {'messages': '완료되었습니다.'}
+    return render(request, 'dbApp/asset.html', context)
+

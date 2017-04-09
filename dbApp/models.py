@@ -21,7 +21,7 @@ class Service(models.Model):
 
 class Asset(models.Model):
     assetNum = models.CharField(max_length=45, db_index=True)
-    acquisitionDate = models.DateField(auto_now_add=True)
+    acquisitionDate = models.DateField()
     assetName = models.CharField(max_length=45)
     standard = models.CharField(max_length=45)
     acquisitionCost = models.IntegerField()
