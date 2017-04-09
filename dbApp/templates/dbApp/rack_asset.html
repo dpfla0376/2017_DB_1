@@ -1,0 +1,32 @@
+{% extends 'dbApp/navigation_bar.html' %}
+{% block content %}
+    <div class="container">
+        <h2 class="page-header">RACK</h2>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>자산번호</th>
+                        <th>관리번호</th>
+                        <th>관리스펙</th>
+                        <th>크기</th>
+                        <th>위치</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% if rack_asset_list %}
+                    {% for rack in rack_asset_list %}
+                        <tr>
+                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')" ><a  onclick="td_click_detail_asset(this)">{{ rack.assetNum }}</a></td>
+                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a onclick="td_click_detail_server(this)">{{ rack.manageNum }}</a></td>
+                            <td>{{ rack.manageSpec }}</td>
+                            <td>{{ rack.size }}</td>
+                            <td>{{ rack.location }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock content %}

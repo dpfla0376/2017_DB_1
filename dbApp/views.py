@@ -181,6 +181,21 @@ def server_asset(request):
     return temppp
     # return HttpResponse(temp_list)
 
+def rack_asset(request):
+    rack_asset_list = Rack.objects.all()
+    temp_list = []
+    for rack in rack_asset_list:
+        temp_dict = {}
+        temp_dict['assetNum'] = rack.assetInfo.assetNum
+        temp_dict['manageNum'] = rack.manageNum
+        temp_dict['manageSpec'] = rack.manageSpec
+        temp_dict['size'] = rack.size
+        temp_dict['location'] = rack.location
+        temp_list.append(temp_dict)
+    print(temp_list)
+    context = {'rack_asset_list': temp_list}
+    return render(request, 'dbApp/rack_asset.html', context)
+
 
 def service_resources(request):#서비스의 리소스를 보여준다.
     #user = getUser(request.session) #여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
@@ -433,8 +448,7 @@ def asset_detail(request):
     if assetList.count()== 0:
         return HttpResponse("찾으시는 제품이 없습니다.")
     asset=assetList[0]
-    asset_temp_list = Server.objects.filter(assetInfo=asset)
-    #Server.objects.select_related('location', 'assetInfo', 'location__rack_pk').filter(assetInfo=asset)
+    asset_temp_list = Server.objects.select_related('location', 'assetInfo', 'location__rack_pk').filter(assetInfo=asset)
     print(asset_temp_list)
     temp_list = []
     for server in asset_temp_list:

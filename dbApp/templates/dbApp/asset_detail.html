@@ -2,27 +2,24 @@
 {% block content %}
     <div class="container">
         <h1 class="page-header">자산번호 [ {{ asset_list.assetNum }} ] 의 상세 페이지입니다.</h1>
+        {% if asset_server_list %}
+            <h2 class="page-header">Server</h2>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>관리번호</th>
+                        <th>관리스펙</th>
+                        <th>위치</th>
+                        <th>코어</th>
+                        <th>IP</th>
+                        <th>ON/OFF</th>
+                    </tr>
+                    </thead>
+                    <tbody>
 
-        <h2 class="page-header">Server</h2>
-        <div class="table-responsive">
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th>자산번호</th>
-                    <th>관리번호</th>
-                    <th>관리스펙</th>
-                    <th>위치</th>
-                    <th>코어</th>
-                    <th>IP</th>
-                    <th>ON/OFF</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% if asset_server_list %}
                     {% for server in asset_server_list %}
                         <tr>
-                            <!--<td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a
-                                    onclick="td_click_detail_asset(this)">{{ server.assetnum }}</a></td>-->
                             <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a
                                     onclick="td_click_detail_server(this)">{{ server.managenum }}</a></td>
                             <td>{{ server.managespec }}</td>
@@ -33,10 +30,11 @@
                             <td>{{ server.onoff }}</td>
                         </tr>
                     {% endfor %}
-                {% endif %}
-                </tbody>
-            </table>
-        </div>
+
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
         <h2 class="page-header">Switch</h2>
 
         <h2 class="page-header">Storage</h2>
