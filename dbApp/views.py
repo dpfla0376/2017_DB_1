@@ -376,11 +376,12 @@ def add(request, add_type):
         elif add_type == "service":
 
             hex_color = request.POST.get("service_color").lstrip('#')
-            rgb = tuple(int(hex_color[i:i + 2], 16) for i in (0, 2, 4))
+            rgb_tuple = tuple(int(hex_color[i:i + 2], 16) for i in (0, 2, 4))
+            rgb = str(rgb_tuple[0])+","+str(rgb_tuple[1])+","+str(rgb_tuple[2])
 
             temp_service = Service.objects.create(serviceName=request.POST.get("service_name"),
                                                   makeDate=request.POST.get("service_make_date"),
-                                                  color=request.POST.get("service_color"))
+                                                  color=rgb)
             context = {'messages': '완료되었습니다.'}
             return render(request, 'dbApp/add_service.html', context)
     else:

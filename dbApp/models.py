@@ -16,7 +16,7 @@ class User(models.Model):
 class Service(models.Model):
     serviceName = models.CharField(max_length=45)
     makeDate = models.DateField()
-    color = models.CharField(max_length=10)
+    color = models.CharField(max_length=11)
 
 
 class Asset(models.Model):
