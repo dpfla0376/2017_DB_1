@@ -18,10 +18,13 @@
                 {% if switch_asset_list %}
                     {% for switch in switch_asset_list %}
                         <tr>
-                        <td><a herf="#">{{ switch.assetNum }}</a></td>
-                        <td><a herf="#">{{ switch.manageNum }}</a></td>
+                        <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a
+                                onclick="td_click_detail_asset(this)">{{ switch.assetNum }}</a></td>
+                        <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a
+                                onclick="td_click_detail_asset(this)">{{ switch.manageNum }}</a></td>
                         <td>{{ switch.manageSpec }}</td>
-                        <td><a herf="#">{{ switch.location }}</a></td>
+                        <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a
+                                onclick="td_click_detail_rack(this)">{{ switch.location }}</a></td>
                         <td>{{ switch.ip }}</td>
                         <td>{{ switch.onOff }}</td>
                     {% endfor %}
