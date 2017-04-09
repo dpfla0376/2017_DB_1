@@ -1,4 +1,7 @@
 from django import template
+from django.utils.safestring import mark_safe
+import json
+
 register = template.Library()
 
 
@@ -26,29 +29,36 @@ def set_var(parser, token):
     parts = token.split_contents()
     if len(parts) < 4:
         raise template.TemplateSyntaxError("'set' tag must be of the form: {% set <var_name> = <var_value> %}")
-
     return SetVarNode(parts[1], parts[3])
+
 
 @register.filter
 def get_range( value ):
-  """
+    """
     Filter - returns a list containing range made from given value
     Usage (in template):
-
+    
     <ul>{% for i in 3|get_range %}
       <li>{{ i }}. Do something</li>
     {% endfor %}</ul>
-
+    
     Results with the HTML:
     <ul>
       <li>0. Do something</li>
       <li>1. Do something</li>
       <li>2. Do something</li>
     </ul>
-
+    
     Instead of 3 one may use the variable set in the views
-  """
-  return range(value)
+    """
+    return range(value)
+
+
 @register.filter
 def getReverse(value):
     return 43-value
+
+
+@register.filter
+def js(obj):
+    return mark_safe(json.dumps(obj))

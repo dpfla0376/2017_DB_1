@@ -3,26 +3,45 @@
     <div class="container">
         <h2 class="page-header">SERVER</h2>
         <div class="table-responsive">
+{#        요 아래처럼 html 에 쑤셔박아도 됩니다.#}
+{#            <script type="text/javascript">#}
+{#                function serverDetail(tdObj) {#}
+{#                    var txt = tdObj.text;#}
+{#                    alert("server"+txt);#}
+{#                    location.href="/dbApp/search/?searchText="+txt;#}
+{#                }#}
+{#                function rackDetail(tdObj) {#}
+{#                     var txt = tdObj.text;#}
+{#                    alert("rack"+txt);#}
+{#                    location.href="/dbApp/search/?searchText="+txt;#}
+{#                }#}
+{#                function assetDetail(tdObj) {#}
+{#                     var txt = tdObj.text;#}
+{#                    alert("asset"+txt);#}
+{#                    location.href="/dbApp/search/?searchText="+txt;#}
+{#                }#}
+{#            </script>#}
+
             <table class="table table-striped">
                 <thead>
-                <tr>
-                    <th>자산번호</th>
-                    <th>관리번호</th>
-                    <th>관리스펙</th>
-                    <th>위치</th>
-                    <th>코어</th>
-                    <th>IP</th>
-                    <th>ON/OFF</th>
-                </tr>
+                    <tr>
+                        <th>자산번호</th>
+                        <th>관리번호</th>
+                        <th>관리스펙</th>
+                        <th>위치</th>
+                        <th>코어</th>
+                        <th>IP</th>
+                        <th>ON/OFF</th>
+                    </tr>
                 </thead>
                 <tbody>
                 {% if server_asset_list %}
                     {% for server in server_asset_list %}
                         <tr>
-                            <td><a href="#">{{ server.assetnum }}</a></td>
-                            <td><a href="#">{{ server.managenum }}</a></td>
+                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')" ><a  onclick="td_click_detail_asset(this)">{{ server.assetnum }}</a></td>
+                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a onclick="td_click_detail_server(this)">{{ server.managenum }}</a></td>
                             <td>{{ server.managespec }}</td>
-                            <td><a href="#">{{ server.location }}</a></td>
+                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a onclick="td_click_detail_rack(this)">{{ server.location }}</a></td>
                             <td>{{ server.core }}</td>
                             <td>{{ server.ip }}</td>
                             <td>{{ server.onoff }}</td>
