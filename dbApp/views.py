@@ -284,9 +284,8 @@ def rack_info(request):
         temp_subDict['manageSpec'] = server.manageSpec
         temp_subDict['ip'] = server.ip
         temp_subDict['size'] = server.size
-        if server.services is not None:
+        if len(server.services) is not 0:
             temp_serverservice = server.services[0]
-            # temp_serverservice = ServerService.objects.select_related('service').get(server=server)
             temp_subDict['use'] = temp_serverservice.Use
             temp_service = temp_serverservice.service
             temp_subDict['serviceName'] = temp_service.serviceName
