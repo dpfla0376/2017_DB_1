@@ -455,7 +455,8 @@ def add_storages(request, new_asset):
                                              enrollDate=new_asset.acquisitionDate,
                                              diskSpec=request.POST.get("disk_spec"),
                                              allocUnitSize=request.POST.get("alloc_size"),
-                                             Vol=request.POST.get("disk_vol"))
+                                             Vol=request.POST.get("disk_vol"),
+                                             storageAssetName="속해있는 장치 명으로 수정하세요")
 
         this_storage_manage_num += 1
 
