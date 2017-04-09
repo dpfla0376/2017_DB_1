@@ -551,13 +551,13 @@ def switch_detail(request):
     return HttpResponse("스위치 디테일 페이지 이고 스위치 이름은" + switch.manageNum + "입니다.")
 
 
-def asset_detail(request):
-    searchText = request.GET.get("data")
-    assetList = Asset.objects.filter(Q(assetNum=searchText) | Q(assetName=searchText) | Q(standard=searchText))
-    if assetList.count() == 0:
-        return HttpResponse("찾으시는 제품이 없습니다.")
-    asset = assetList[0]
-    return HttpResponse("에셋 디테일 페이지 이고 자산번호는" + asset.assetNum + "입니다.")
+# def asset_detail(request):
+#     searchText = request.GET.get("data")
+#     assetList = Asset.objects.filter(Q(assetNum=searchText) | Q(assetName=searchText) | Q(standard=searchText))
+#     if assetList.count() == 0:
+#         return HttpResponse("찾으시는 제품이 없습니다.")
+#     asset = assetList[0]
+#     return HttpResponse("에셋 디테일 페이지 이고 자산번호는" + asset.assetNum + "입니다.")
 
 def search_assets(request):
     searchText = request.GET.get("searchText")
