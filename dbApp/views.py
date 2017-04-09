@@ -559,7 +559,18 @@ def asset_detail(request):
     asset = assetList[0]
     return HttpResponse("에셋 디테일 페이지 이고 자산번호는" + asset.assetNum + "입니다.")
 
+
 def search_assets(request):
     searchText = request.GET.get("searchText")
     print(searchText)
     return render(request, 'dbApp/searchResult.html', {})
+
+
+def edit_asset(request):
+    selected = request.GET.get("data")
+    return HttpResponse("자산번호" + selected + "를 수정하고싶니?")
+
+
+def delete_asset(request):
+    selected = request.GET.get("data")
+    return HttpResponse("자산번호" + selected + "를 삭제하고싶니?")

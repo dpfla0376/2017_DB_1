@@ -24,3 +24,11 @@ function td_click_detail_switch(tdObj) {
     var txt = tdObj.text;
     location.href="/dbApp/switch/switch_detail/?data="+txt;
 }
+
+function td_click_delete_asset(assetNum) {
+    location.href="/dbApp/asset/delete_asset/?data="+assetNum;
+}
+
+function td_click_edit_asset(assetNum) {
+    location.href="/dbApp/asset/edit_asset/?data="+assetNum;
+}
