@@ -31,7 +31,7 @@ class Asset(models.Model):
 
 class StorageAsset(models.Model):
     manageNum = models.CharField(max_length=45)
-    assetInfo = models.ForeignKey(Asset, on_delete=models.CASCADE)
+    assetInfo = models.ForeignKey(Asset, on_delete=models.CASCADE,related_name='storageasset')
     manageSpec = models.CharField(max_length=45)
     location = models.CharField(max_length=45)
     storageForm = models.CharField(max_length=45)
@@ -39,7 +39,7 @@ class StorageAsset(models.Model):
 
 class Server(models.Model):
     manageNum = models.CharField(max_length=45)
-    assetInfo = models.ForeignKey(Asset, on_delete=models.CASCADE)
+    assetInfo = models.ForeignKey(Asset, on_delete=models.CASCADE,related_name='server')
     manageSpec = models.CharField(max_length=45)
     isInRack = models.BooleanField(default=1)
     size = models.IntegerField()
@@ -49,7 +49,7 @@ class Server(models.Model):
 
 class Switch(models.Model):
     manageNum = models.CharField(max_length=45)
-    assetInfo = models.ForeignKey(Asset, on_delete=models.CASCADE)
+    assetInfo = models.ForeignKey(Asset, on_delete=models.CASCADE,related_name='switch')
     manageSpec = models.CharField(max_length=45)
     isInRack = models.BooleanField(default=1)
     size = models.IntegerField()
@@ -59,7 +59,7 @@ class Switch(models.Model):
 
 class Rack(models.Model):
     manageNum = models.CharField(max_length=45)
-    assetInfo = models.ForeignKey(Asset, on_delete=models.CASCADE)
+    assetInfo = models.ForeignKey(Asset, on_delete=models.CASCADE,related_name='rack')
     manageSpec = models.CharField(max_length=45)
     size = models.IntegerField()
     location = models.CharField(max_length=45, null=True)

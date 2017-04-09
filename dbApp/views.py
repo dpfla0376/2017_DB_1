@@ -7,7 +7,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db import connection
 from django.db.models import Q
-
+from django.db.models import Prefetch
 from dbApp.models import *
 
 import json, jwt, time
@@ -123,13 +123,17 @@ def welcome(request):
 
 
 def asset_total(request):
-    asset_total_list = Asset.objects.all()
+    server_prefetch= Prefetch('server',to_attr='servers')
+    switch_prefetch= Prefetch('switch',to_attr='switches')
+    storage_prefetch= Prefetch('storageasset',to_attr='storages')
+    rack_prefetch= Prefetch('rack',to_attr='racks')
+    asset_total_list = Asset.objects.all().prefetch_related(server_prefetch,switch_prefetch,storage_prefetch,rack_prefetch)
     temp_list = []
     for asset in asset_total_list:
-        server_num = Server.objects.filter(assetInfo=asset.id).count()
-        switch_num = Switch.objects.filter(assetInfo=asset.id).count()
-        storage_num = StorageAsset.objects.filter(assetInfo=asset.id).count()
-        rack_num = Rack.objects.filter(assetInfo=asset.id).count()
+        server_num = len(asset.servers)
+        switch_num = len(asset.switches)
+        storage_num = len(asset.storages)
+        rack_num = len(asset.racks)
         temp_dict = dict()
         temp_dict['assetNum'] = asset.assetNum
         temp_dict['acquisitionDate'] = asset.acquisitionDate
@@ -261,19 +265,21 @@ def storage_use(request):
 
 # 엑셀의 rack_info 페이지. rack_total_view 를 보여줍니다.
 def rack_info(request):
-    rack_total = list(Rack.objects.values('manageNum'))
+    start_time = time.time()
     rack_list = {}
     rack_name = {}
-    for rack in rack_total:
-        temp = rack['manageNum']  # ex) R11001
-        temp_name = Rack.objects.get(manageNum=temp).location[-3:]  # ex) C03
-        rack_list[rack['manageNum']] = []
-        rack_name[temp_name] = rack['manageNum']
-    print(rack_list)
-    print(rack_name)
 
-    server_asset_list = Server.objects.select_related('location', 'location__rack_pk').prefetch_related(
-        'ss_server').all()
+    rack_query_list = Rack.objects.all()
+    for rack in rack_query_list:
+        temp = rack.manageNum
+        temp_name = rack.location[-3:]  # ex) C03
+        rack_list[temp] = []
+        rack_name[temp_name] = temp
+    my_prefetch = Prefetch('ss_server',queryset=ServerService.objects.select_related('service'),to_attr="services")
+    # server_asset_list = Server.objects.select_related('location', 'location__rack_pk').all()
+    # server_asset_list = Server.objects.select_related('location', 'location__rack_pk').all().prefetch_related(None)
+    server_asset_list = Server.objects.select_related('location', 'location__rack_pk').prefetch_related(my_prefetch).all()
+
     switch_asset_list = Switch.objects.select_related('location', 'location__rack').all()
     # make server list for rack
     for server in server_asset_list:
@@ -282,19 +288,17 @@ def rack_info(request):
         temp_subDict['manageSpec'] = server.manageSpec
         temp_subDict['ip'] = server.ip
         temp_subDict['size'] = server.size
-        temp_service = ServerService.objects.get(server=server)
-        temp_subDict['serviceName'] = temp_service.service.serviceName
-        temp_subDict['use'] = temp_service.Use
-        temp_subDict['color'] = temp_service.service.color
-
+        if len(server.services) is not 0:
+            temp_serverservice = server.services[0]
+            temp_subDict['use'] = temp_serverservice.Use
+            temp_service = temp_serverservice.service
+            temp_subDict['serviceName'] = temp_service.serviceName
+            temp_subDict['color'] = temp_service.color
         temp_location = server.location
         if temp_location.rack_pk is not None:
             temp_subDict['rack_pk'] = temp_location.rack_pk.manageNum
             temp_subDict['rackLocation'] = temp_location.rackLocation
-        # print(temp_subDict)
-        rack_list[temp_subDict['rack_pk']].append(temp_subDict)
-        # print(rack_list)
-
+            rack_list[temp_subDict['rack_pk']].append(temp_subDict)
     # make server list for rack
     for switch in switch_asset_list:
         temp_subDict = dict()
@@ -304,16 +308,12 @@ def rack_info(request):
         temp_subDict['use'] = switch.serviceOn
         temp_subDict['size'] = switch.size
         temp_subDict['color'] = '255, 204, 255'
-        # temp_subDict['color'] = '#ffe9ff'
 
         temp_location = switch.location
         if temp_location.rack is not None:
             temp_subDict['rack_pk'] = temp_location.rack.manageNum
             temp_subDict['rackLocation'] = temp_location.rackLocation
-        print(temp_subDict)
-        rack_list[temp_subDict['rack_pk']].append(temp_subDict)
-        print(rack_list)
-
+            rack_list[temp_subDict['rack_pk']].append(temp_subDict)
     rack_total = []
     for rack in rack_name:
         temp = dict()
@@ -321,9 +321,6 @@ def rack_info(request):
         temp['list'] = sorted(rack_list[temp['id']], key=lambda k: k['rackLocation'], reverse=True)
         temp['name'] = rack
         rack_total.append(temp)
-
-    print(list(rack_list.keys()))
-    print(rack_total)
     data = []
     for rack in rack_total:
         position = [None] * 42
@@ -331,6 +328,7 @@ def rack_info(request):
             position[inrack["rackLocation"]] = inrack
         data.append({'data': list(reversed(position)), 'rack': rack})
     context = {'rack_list': rack_total, 'data': data}
+    print("--- %s seconds ---" % (time.time() - start_time))
     return render(request, 'dbApp/rack_info.html', context)
 
 
