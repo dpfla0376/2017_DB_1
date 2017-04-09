@@ -271,7 +271,7 @@ def rack_info(request):
     my_prefetch = Prefetch('ss_server',queryset=ServerService.objects.select_related('service'),to_attr="services")
     # server_asset_list = Server.objects.select_related('location', 'location__rack_pk').all()
     # server_asset_list = Server.objects.select_related('location', 'location__rack_pk').all().prefetch_related(None)
-    server_asset_list = Server.objects.select_related('location', 'location__rack_pk').all().prefetch_related(my_prefetch)
+    server_asset_list = Server.objects.select_related('location', 'location__rack_pk').prefetch_related(my_prefetch).all()
     switch_asset_list = Switch.objects.select_related('location', 'location__rack').all()
     # make server list for rack
     for server in server_asset_list:
@@ -321,6 +321,7 @@ def rack_info(request):
             position[inrack["rackLocation"]] = inrack
         data.append({'data': list(reversed(position)), 'rack': rack})
     context = {'rack_list': rack_total, 'data': data}
+    print("--- %s seconds ---" % (time.time() - start_time))
     return render(request, 'dbApp/rack_info.html', context)
 
 
