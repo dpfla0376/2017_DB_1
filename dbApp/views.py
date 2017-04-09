@@ -341,11 +341,14 @@ def add(request, add_type):
             if request.POST.get("switch_button") == "on":
                 add_switches(request, new_asset)
 
+            if request.POST.get("storage_button") == "on":
+                add_storages(request, new_asset)
+
             if request.POST.get("rack_button") == "on":
                 add_racks(request, new_asset)
 
             context = {'messages': '완료되었습니다.'}
-            return render(request, 'dbApp/add_service.html', context)
+            return render(request, 'dbApp/add_asset.html', context)
 
         elif add_type == "service":
 
@@ -366,7 +369,7 @@ def add(request, add_type):
 
 def add_servers(request, new_asset):
     # add servers
-    server_number = request.POST.get("server_number")
+    server_number = int(request.POST.get("server_number"))
     temp_server = Server.objects.filter(manageNum__startswith="S" + str(new_asset.acquisitionDate)[2:4]).order_by(
         '-manageNum').first()
     if temp_server:
@@ -392,13 +395,13 @@ def add_servers(request, new_asset):
 
 def add_switches(request, new_asset):
     # add switches
-    switch_number = request.POST.get("switch_number")
-    temp_switch = Service.objects.filter(manageNum__startswith="N" + str(new_asset.acquisitionDate)[2:4]).order_by(
+    switch_number = int(request.POST.get("switch_number"))
+    temp_switch = Switch.objects.filter(manageNum__startswith="N" + str(new_asset.acquisitionDate)[2:4]).order_by(
         '-manageNum').first()
     if temp_switch:
         this_switch_manage_num = int(temp_switch.manageNum[1:]) + 1
     else:
-        this_switch_manage_num = int(str(datetime.now().year)[2:]) * 1000 + 1
+        this_switch_manage_num = int(str(new_asset.acquisitionDate)[2:4]) * 1000 + 1
     for i in range(0, switch_number):
         new_switch = Switch.objects.create(manageNum="N" + str(this_switch_manage_num),
                                            assetInfo=new_asset,
@@ -410,15 +413,15 @@ def add_switches(request, new_asset):
         this_switch_manage_num += 1
 
         SwitchLocation.objects.create(
-            switch_pk=new_switch,
-            rack_pk=None,
+            switch=new_switch,
+            rack=None,
             rackLocation=None,
-            realLocation=request.POST.get('switch_location'))
+            realLocation=str(request.POST.get('switch_location')))
 
 
 def add_racks(request, new_asset):
     # add racks
-    rack_number = request.POST.get("rack_number")
+    rack_number = int(request.POST.get("rack_number"))
     temp_rack = Rack.objects.filter(manageNum__startswith="R" + str(new_asset.acquisitionDate)[2:4]).order_by(
         '-manageNum').first()
     if temp_rack:
@@ -431,13 +434,13 @@ def add_racks(request, new_asset):
                                        assetInfo=new_asset,
                                        manageSpec=new_asset.assetName,
                                        size=request.POST.get("rack_size"),
-                                       location=request.POST.get("rack_location"))
+                                       location=str(request.POST.get("rack_location")))
         this_rack_manage_num += 1
 
 
 def add_storages(request, new_asset):
     # add storages
-    storage_number = request.POST.get("storage_number")
+    storage_number = int(request.POST.get("storage_number"))
     temp_storage = StorageAsset.objects.filter(
         manageNum__startswith="D" + str(new_asset.acquisitionDate)[2:4]).order_by(
         '-manageNum').first()
@@ -449,7 +452,7 @@ def add_storages(request, new_asset):
     for i in range(0, storage_number):
         new_storage_asset = StorageAsset.objects.create(manageNum="D" + str(this_storage_manage_num),
                                                         assetInfo=new_asset,
-                                                        manageSpec=request.POST.get("manage_speck"),
+                                                        manageSpec=request.POST.get("manage_spec"),
                                                         location=request.POST.get("storage_location"))
         new_storage = Storage.objects.create(storageAsset=new_storage_asset,
                                              enrollDate=new_asset.acquisitionDate,
