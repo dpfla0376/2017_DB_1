@@ -427,6 +427,50 @@ def add_racks(request, new_asset):
                                        location=request.POST.get("rack_location"))
         this_rack_manage_num += 1
 
+def asset_detail(request):
+    searchText = request.GET.get("data")
+    assetList=Asset.objects.filter(Q(assetNum=searchText)|Q(assetName=searchText)|Q(standard=searchText))
+    if assetList.count()== 0:
+        return HttpResponse("찾으시는 제품이 없습니다.")
+    asset=assetList[0]
+    asset_temp_list = Server.objects.filter(assetInfo=asset)
+    #Server.objects.select_related('location', 'assetInfo', 'location__rack_pk').filter(assetInfo=asset)
+    print(asset_temp_list)
+    temp_list = []
+    for server in asset_temp_list:
+        temp_dict = dict()
+        #temp_dict['assetnum'] = server.assetInfo.assetNum
+        temp_dict['managenum'] = server.manageNum
+        temp_dict['managespec'] = server.manageSpec
+        temp_dict['core'] = server.core
+        temp_dict['ip'] = server.ip
+        temp_location = server.location
+        if temp_location.rack_pk is not None:
+            temp_dict['location'] = temp_location.rack_pk.location
+        else:
+            temp_dict['location'] = temp_location.realLocation
+        temp_dict['onoff'] = True
+        temp_list.append(temp_dict)
+    asset_server_list = temp_list
+
+    asset_temp_list = Switch.objects.filter(assetInfo=asset.id)
+    temp_list = []
+    for switch in asset_temp_list:
+        temp_dict = {}
+        #temp_dict['assetNum'] = switch.assetInfo.assetNum
+        temp_dict['manageNum'] = switch.manageNum
+        temp_dict['manageSpec'] = switch.manageSpec
+        temp_dict['ip'] = switch.ip
+        temp_dict['onOff'] = True
+        temp_list.append(temp_dict)
+    asset_switch_list = temp_list
+
+    asset_storage_list = StorageAsset.objects.filter(assetInfo=asset.id)
+    asset_rack_list = Rack.objects.filter(assetInfo=asset.id)
+    context = {'asset_list' : asset, 'asset_server_list' : asset_server_list, 'asset_switch_list' : asset_switch_list,
+               'asset_storage_list' : asset_storage_list, 'asset_rack_list' : asset_rack_list}
+    return render(request, 'dbApp/asset_detail.html', context)
+
 def rack_detail(request):
     searchText = request.GET.get("data")
     rackname = None
@@ -452,14 +496,6 @@ def switch_detail(request):
         return HttpResponse("찾으시는 제품이 없습니다.")
     switch=switchList[0]
     return HttpResponse("스위치 디테일 페이지 이고 스위치 이름은"+switch.manageNum+"입니다.")
-
-def asset_detail(request):
-    searchText = request.GET.get("data")
-    assetList=Asset.objects.filter(Q(assetNum=searchText)|Q(assetName=searchText)|Q(standard=searchText))
-    if assetList.count()== 0:
-        return HttpResponse("찾으시는 제품이 없습니다.")
-    asset=assetList[0]
-    return HttpResponse("에셋 디테일 페이지 이고 자산번호는"+ asset.assetNum+"입니다.")
 
 def search_assets(request):
     searchText = request.GET.get("searchText")
