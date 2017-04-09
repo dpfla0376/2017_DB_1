@@ -1,0 +1,193 @@
+{% extends 'dbApp/navigation_bar.html' %}
+{% load define %}
+{% block head %}
+    <style type="text/css">
+        .tb {
+            text-align: center;
+            float: left;
+            height: 100%;
+            width: 500px;
+        }
+
+        .tb thead tr th {
+            padding: 5px;
+            text-align: center;
+        }
+
+        .tb td {
+            padding: 5px;
+        }
+
+        .table-wrapper {
+            text-align: center;
+            display: inline-block;
+            margin-top: 2%;
+            margin-left: 5%;
+            margin-right: 5%;
+            margin-bottom: 5%;
+            padding-bottom: 5%;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div style="width:100%; height:100%;">
+        {% if rack_list %}
+            {% for rack in data %}
+                <div class="table-wrapper">
+                    <h2>{{ rack.rack.name }} - {{ rack.rack.id }} : {{ rack.rack.location }}</h2>
+                    <table border="1" class="tb">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th>ip</th>
+                            <th>관리번호</th>
+                            <th>관리스펙</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <script language="JavaScript">
+                            <!--
+                            var rackdatalist = JSON.parse('{{ rack.data|js}}');
+                            var count = 0;
+                            var racknum = 42;
+                            var colorr;
+                            for (var i in rackdatalist) {
+                                if (rackdatalist[i] == null) {
+                                    if (count == 0) {
+                                        document.write("<tr>");
+                                        document.write("<td>" + racknum.toString() + "</td>");
+                                        document.write("<td></td>");
+                                        document.write("<td></td>");
+                                        document.write("<td></td>");
+                                        document.write("</tr>");
+                                    }
+                                    else {
+                                        document.write('<tr style="background-color:white; color:black">');
+                                        document.write("<td>");
+                                        document.write(racknum.toString());
+                                        document.write("</td>");
+                                        document.write("</tr>");
+                                        count--;
+                                    }
+                                } else {
+                                    var temp = rackdatalist[i].color;
+                                    temp = temp.split(",");
+                                    console.log(temp);
+                                    console.log(rackdatalist[i].color)
+                                    var sum = 0;
+                                    for (j in temp) {
+                                        sum += Number(temp[j]);
+                                    }
+                                    //sum = Number(sum);
+                                    console.log(sum);
+                                    if (sum > 300) document.write('<tr style="background-color:rgb(' + rackdatalist[i].color + '); color:black">');
+                                    else document.write('<tr style="background-color:rgb(' + rackdatalist[i].color + '); color:white">');
+                                    document.write('<td style="background-color:white; color:black">');
+                                    document.write(racknum.toString());
+                                    document.write("</td>");
+                                    document.write('<td  rowspan="' + rackdatalist[i].size.toString() + '">');
+                                    document.write(rackdatalist[i].ip);
+                                    document.write("</td>");
+                                    document.write('<td  rowspan="' + rackdatalist[i].size.toString() + '">');
+                                    document.write(rackdatalist[i].manageNum);
+                                    document.write("</td>");
+                                    document.write('<td  rowspan="' + rackdatalist[i].size.toString() + '">');
+                                    document.write(rackdatalist[i].manageSpec);
+                                    document.write("</td>");
+                                    count = rackdatalist[i].size - 1;
+                                    colorr = rackdatalist[i].color;
+                                }
+                                racknum--;
+                            }
+                            //-->
+                        </script>
+                        </tbody>
+                    </table>
+                </div>
+            {% endfor %}
+
+            <div id="rack_detail_data" style="float: right; margin-right: 5%">
+                {% for rack in rack_list %}
+                    <script language="JavaScript">
+                        var rackdatalist = JSON.parse('{{ rack.list|js}}');
+                        var count = 0;
+                        for (var i in rackdatalist) {
+                            if (rackdatalist[i].manageNum.match("S")) {
+                                if (count == 0) {
+                                    document.write('<h2 class="page-header">SERVER</h2>');
+                                    document.write('<div class="table-responsive">');
+                                    document.write('<table class="table table-striped" style="display:inline-block; width=500px">');
+                                    document.write('<thead>');
+                                    document.write('<tr>');
+                                    document.write('<th>자산번호</th>');
+                                    document.write('<th>관리번호</th>');
+                                    document.write('<th>관리스펙</th>');
+                                    document.write('<th>코어</th>');
+                                    document.write('<th>IP</th>');
+                                    document.write('<th>ON/OFF</th>');
+                                    document.write('<th>service</th>');
+                                    document.write('</tr>');
+                                    document.write('</thead>');
+                                    document.write('<tbody>');
+                                }
+                                document.write('<tr>');
+                                document.write('<td>' + rackdatalist[i].assetNum + '</td>');
+                                document.write('<td>' + rackdatalist[i].manageNum + '</td>');
+                                document.write('<td>' + rackdatalist[i].manageSpec + '</td>');
+                                document.write('<td>' + rackdatalist[i].core.toString() + '</td>');
+                                document.write('<td>' + rackdatalist[i].ip + '</td>');
+                                if(rackdatalist[i].use == true) { document.write('<td>ON</td>'); }
+                                else { document.write('<td>OFF</td>'); }
+                                document.write('<td>' + rackdatalist[i].serviceName + '</td>');
+                                document.write('</tr>');
+                                count++;
+                            }
+                        }
+                        if (count > 0) {
+                            document.write('</tbody>');
+                            document.write('</table>');
+                            document.write('</div>');
+                            count = 0;
+                        }
+
+
+                        for (var i in rackdatalist) {
+                            if (rackdatalist[i].manageNum.match("N")) {
+                                if (count == 0) {
+                                    document.write('<h2 class="page-header">SWITCH</h2>');
+                                    document.write('<div class="table-responsive">');
+                                    document.write('<table class="table table-striped" style="display:inline-block; width=500px">');
+                                    document.write('<thead>');
+                                    document.write('<tr>');
+                                    document.write('<th>자산번호</th>');
+                                    document.write('<th>관리번호</th>');
+                                    document.write('<th>관리스펙</th>');
+                                    document.write('<th>IP</th>');
+                                    document.write('<th>ON/OFF</th>');
+                                    document.write('</tr>');
+                                    document.write('</thead>');
+                                    document.write('<tbody>');
+                                }
+                                document.write('<tr>');
+                                document.write('<td>' + rackdatalist[i].assetNum + '</td>');
+                                document.write('<td>' + rackdatalist[i].manageNum + '</td>');
+                                document.write('<td>' + rackdatalist[i].manageSpec + '</td>');
+                                document.write('<td>' + rackdatalist[i].ip + '</td>');
+                                if(rackdatalist[i].use == true) { document.write('<td>ON</td>'); }
+                                else { document.write('<td>OFF</td>'); }
+                                document.write('</tr>');
+                                count++;
+                            }
+                        }
+                        if (count > 0) {
+                            document.write('</tbody>');
+                            document.write('</table>');
+                            document.write('</div>');
+                            count = 0;
+                        }
+                    </script>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock content %}

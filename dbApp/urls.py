@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from . import views
+from dbApp import views
 
 urlpatterns = [
     url(r'^$', views.welcome, name='welcome_page'),
@@ -25,7 +25,8 @@ urlpatterns = [
 
     url(r'^resource/$', views.service_resources, name='service_resources'),
     url(r'^resource/storage_detail/$', views.service_detail, name='service_detail'),
-    url(r'^resource/service_detail/$', views.service_detail, name='service_detail'),
+    url(r'^resource/service_detail/(\d+)/$', views.service_detail, name='service_detail'),
+    url(r'^resource/service_detail/$', views.storage_use, name='storage_use'),
     url(r'^api/graph/total/storage/$', views.api_graph_storage_total, name='api_graph_storage_total'),
     url(r'^api/graph/service/$', views.api_graph_service_info, name='api_graph_service_info'),
 
