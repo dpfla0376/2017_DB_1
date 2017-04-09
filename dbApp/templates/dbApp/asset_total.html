@@ -26,7 +26,7 @@
                 <tbody>
                 {% if asset_total_list %}
                     {% for asset in asset_total_list %}
-                        <tr>
+                        <tr id="asset-id-{{asset.assetNum}}">
                             <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a
                                     onclick="td_click_detail_asset(this)">{{ asset.assetNum }}</a></td>
                             <td>{{ asset.acquisitionDate }}</td>

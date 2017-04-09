@@ -594,9 +594,13 @@ def edit_asset(request):
     return HttpResponse("자산번호" + selected + "를 수정하고싶니?")
 
 
-def delete_asset(request):
-    selected = request.GET.get("data")
-    Asset.objects.filter(assetNum=selected).delete()
-    context = {'messages': '완료되었습니다.'}
-    return render(request, 'dbApp/asset.html', context)
+def delete_asset(request, pk):
+    try:
+        assets = Asset.objects.filter(assetNum=pk).all()
+        if assets.count() == 0:
+            raise Asset.DoesNotExist
+    except Asset.DoesNotExist:
+        return HttpResponse("error", 404)
+    assets.delete()
+    return HttpResponse("ok")
 

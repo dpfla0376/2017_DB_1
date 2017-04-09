@@ -26,7 +26,24 @@ function td_click_detail_switch(tdObj) {
 }
 
 function td_click_delete_asset(assetNum) {
-    location.href="/dbApp/asset/delete_asset/?data="+assetNum;
+    function deleteAction() {
+        $.ajax({
+         url: "/dbApp/asset/delete_asset/" + assetNum,
+        success: function(result) {
+            $("#asset-id-"+assetNum).remove();
+        },
+        fail: function(error) {
+            alert("fail");
+        }
+        })
+    }
+    myConfirm("delete?", deleteAction);
+}
+
+function myConfirm(message, callback) {
+    if(confirm(message)){
+        callback();
+    }
 }
 
 function td_click_edit_asset(assetNum) {
