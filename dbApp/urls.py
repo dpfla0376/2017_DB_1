@@ -6,7 +6,7 @@ urlpatterns = [
     url(r'^sign_in/$', views.sign_in, name='sign_in'),
     url(r'^sign_up/$', views.SignUp.as_view(), name='sign_up'),
 
-    url(r'^rack/$', views.rack_info, name='rack_info'),
+    url(r'^rack_total_view/$', views.rack_info, name='rack_info'),
     url(r'^rack/rack_detail/$', views.rack_detail, name='rack_detail'),
 
     url(r'^asset/$', views.asset_total, name='asset_total'),
