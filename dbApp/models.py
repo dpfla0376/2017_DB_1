@@ -75,8 +75,8 @@ class Storage(models.Model):
 
 
 class ServerService(models.Model):
-    server = models.ForeignKey(Server, on_delete=models.CASCADE)
-    service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    server = models.ForeignKey(Server, on_delete=models.CASCADE, related_name = 'ss_server')
+    service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name = 'ss_service')
     alloclDate = models.DateField(auto_now_add=True)
     Use = models.BooleanField(default=1)
 

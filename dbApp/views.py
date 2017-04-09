@@ -270,7 +270,7 @@ def rack_info(request):
     print(rack_list)
     print(rack_name)
 
-    server_asset_list = Server.objects.select_related('location', 'location__rack_pk').all()
+    server_asset_list = Server.objects.select_related('location', 'location__rack_pk').prefetch_related('ss_server').all()
     switch_asset_list = Switch.objects.select_related('location', 'location__rack').all()
     # make server list for rack
     for server in server_asset_list:
