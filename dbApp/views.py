@@ -183,9 +183,9 @@ def server_asset(request):
 
 
 def service_resources(request):#서비스의 리소스를 보여준다.
-    user = getUser(request.session) #여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
-    if user is None:
-        return HttpResponseRedirect('/dbApp/')
+    #user = getUser(request.session) #여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
+    #if user is None:
+    #    return HttpResponseRedirect('/dbApp/')
     service_list = Service.objects.all()
     temp_list = []
     for service in service_list:
@@ -271,7 +271,8 @@ def rack_info(request):
         temp_subDict['ip'] = switch.ip
         temp_subDict['use'] = switch.serviceOn
         temp_subDict['size'] = switch.size
-        temp_subDict['color'] = '255,204,255'
+        temp_subDict['color'] = '255, 204, 255'
+        #temp_subDict['color'] = '#ffe9ff'
 
         temp_location = switch.location
         if temp_location.rack is not None:
@@ -300,8 +301,6 @@ def rack_info(request):
         data.append({'data': list(reversed(position)), 'rack': rack})
     context = {'rack_list': rack_total, 'data': data}
     return render(request, 'dbApp/rack_info.html', context)
-    # return HttpResponse(json.dumps(data))
-
 
 def insert_asset(request):
     asset_total_list = Asset.objects.all()
