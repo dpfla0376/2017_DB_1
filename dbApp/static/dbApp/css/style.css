@@ -56,3 +56,10 @@ By: dave-cheon
 #link-color-black a:visited {text-decoration: none; color: black;}
 #link-color-black a:active {text-decoration: none; color: black;}
 #link-color-black a:hover {text-decoration: underline; color: black;}
+
+table {
+    font-size: 12px;
+}
+.hitachi {
+    width: 100px;
+}

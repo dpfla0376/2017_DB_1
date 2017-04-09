@@ -192,6 +192,7 @@ def server_asset(request):
     return temppp
     # return HttpResponse(temp_list)
 
+
 # rack_asset 에 대한 페이지. Rack list 클릭하면 나옵니다.
 def rack_asset(request):
     rack_asset_list = Rack.objects.all()
@@ -257,6 +258,7 @@ def storage_use(request):
     # context = {'server_service_list': server_service_list, 'storage_service_list' : storage_service_list}
     return render(request, 'dbApp/storage_use.html', {});
 
+
 # 엑셀의 rack_info 페이지. rack_total_view 를 보여줍니다.
 def rack_info(request):
     rack_total = list(Rack.objects.values('manageNum'))
@@ -270,7 +272,8 @@ def rack_info(request):
     print(rack_list)
     print(rack_name)
 
-    server_asset_list = Server.objects.select_related('location', 'location__rack_pk').prefetch_related('ss_server').all()
+    server_asset_list = Server.objects.select_related('location', 'location__rack_pk').prefetch_related(
+        'ss_server').all()
     switch_asset_list = Switch.objects.select_related('location', 'location__rack').all()
     # make server list for rack
     for server in server_asset_list:
@@ -485,18 +488,20 @@ def add_storages(request, new_asset):
 
         this_storage_manage_num += 1
 
-#언제 어디서든 자산번호 클릭하면 나옵니다.
+
+# 언제 어디서든 자산번호 클릭하면 나옵니다.
 def asset_detail(request):
     searchText = request.GET.get("data")
-    assetList=Asset.objects.filter(Q(assetNum=searchText)|Q(assetName=searchText)|Q(standard=searchText))
-    if assetList.count()== 0:
+    assetList = Asset.objects.filter(Q(assetNum=searchText) | Q(assetName=searchText) | Q(standard=searchText))
+    if assetList.count() == 0:
         return HttpResponse("찾으시는 제품이 없습니다.")
-    asset=assetList[0]
-    asset_temp_list = Server.objects.select_related('location', 'assetInfo', 'location__rack_pk').filter(assetInfo=asset)
+    asset = assetList[0]
+    asset_temp_list = Server.objects.select_related('location', 'assetInfo', 'location__rack_pk').filter(
+        assetInfo=asset)
     temp_list = []
     for server in asset_temp_list:
         temp_dict = dict()
-        #temp_dict['assetnum'] = server.assetInfo.assetNum
+        # temp_dict['assetnum'] = server.assetInfo.assetNum
         temp_dict['managenum'] = server.manageNum
         temp_dict['managespec'] = server.manageSpec
         temp_dict['core'] = server.core
@@ -514,7 +519,7 @@ def asset_detail(request):
     temp_list = []
     for switch in asset_temp_list:
         temp_dict = dict()
-        #temp_dict['assetNum'] = switch.assetInfo.assetNum
+        # temp_dict['assetNum'] = switch.assetInfo.assetNum
         temp_dict['manageNum'] = switch.manageNum
         temp_dict['manageSpec'] = switch.manageSpec
         temp_dict['ip'] = switch.ip
@@ -540,9 +545,10 @@ def asset_detail(request):
         temp_dict['location'] = rack.location
         temp_list.append(temp_dict)
     asset_rack_list = temp_list
-    context = {'asset_list' : asset, 'asset_server_list' : asset_server_list, 'asset_switch_list' : asset_switch_list,
-               'asset_storage_list' : asset_storage_list, 'asset_rack_list' : asset_rack_list}
+    context = {'asset_list': asset, 'asset_server_list': asset_server_list, 'asset_switch_list': asset_switch_list,
+               'asset_storage_list': asset_storage_list, 'asset_rack_list': asset_rack_list}
     return render(request, 'dbApp/asset_detail.html', context)
+
 
 #
 def rack_detail(request):
@@ -574,7 +580,7 @@ def switch_detail(request):
     return HttpResponse("스위치 디테일 페이지 이고 스위치 이름은" + switch.manageNum + "입니다.")
 
 
-#def asset_detail(request):
+# def asset_detail(request):
 #    searchText = request.GET.get("data")
 #    assetList = Asset.objects.filter(Q(assetNum=searchText) | Q(assetName=searchText) | Q(standard=searchText))
 #    if assetList.count() == 0:
@@ -604,3 +610,32 @@ def delete_asset(request, pk):
     assets.delete()
     return HttpResponse("ok")
 
+
+def delete_one_asset(request, asset_type, manage_num):
+    print("delete one asset")
+    if asset_type == "server":
+        try:
+            server = Server.objects.filter(manageNum=manage_num)
+            if server.count() == 0:
+                raise Server.DoesNotExist
+        except Server.DoesNotExist:
+            return HttpResponse("error", 404)
+        server.delete()
+    elif asset_type == "switch":
+        try:
+            switch = Switch.objects.filter(manageNum=manage_num)
+            if switch.count() == 0:
+                raise Switch.DoesNotExist
+        except Switch.DoesNotExist:
+            return HttpResponse("error", 404)
+        switch.delete()
+    elif asset_type == "rack":
+        try:
+            rack = Rack.objects.filter(manageNum=manage_num)
+            if Rack.count() == 0:
+                raise Rack.DoesNotExist
+        except Rack.DoesNotExist:
+            return HttpResponse("error", 404)
+        rack.delete()
+
+    return HttpResponse("ok")

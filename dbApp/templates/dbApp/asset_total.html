@@ -9,7 +9,7 @@
                     <th>자산번호</th>
                     <th>취득일</th>
                     <th>자산명</th>
-                    <th>규격</th>
+                    <th class="hitachi">규격</th>
                     <th>취득원가</th>
                     <th>구입처</th>
                     <th>내용연수</th>
@@ -31,7 +31,7 @@
                                     onclick="td_click_detail_asset(this)">{{ asset.assetNum }}</a></td>
                             <td>{{ asset.acquisitionDate }}</td>
                             <td>{{ asset.assetName }}</td>
-                            <td>{{ asset.standard }}</td>
+                            <td class="hitachi">{{ asset.standard }}</td>
                             <td>{{ asset.acquisitionCost }}</td>
                             <td>{{ asset.purchaseLocation }}</td>
                             <td>{{ asset.maintenanceYear }}</td>

@@ -5,23 +5,29 @@
         <div class="table-responsive">
             <table class="table table-striped">
                 <thead>
-                    <tr>
-                        <th>자산번호</th>
-                        <th>관리번호</th>
-                        <th>관리스펙</th>
-                        <th>크기</th>
-                        <th>위치</th>
-                    </tr>
+                <tr>
+                    <th>자산번호</th>
+                    <th>관리번호</th>
+                    <th>관리스펙</th>
+                    <th>크기</th>
+                    <th>위치</th>
+                    <th>수정</th>
+                    <th>삭제</th>
+                </tr>
                 </thead>
                 <tbody>
                 {% if rack_asset_list %}
                     {% for rack in rack_asset_list %}
-                        <tr>
-                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')" ><a  onclick="td_click_detail_asset(this)">{{ rack.assetNum }}</a></td>
-                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a onclick="td_click_detail_server(this)">{{ rack.manageNum }}</a></td>
+                        <tr id="one-asset-id-{{rack.manageNum}}">
+                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a
+                                    onclick="td_click_detail_asset(this)">{{ rack.assetNum }}</a></td>
+                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a
+                                    onclick="td_click_detail_server(this)">{{ rack.manageNum }}</a></td>
                             <td>{{ rack.manageSpec }}</td>
                             <td>{{ rack.size }}</td>
                             <td>{{ rack.location }}</td>
+                            <td>수정</td>
+                            <td><a onclick='td_click_delete_rack("{{ rack.manageNum }}")'>삭제</a></td>
                         </tr>
                     {% endfor %}
                 {% endif %}
