@@ -557,7 +557,78 @@ def rack_detail(request):
         rackname = rack.manageNum
     except:
         return HttpResponse("찾으시는 제품이 없습니다.")
-    return HttpResponse("랙 디테일 페이지 이고 랙 관리번호는 " + rackname + "입니다.")
+
+    rack_list = {}
+    rack_name = {}
+    rack_query_list = Rack.objects.filter(manageNum=rackname)
+    rack_location = ""
+    print(rack_query_list)
+    for rack in rack_query_list:
+        temp = rack.manageNum
+        temp_name = rack.location
+        temp_name = temp_name.split("-")
+        rack_location = temp_name[0]
+        temp_name = temp_name[1]
+        #temp_name = rack.location[-3:]  # ex) C03
+        rack_list[temp] = []
+        rack_name[temp_name] = temp
+
+    my_prefetch = Prefetch('ss_server', queryset=ServerService.objects.select_related('service'), to_attr="services")
+    server_asset_list = Server.objects.select_related('location', 'location__rack_pk').prefetch_related(my_prefetch).filter(location__rack_pk=rack_query_list)
+    switch_asset_list = Switch.objects.select_related('location', 'location__rack').filter(location__rack=rack_query_list)
+    
+    # make server list for rack
+    for server in server_asset_list:
+        temp_subDict = dict()
+        temp_subDict['assetNum'] = server.assetInfo.assetNum
+        temp_subDict['manageNum'] = server.manageNum
+        temp_subDict['manageSpec'] = server.manageSpec
+        temp_subDict['core'] = server.core
+        temp_subDict['ip'] = server.ip
+        temp_subDict['size'] = server.size
+        if len(server.services) is not 0:
+            temp_serverservice = server.services[0]
+            temp_subDict['use'] = temp_serverservice.Use
+            temp_service = temp_serverservice.service
+            temp_subDict['serviceName'] = temp_service.serviceName
+            temp_subDict['color'] = temp_service.color
+        temp_location = server.location
+        if temp_location.rack_pk is not None:
+            temp_subDict['rack_pk'] = temp_location.rack_pk.manageNum
+            temp_subDict['rackLocation'] = temp_location.rackLocation
+            rack_list[temp_subDict['rack_pk']].append(temp_subDict)
+    # make server list for rack
+    for switch in switch_asset_list:
+        temp_subDict = dict()
+        temp_subDict['assetNum'] = server.assetInfo.assetNum
+        temp_subDict['manageNum'] = switch.manageNum
+        temp_subDict['manageSpec'] = switch.manageSpec
+        temp_subDict['ip'] = switch.ip
+        temp_subDict['use'] = switch.serviceOn
+        temp_subDict['size'] = switch.size
+        temp_subDict['color'] = '255, 204, 255'
+
+        temp_location = switch.location
+        if temp_location.rack is not None:
+            temp_subDict['rack_pk'] = temp_location.rack.manageNum
+            temp_subDict['rackLocation'] = temp_location.rackLocation
+            rack_list[temp_subDict['rack_pk']].append(temp_subDict)
+    rack_total = []
+    for rack in rack_name:
+        temp = dict()
+        temp['id'] = rack_name[rack]
+        temp['list'] = sorted(rack_list[temp['id']], key=lambda k: k['rackLocation'], reverse=True)
+        temp['name'] = rack
+        temp['location'] = rack_location
+        rack_total.append(temp)
+    data = []
+    for rack in rack_total:
+        position = [None] * 42
+        for inrack in rack['list']:
+            position[inrack["rackLocation"]] = inrack
+        data.append({'data': list(reversed(position)), 'rack': rack})
+    context = {'rack_list': rack_total, 'data': data}
+    return render(request, 'dbApp/rack_detail.html', context)
 
 
 def server_detail(request):
