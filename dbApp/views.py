@@ -341,7 +341,8 @@ def add(request, add_type):
             if request.POST.get("rack_button") == "on":
                 add_racks(request, new_asset)
 
-            return HttpResponse("ASSET")
+            context = {'messages': '완료되었습니다.'}
+            return render(request, 'dbApp/add_service.html', context)
 
         elif add_type == "service":
 
@@ -351,11 +352,8 @@ def add(request, add_type):
             temp_service = Service.objects.create(serviceName=request.POST.get("service_name"),
                                                   makeDate=request.POST.get("service_make_date"),
                                                   color=request.POST.get("service_color"))
-
-            print("<" + temp_service.serviceName + ">")
-            print("<" + temp_service.makeDate + ">")
-            print("<" + temp_service.color + ">")
-            return HttpResponse("SERVICE")
+            context = {'messages': '완료되었습니다.'}
+            return render(request, 'dbApp/add_service.html', context)
     else:
         if add_type == "asset":
             return render(request, 'dbApp/add_asset.html')
