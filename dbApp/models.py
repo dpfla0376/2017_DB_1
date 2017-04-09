@@ -70,7 +70,7 @@ class Storage(models.Model):
 	diskSpec = models.CharField(max_length=45)
 	allocUnitSize = models.FloatField()
 	Vol = models.FloatField()
-	storageAssetName = models.CharField(max_length=45)
+	storageAssetName = models.CharField(max_length=45, default="")
 
 
 
