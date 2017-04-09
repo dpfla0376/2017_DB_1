@@ -1,6 +1,6 @@
 # README #
 
-This README would normally document whatever steps are necessary to get your application up and running.
+리드미가 요로코롬 되어있지요
 
 ### environment ###
  - python3
