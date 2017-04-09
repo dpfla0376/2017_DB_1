@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from django.db import connection
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.generic import View
 from django.contrib.auth import authenticate
@@ -9,11 +11,10 @@ from django.db import connection
 from django.db.models import Q
 from django.db.models import Prefetch
 from dbApp.models import *
-
-import json, jwt, time
 from datetime import datetime
 
-
+import json, time, jwt
+#import json, jwt, time
 # Create your views here.
 
 # Private Methods
@@ -52,7 +53,7 @@ def api_graph_storage_total(request):
                    'group by sa.storageForm')
     total_sum_list = dictFetchall(cursor)
 
-    return HttpResponse(json.dumps({'total': total_sum_list, 'usage': usage_sum_list}))
+    return HttpResponse(json.dumps({ 'total': total_sum_list, 'usage': usage_sum_list }))
 
 
 def api_graph_service_info(request):
@@ -153,10 +154,10 @@ def asset_total(request):
 
 
 def switch_asset(request):
-    switch_asset_list = Switch.objects.select_related('location', 'assetInfo', 'location__rack').all()
+    switch_asset_list = Switch.objects.all()
     temp_list = []
     for switch in switch_asset_list:
-        temp_dict = dict()
+        temp_dict = {}
         temp_dict['assetNum'] = switch.assetInfo.assetNum
         temp_dict['manageNum'] = switch.manageNum
         temp_dict['manageSpec'] = switch.manageSpec
@@ -229,29 +230,48 @@ def service_resources(request):  # 서비스의 리소스를 보여준다.
     return render(request, 'dbApp/service_resources.html', context)
 
 
-def service_detail(request):
+def service_detail(request,pk):
     cursor = connection.cursor()
-    cursor.execute('SELECT * FROM `dbApp_asset`INNER JOIN `dbApp_server` '
-                   + 'ON dbApp_asset.id = dbApp_server.assetInfo_id')
+    cursor.execute('SELECT * FROM `dbApp_asset`INNER JOIN `dbApp_server` ON dbApp_asset.id = dbApp_server.assetInfo_id ' +
+                   'INNER JOIN `dbApp_serverlocation` ON dbApp_serverlocation.server_pk_id = dbApp_server.id ' +
+                   'INNER JOIN `dbApp_rack` ON dbApp_rack.id = dbApp_serverlocation.rack_pk_id '+
+                   'INNER JOIN dbApp_serverservice ON dbApp_serverservice.server_id = dbApp_server.id ' +
+                   'WHERE dbApp_serverservice.service_id = ' + pk)
     server_list = dictFetchall(cursor)
+    for server in server_list :
+        if server['isInRack'] == 0 :
+            server['location'] = server['realLocation']
+        if server['Use'] :
+            server['Use'] = True
+        else :
+            server['Use'] = False
+
     cursor.execute('SELECT * FROM `dbApp_storage` ' +
-                   'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id ' +
-                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id ' +
-                   'where dbApp_storageasset.storageForm = \'SAN\' ')
+                   'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id '+
+                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id '+
+                   'where dbApp_storageasset.storageForm = \'SAN\' ' +
+                   'and dbApp_storageservice.service_id = ' + pk )
     disk_SAN = dictFetchall(cursor)
     cursor.execute('SELECT * FROM `dbApp_storage` ' +
-                   'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id ' +
-                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id ' +
-                   'where dbApp_storageasset.storageForm = \'NAS\' ')
+                   'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id '+
+                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id '+
+                   'where dbApp_storageasset.storageForm = \'NAS\' ' +
+                   'and dbApp_storageservice.service_id = ' + pk )
     disk_NAS = dictFetchall(cursor)
     cursor.execute('SELECT * FROM `dbApp_storage` ' +
-                   'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id ' +
-                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id ' +
-                   'where dbApp_storageasset.storageForm = \'TAPE\' ')
+                   'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id '+
+                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id '+
+                   'where dbApp_storageasset.storageForm = \'TAPE\' ' +
+                   'and dbApp_storageservice.service_id = ' + pk )
     disk_TAPE = dictFetchall(cursor)
-
-    return render(request, 'dbApp/service_detail.html', {});
-
+    service = pk
+    return render(request, 'dbApp/service_detail.html', {'service': service,
+                                                         'server_asset_list' : server_list,
+                                                         'SAN': disk_SAN,
+                                                         'NAS': disk_NAS,
+                                                         'TAPE': disk_TAPE
+                                                         });
+''
 
 def storage_use(request):
     # server_list = ServerService.objects.all()
@@ -268,6 +288,13 @@ def rack_info(request):
     start_time = time.time()
     rack_list = {}
     rack_name = {}
+    for rack in rack_total:
+        temp = rack['manageNum']    # ex) R11001
+        temp_name = Rack.objects.get(manageNum=temp).location[-3:]  # ex) C03
+        rack_list[rack['manageNum']] = []
+        rack_name[temp_name] = rack['manageNum']
+    print(rack_list)
+    print(rack_name)
 
     rack_query_list = Rack.objects.all()
     for rack in rack_query_list:
@@ -336,6 +363,33 @@ def insert_asset(request):
     asset_total_list = Asset.objects.all()
     context = {'asset_total_list': asset_total_list}
     return render(request, 'dbApp/asset_total.html', context)
+
+def sign_in(request):
+    data = request.POST
+    email = data['email']
+    password = data['password']
+    user = authenticate(username=email, password=password)
+    if user is None:
+        context = {'messages': 'login failed'}
+        return render(request, 'dbApp/welcome_page.html',context)
+    return service_resources(request)
+
+
+def welcome(request):
+    return render(request, 'dbApp/welcome_page.html', {})
+
+
+class SignUp(View):
+    def get(self, request):
+        return render(request, 'dbApp/resistration.html')
+    def post(self, request):
+        data = request.POST
+        name = data['name']
+        password = data['password']
+        email = data['email']
+        user = User.objects.create_user(username = email,email = email,password=password)
+        user.first_name = name
+        return welcome(request)
 
 
 def add(request, add_type):
