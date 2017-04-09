@@ -10,8 +10,9 @@ from django.db.models import Q
 
 from dbApp.models import *
 
-import json,jwt,time
+import json, jwt, time
 from datetime import datetime
+
 
 # Create your views here.
 
@@ -24,15 +25,19 @@ def dictFetchall(cursor):
         for row in cursor.fetchall()
     ]
 
+
 def sub42(value):
     return 42 - value
 
+
 def getUser(session):
-     try:
-         username = session['usertoken']
-         return User.objects.get(username=username)
-     except KeyError:
-         return None
+    try:
+        username = session['usertoken']
+        return User.objects.get(username=username)
+    except KeyError:
+        return None
+
+
 # API
 def api_graph_storage_total(request):
     cursor = connection.cursor()
@@ -47,7 +52,7 @@ def api_graph_storage_total(request):
                    'group by sa.storageForm')
     total_sum_list = dictFetchall(cursor)
 
-    return HttpResponse(json.dumps({ 'total': total_sum_list, 'usage': usage_sum_list }))
+    return HttpResponse(json.dumps({'total': total_sum_list, 'usage': usage_sum_list}))
 
 
 def api_graph_service_info(request):
@@ -87,15 +92,16 @@ def api_graph_service_info(request):
 
 # Logic
 
-class SignUp(View):# 회원가입
+class SignUp(View):  # 회원가입
     def get(self, request):
         return render(request, 'dbApp/resistration.html')
+
     def post(self, request):
         data = request.POST
         name = data['name']
         password = data['password']
         email = data['email']
-        user = User.objects.create_user(username = email,email = email,password=password)
+        user = User.objects.create_user(username=email, email=email, password=password)
         user.first_name = name
         return HttpResponseRedirect('/dbApp/')
 
@@ -107,8 +113,8 @@ def sign_in(request):
     user = authenticate(username=email, password=password)
     if user is None:
         context = {'messages': 'login failed'}
-        return render(request, 'dbApp/welcome_page.html',context)
-    request.session['usertoken']=email
+        return render(request, 'dbApp/welcome_page.html', context)
+    request.session['usertoken'] = email
     return HttpResponseRedirect('/dbApp/resource/')
 
 
@@ -124,7 +130,7 @@ def asset_total(request):
         switch_num = Switch.objects.filter(assetInfo=asset.id).count()
         storage_num = StorageAsset.objects.filter(assetInfo=asset.id).count()
         rack_num = Rack.objects.filter(assetInfo=asset.id).count()
-        temp_dict = {}
+        temp_dict = dict()
         temp_dict['assetNum'] = asset.assetNum
         temp_dict['acquisitionDate'] = asset.acquisitionDate
         temp_dict['assetName'] = asset.assetName
@@ -146,7 +152,7 @@ def switch_asset(request):
     switch_asset_list = Switch.objects.all()
     temp_list = []
     for switch in switch_asset_list:
-        temp_dict = {}
+        temp_dict = dict()
         temp_dict['assetNum'] = switch.assetInfo.assetNum
         temp_dict['manageNum'] = switch.manageNum
         temp_dict['manageSpec'] = switch.manageSpec
@@ -197,9 +203,9 @@ def rack_asset(request):
     return render(request, 'dbApp/rack_asset.html', context)
 
 
-def service_resources(request):#서비스의 리소스를 보여준다.
-    #user = getUser(request.session) #여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
-    #if user is None:
+def service_resources(request):  # 서비스의 리소스를 보여준다.
+    # user = getUser(request.session) #여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
+    # if user is None:
     #    return HttpResponseRedirect('/dbApp/')
     service_list = Service.objects.all()
     temp_list = []
@@ -215,41 +221,43 @@ def service_resources(request):#서비스의 리소스를 보여준다.
 def service_detail(request):
     cursor = connection.cursor()
     cursor.execute('SELECT * FROM `dbApp_asset`INNER JOIN `dbApp_server` '
-    + 'ON dbApp_asset.id = dbApp_server.assetInfo_id')
+                   + 'ON dbApp_asset.id = dbApp_server.assetInfo_id')
     server_list = dictFetchall(cursor)
     cursor.execute('SELECT * FROM `dbApp_storage` ' +
-                   'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id '+
-                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id '+
-                   'where dbApp_storageasset.storageForm = \'SAN\' ' )
+                   'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id ' +
+                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id ' +
+                   'where dbApp_storageasset.storageForm = \'SAN\' ')
     disk_SAN = dictFetchall(cursor)
     cursor.execute('SELECT * FROM `dbApp_storage` ' +
-                   'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id '+
-                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id '+
-                   'where dbApp_storageasset.storageForm = \'NAS\' ' )
+                   'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id ' +
+                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id ' +
+                   'where dbApp_storageasset.storageForm = \'NAS\' ')
     disk_NAS = dictFetchall(cursor)
     cursor.execute('SELECT * FROM `dbApp_storage` ' +
-                   'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id '+
-                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id '+
-                   'where dbApp_storageasset.storageForm = \'TAPE\' ' )
+                   'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id ' +
+                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id ' +
+                   'where dbApp_storageasset.storageForm = \'TAPE\' ')
     disk_TAPE = dictFetchall(cursor)
 
     return render(request, 'dbApp/service_detail.html', {});
 
+
 def storage_use(request):
-    #server_list = ServerService.objects.all()
-    #storage_list = StorageService.objects.all()
-    #data = json.loads(request.POST.get('data'))
-    #server_service_list = ServerService.objects.get(service=data[???])
-    #storage_service_list = StorageService.objects.get(service=data[???])
-    #context = {'server_service_list': server_service_list, 'storage_service_list' : storage_service_list}
+    # server_list = ServerService.objects.all()
+    # storage_list = StorageService.objects.all()
+    # data = json.loads(request.POST.get('data'))
+    # server_service_list = ServerService.objects.get(service=data[???])
+    # storage_service_list = StorageService.objects.get(service=data[???])
+    # context = {'server_service_list': server_service_list, 'storage_service_list' : storage_service_list}
     return render(request, 'dbApp/storage_use.html', {});
+
 
 def rack_info(request):
     rack_total = list(Rack.objects.values('manageNum'))
     rack_list = {}
     rack_name = {}
     for rack in rack_total:
-        temp = rack['manageNum']    # ex) R11001
+        temp = rack['manageNum']  # ex) R11001
         temp_name = Rack.objects.get(manageNum=temp).location[-3:]  # ex) C03
         rack_list[rack['manageNum']] = []
         rack_name[temp_name] = rack['manageNum']
@@ -274,9 +282,9 @@ def rack_info(request):
         if temp_location.rack_pk is not None:
             temp_subDict['rack_pk'] = temp_location.rack_pk.manageNum
             temp_subDict['rackLocation'] = temp_location.rackLocation
-        #print(temp_subDict)
+        # print(temp_subDict)
         rack_list[temp_subDict['rack_pk']].append(temp_subDict)
-        #print(rack_list)
+        # print(rack_list)
 
     # make server list for rack
     for switch in switch_asset_list:
@@ -287,7 +295,7 @@ def rack_info(request):
         temp_subDict['use'] = switch.serviceOn
         temp_subDict['size'] = switch.size
         temp_subDict['color'] = '255, 204, 255'
-        #temp_subDict['color'] = '#ffe9ff'
+        # temp_subDict['color'] = '#ffe9ff'
 
         temp_location = switch.location
         if temp_location.rack is not None:
@@ -299,12 +307,11 @@ def rack_info(request):
 
     rack_total = []
     for rack in rack_name:
-        temp = {}
+        temp = dict()
         temp['id'] = rack_name[rack]
         temp['list'] = sorted(rack_list[temp['id']], key=lambda k: k['rackLocation'], reverse=True)
         temp['name'] = rack
         rack_total.append(temp)
-
 
     print(list(rack_list.keys()))
     print(rack_total)
@@ -317,10 +324,12 @@ def rack_info(request):
     context = {'rack_list': rack_total, 'data': data}
     return render(request, 'dbApp/rack_info.html', context)
 
+
 def insert_asset(request):
     asset_total_list = Asset.objects.all()
     context = {'asset_total_list': asset_total_list}
     return render(request, 'dbApp/asset_total.html', context)
+
 
 def add(request, add_type):
     if request.method == "POST":
@@ -332,7 +341,7 @@ def add(request, add_type):
             if temp_asset:
                 this_asset_num = str(int(temp_asset.assetNum) + 1)
             else:
-                this_asset_num = int(str(request.POST.get("acquisition_date"))[0:4])*1000000+1
+                this_asset_num = int(str(request.POST.get("acquisition_date"))[0:4]) * 1000000 + 1
 
             new_asset = Asset.objects.create(assetNum=this_asset_num,
                                              acquisitionDate=request.POST.get("acquisition_date"),
@@ -347,10 +356,14 @@ def add(request, add_type):
             if request.POST.get("switch_button") == "on":
                 add_switches(request, new_asset)
 
+            if request.POST.get("storage_button") == "on":
+                add_storages(request, new_asset)
+
             if request.POST.get("rack_button") == "on":
                 add_racks(request, new_asset)
 
-            return HttpResponse("ASSET")
+            context = {'messages': '완료되었습니다.'}
+            return render(request, 'dbApp/add_asset.html', context)
 
         elif add_type == "service":
 
@@ -360,11 +373,8 @@ def add(request, add_type):
             temp_service = Service.objects.create(serviceName=request.POST.get("service_name"),
                                                   makeDate=request.POST.get("service_make_date"),
                                                   color=request.POST.get("service_color"))
-
-            print("<" + temp_service.serviceName + ">")
-            print("<" + temp_service.makeDate + ">")
-            print("<" + temp_service.color + ">")
-            return HttpResponse("SERVICE")
+            context = {'messages': '완료되었습니다.'}
+            return render(request, 'dbApp/add_service.html', context)
     else:
         if add_type == "asset":
             return render(request, 'dbApp/add_asset.html')
@@ -374,15 +384,15 @@ def add(request, add_type):
 
 def add_servers(request, new_asset):
     # add servers
-    server_number = request.POST.get("server_number")
+    server_number = int(request.POST.get("server_number"))
     temp_server = Server.objects.filter(manageNum__startswith="S" + str(new_asset.acquisitionDate)[2:4]).order_by(
         '-manageNum').first()
     if temp_server:
         this_server_manage_num = int(temp_server.manageNum[1:]) + 1
     else:
-        this_server_manage_num = int(str(new_asset.acquisitionDate)[2:4])*1000+1
+        this_server_manage_num = int(str(new_asset.acquisitionDate)[2:4]) * 1000 + 1
     for i in range(0, int(server_number)):
-        new_server = Server.objects.create(manageNum="S"+str(this_server_manage_num),
+        new_server = Server.objects.create(manageNum="S" + str(this_server_manage_num),
                                            assetInfo=new_asset,
                                            manageSpec=new_asset.assetName,
                                            isInRack=False,
@@ -400,15 +410,15 @@ def add_servers(request, new_asset):
 
 def add_switches(request, new_asset):
     # add switches
-    switch_number = request.POST.get("switch_number")
-    temp_switch = Service.objects.filter(manageNum__startswith="N" + str(new_asset.acquisitionDate)[2:4]).order_by(
+    switch_number = int(request.POST.get("switch_number"))
+    temp_switch = Switch.objects.filter(manageNum__startswith="N" + str(new_asset.acquisitionDate)[2:4]).order_by(
         '-manageNum').first()
     if temp_switch:
         this_switch_manage_num = int(temp_switch.manageNum[1:]) + 1
     else:
-        this_switch_manage_num = int(str(datetime.now().year)[2:]) * 1000 + 1
+        this_switch_manage_num = int(str(new_asset.acquisitionDate)[2:4]) * 1000 + 1
     for i in range(0, switch_number):
-        new_switch = Switch.objects.create(manageNum="N"+str(this_switch_manage_num),
+        new_switch = Switch.objects.create(manageNum="N" + str(this_switch_manage_num),
                                            assetInfo=new_asset,
                                            manageSpec=new_asset.assetName,
                                            isInRack=False,
@@ -418,15 +428,15 @@ def add_switches(request, new_asset):
         this_switch_manage_num += 1
 
         SwitchLocation.objects.create(
-            switch_pk=new_switch,
-            rack_pk=None,
+            switch=new_switch,
+            rack=None,
             rackLocation=None,
-            realLocation=request.POST.get('switch_location'))
+            realLocation=str(request.POST.get('switch_location')))
 
 
 def add_racks(request, new_asset):
     # add racks
-    rack_number = request.POST.get("rack_number")
+    rack_number = int(request.POST.get("rack_number"))
     temp_rack = Rack.objects.filter(manageNum__startswith="R" + str(new_asset.acquisitionDate)[2:4]).order_by(
         '-manageNum').first()
     if temp_rack:
@@ -435,12 +445,39 @@ def add_racks(request, new_asset):
         this_rack_manage_num = int(str(new_asset.acquisitionDate)[2:4]) * 1000 + 1
 
     for i in range(0, rack_number):
-        new_rack = Rack.objects.create(manageNum="R"+str(this_rack_manage_num),
+        new_rack = Rack.objects.create(manageNum="R" + str(this_rack_manage_num),
                                        assetInfo=new_asset,
                                        manageSpec=new_asset.assetName,
                                        size=request.POST.get("rack_size"),
-                                       location=request.POST.get("rack_location"))
+                                       location=str(request.POST.get("rack_location")))
         this_rack_manage_num += 1
+
+
+def add_storages(request, new_asset):
+    # add storages
+    storage_number = int(request.POST.get("storage_number"))
+    temp_storage = StorageAsset.objects.filter(
+        manageNum__startswith="D" + str(new_asset.acquisitionDate)[2:4]).order_by(
+        '-manageNum').first()
+    if temp_storage:
+        this_storage_manage_num = int(temp_storage.manageNum[1:]) + 1
+    else:
+        this_storage_manage_num = int(str(new_asset.acquisitionDate)[2:4]) * 1000 + 1
+
+    for i in range(0, storage_number):
+        new_storage_asset = StorageAsset.objects.create(manageNum="D" + str(this_storage_manage_num),
+                                                        assetInfo=new_asset,
+                                                        manageSpec=request.POST.get("manage_spec"),
+                                                        location=request.POST.get("storage_location"))
+        new_storage = Storage.objects.create(storageAsset=new_storage_asset,
+                                             enrollDate=new_asset.acquisitionDate,
+                                             diskSpec=request.POST.get("disk_spec"),
+                                             allocUnitSize=request.POST.get("alloc_size"),
+                                             Vol=request.POST.get("disk_vol"),
+                                             storageAssetName="속해있는 장치 명으로 수정하세요")
+
+        this_storage_manage_num += 1
+
 
 def asset_detail(request):
     searchText = request.GET.get("data")
@@ -489,27 +526,38 @@ def rack_detail(request):
     searchText = request.GET.get("data")
     rackname = None
     try:
-        rack = Rack.objects.filter(Q(manageNum=searchText)|Q(manageSpec=searchText)|Q(location=searchText))[0]
+        rack = Rack.objects.filter(Q(manageNum=searchText) | Q(manageSpec=searchText) | Q(location=searchText))[0]
         rackname = rack.manageNum
     except:
         return HttpResponse("찾으시는 제품이 없습니다.")
-    return HttpResponse("랙 디테일 페이지 이고 랙 관리번호는 "+rackname+"입니다.")
+    return HttpResponse("랙 디테일 페이지 이고 랙 관리번호는 " + rackname + "입니다.")
+
 
 def server_detail(request):
     searchText = request.GET.get("data")
-    serverList=Server.objects.filter(Q(manageNum=searchText)|Q(manageSpec=searchText)|Q(ip=searchText))
-    if serverList.count()== 0:
+    serverList = Server.objects.filter(Q(manageNum=searchText) | Q(manageSpec=searchText) | Q(ip=searchText))
+    if serverList.count() == 0:
         return HttpResponse("찾으시는 제품이 없습니다.")
-    server=serverList[0]
-    return HttpResponse("서버 디테일 페이지 이고 서버 관리번호는"+server.manageNum+"입니다.")
+    server = serverList[0]
+    return HttpResponse("서버 디테일 페이지 이고 서버 관리번호는" + server.manageNum + "입니다.")
+
 
 def switch_detail(request):
     searchText = request.GET.get("data")
-    switchList=Asset.objects.filter(Q(manageNum=searchText)|Q(manageSpec=searchText)|Q(ip=searchText))
-    if switchList.count()== 0:
+    switchList = Asset.objects.filter(Q(manageNum=searchText) | Q(manageSpec=searchText) | Q(ip=searchText))
+    if switchList.count() == 0:
         return HttpResponse("찾으시는 제품이 없습니다.")
-    switch=switchList[0]
-    return HttpResponse("스위치 디테일 페이지 이고 스위치 이름은"+switch.manageNum+"입니다.")
+    switch = switchList[0]
+    return HttpResponse("스위치 디테일 페이지 이고 스위치 이름은" + switch.manageNum + "입니다.")
+
+
+def asset_detail(request):
+    searchText = request.GET.get("data")
+    assetList = Asset.objects.filter(Q(assetNum=searchText) | Q(assetName=searchText) | Q(standard=searchText))
+    if assetList.count() == 0:
+        return HttpResponse("찾으시는 제품이 없습니다.")
+    asset = assetList[0]
+    return HttpResponse("에셋 디테일 페이지 이고 자산번호는" + asset.assetNum + "입니다.")
 
 def search_assets(request):
     searchText = request.GET.get("searchText")
