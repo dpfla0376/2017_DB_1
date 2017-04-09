@@ -111,7 +111,7 @@
         });
         var $summaryNumber = $('<p class="' + settings.summaryNumberClass + '"></p>').appendTo($summary).css({opacity: 0});
         $summaryNumber.on('click', function () {
-            window.location = "./service_detail";
+           console.log(this);
         });
 
         for (var i = 0, len = data.length; i < len; i++) {
@@ -265,7 +265,7 @@
 function drawChart1() {
     console.log("load");
     $.ajax({
-        url: '../api/graph/total/storage/'
+        url: '/dbApp/api/graph/total/storage/'
     }).done(function (response) {
         var jsonData = JSON.parse(response);
 
@@ -303,7 +303,7 @@ function drawChart1() {
 function drawChart2() {
 
     $.ajax({
-        url: '../api/graph/service/'
+        url: '/dbApp/api/graph/service/'
     }).done(function (response) {
         var jsonData = JSON.parse(response);
 
@@ -395,7 +395,9 @@ function drawChart2() {
 $(document).ready(function () {
     google.charts.load('current', {'packages': ['bar']});
     google.charts.setOnLoadCallback(drawChart2);
-    console.log('ready');
+    $('.service-chart').click(function(){
+        window.location = './service_detail/' + $(this).attr('service');
+    });
 });
 
 

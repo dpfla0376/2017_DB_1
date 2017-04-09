@@ -1,5 +1,172 @@
 {% extends 'dbApp/navigation_bar.html' %}
+{% load staticfiles %}
 
 {% block content %}
+    <script>
+        $(document).ready(function () {
+            $(".btn-circle").click(function () {
+                $(".detail_info").hide();
+                var type = $(this).attr("target");
+                $("#" + type).show(1234);
+            });
+        });
+    </script>
+
+    <div class="row">
+        <div class="col-md-12"></div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div id="service_graph1_{{ service }}" class="chart"></div>
+        </div>
+        <div class="col-md-6">
+            <div id="service_graph2_{{ service }}" class="chart"></div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <kk></kk>
+    </div>
+    <div class="container">
+        <h2 class="page-header">서비스 정보</h2>
+        <div class="center-block add-buttons-container">
+            <p class="form-button btn btn-circle btn-danger selected" target="server_info">SERVER</p>
+            <p class="form-button btn btn-circle btn-warning selected" target="disk_info">DISE_TOTAL</p>
+            <p class="form-button btn btn-circle btn-primary selected" target="tape_info">TAPE</p>
+        </div>
+        <div class="container detail_info"  id="server_info">
+            <h2 class="sub-header">서버</h2>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>자산번호</th>
+                    <th>관리번호</th>
+                    <th>관리스펙</th>
+                    <th>취득일</th>
+                    <th>현재 위치</th>
+                    <th>Core</th>
+                    <th>IP</th>
+                    <th>자산명</th>
+                    <th>규격</th>
+                    <th>ON/OFF</th>
+                    <th>내용연수</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if server_asset_list %}
+                    {% for server in server_asset_list %}
+                        <tr>
+                            <td>{{ server.assetNum }}</td>
+                            <td>{{ server.manageNum }}</td>
+                            <td>{{ server.manageSpec }}</td>
+                            <td>{{ server.acquisitionDate }}</td>
+                            <td>{{ server.location }}</td>
+                            <td>{{ server.core }}</td>
+                            <td>{{ server.ip }}</td>
+                            <td> {{ server.assetName }} </td>
+                            <td> {{ server.standard }} </td>
+                            <td>{{ server.Use }}</td>
+                            <td>{{ server.maintenanceYear}}</td>
+                        </tr>
+                    {% endfor %} {% endif %}
+                </tbody>
+            </table>
+        </div>
+        <div class="container detail_info" style="display: none" id="disk_info">
+            <h2 class="sub-header">SAN</h2>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>제품명</th>
+                    <th>등록일자</th>
+                    <th>디스크 사양</th>
+                    <th>할당단위크기</th>
+                    <th>Vol(TB)</th>
+                    <th>할당량(TB)</th>
+                    <th>용도</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if SAN %}
+                    {% for storage in SAN %}
+                        <tr>
+                            <td>{{ storage.manageSpec }}</td>
+                            <td>{{ storage.enrollDate }}</td>
+                            <td>{{ storage.diskSpec }}</td>
+                            <td>{{ storage.allocUnitSize }}</td>
+                            <td>{{ storage.Vol }}</td>
+                            <td>{{ storage.allocSize }}</td>
+                            <td>{{ storage.usage }}</td>
+                            </td>
+                        </tr>
+                    {% endfor %} {% endif %}
+                </tbody>
+            </table>
+            <h2 class="sub-header">NAS</h2>
+
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>제품명</th>
+                    <th>등록일자</th>
+                    <th>디스크 사양</th>
+                    <th>할당단위크기</th>
+                    <th>Vol(TB)</th>
+                    <th>할당량(TB)</th>
+                    <th>용도</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if NAS %}
+                    {% for storage in NAS %}
+                        <tr>
+                            <td>{{ storage.manageSpec }}</td>
+                            <td>{{ storage.enrollDate }}</td>
+                            <td>{{ storage.diskSpec }}</td>
+                            <td>{{ storage.allocUnitSize }}</td>
+                            <td>{{ storage.Vol }}</td>
+                            <td>{{ storage.allocSize }}</td>
+                            <td>{{ storage.usage }}</td>
+                            </td>
+                        </tr>
+                    {% endfor %} {% endif %}
+                </tbody>
+            </table>
+
+        </div>
+        <div class="container detail_info" style="display: none" id="tape_info">
+            <h2 class="sub-header">TAPE</h2>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>제품명</th>
+                    <th>등록일자</th>
+                    <th>디스크 사양</th>
+                    <th>할당단위크기</th>
+                    <th>Vol(TB)</th>
+                    <th>할당량(TB)</th>
+                    <th>용도</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if TAPE %}
+                    {% for storage in TAPE %}
+                        <tr>
+                            <td>{{ storage.manageSpec }}</td>
+                            <td>{{ storage.enrollDate }}</td>
+                            <td>{{ storage.diskSpec }}</td>
+                            <td>{{ storage.allocUnitSize }}</td>
+                            <td>{{ storage.Vol }}</td>
+                            <td>{{ storage.allocSize }}</td>
+                            <td>{{ storage.usage }}</td>
+                            </td>
+                        </tr>
+                    {% endfor %} {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
 {% endblock content %}
