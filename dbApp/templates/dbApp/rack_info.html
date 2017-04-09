@@ -7,7 +7,7 @@
                 float: left;
                 margin: 5px;
                 height:100%;
-                width: 500px;
+                width: 400px;
             }
             .tb thead tr th { padding: 5px; text-align: center; }
             .tb td { padding: 5px; }
@@ -22,7 +22,8 @@
         {% if rack_list %}
             {% for rack in data %}
                 <div class="table-wrapper">
-                <h2>{{ rack.rack.name }} - {{ rack.rack.id }}</h2>
+                    <h2 >{{ rack.rack.name }} - <a onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"
+                                    onclick="td_click_detail_rack(this)">{{ rack.rack.id }}</a></h2>
                 <table border="1" class="tb">
                     <thead>
                     <tr>
