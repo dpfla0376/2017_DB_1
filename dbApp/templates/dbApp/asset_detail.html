@@ -3,7 +3,7 @@
     <div class="container">
         <h1 class="page-header">자산번호 [ {{ asset_list.assetNum }} ] 의 상세 페이지입니다.</h1>
         {% if asset_server_list %}
-            <h2 class="page-header">Server</h2>
+            <h2 style="padding-bottom: 5px; margin: 40px 0 5px;">Server</h2>
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
@@ -17,7 +17,6 @@
                     </tr>
                     </thead>
                     <tbody>
-
                     {% for server in asset_server_list %}
                         <tr>
                             <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a
@@ -30,16 +29,69 @@
                             <td>{{ server.onoff }}</td>
                         </tr>
                     {% endfor %}
-
                     </tbody>
                 </table>
             </div>
         {% endif %}
-        <h2 class="page-header">Switch</h2>
+        {% if asset_switch_list %}
+            <h2 style="padding-bottom: 5px; margin: 40px 0 5px;">Switch</h2>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>관리번호</th>
+                        <th>관리스펙</th>
+                        <th>위치</th>
+                        <th>IP</th>
+                        <th>ON/OFF</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for switch in asset_switch_list %}
+                        <tr>
+                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a
+                                    onclick="td_click_detail_switch(this)">{{ switch.manageNum }}</a></td>
+                            <td>{{ switch.manageSpec }}</td>
+                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a
+                                    onclick="td_click_detail_rack(this)">{{ switch.location }}</a></td>
+                            <td>{{ switch.ip }}</td>
+                            <td>{{ switch.onoff }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
 
-        <h2 class="page-header">Storage</h2>
+        <h2 style="padding-bottom: 5px; margin: 40px 0 5px;">Storage</h2>
 
-        <h2 class="page-header">Rack</h2>
+        {% if asset_rack_list %}
+            <h2 style="padding-bottom: 5px; margin: 40px 0 5px;">Rack</h2>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>관리번호</th>
+                        <th>관리스펙</th>
+                        <th>크기</th>
+                        <th>위치</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for rack in asset_rack_list %}
+                        <tr>
+                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a
+                                    onclick="td_click_detail_rack(this)">{{ rack.manageNum }}</a></td>
+                            <td>{{ rack.manageSpec }}</td>
+                            <td>{{ rack.size }}</td>
+                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a
+                                    onclick="td_click_detail_rack(this)">{{ rack.location }}</a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
 
     </div>
 
