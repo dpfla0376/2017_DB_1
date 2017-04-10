@@ -289,11 +289,13 @@ def rack_info(request):
     start_time = time.time()
     rack_list = {}
     rack_name = {}
-    for rack in rack_total:
-        temp = rack['manageNum']    # ex) R11001
-        temp_name = Rack.objects.get(manageNum=temp).location[-3:]  # ex) C03
-        rack_list[rack['manageNum']] = []
-        rack_name[temp_name] = rack['manageNum']
+
+    rack_query_list = Rack.objects.all()
+    for rack in rack_query_list:
+        temp = rack.manageNum
+        temp_name = rack.location[-3:]  # ex) C03
+        rack_list[temp] = []
+        rack_name[temp_name] = temp
     print(rack_list)
     print(rack_name)
 
