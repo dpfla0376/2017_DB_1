@@ -107,7 +107,7 @@
         var $summaryTitle = $('<p class="' + settings.summaryTitleClass + '">' + settings.summaryTitle + '</p>').appendTo($summary);
         var $summaryNumber = $('<p class="' + settings.summaryNumberClass + '"></p>').appendTo($summary).css({opacity: 0});
         $summaryTitle.on('click', function () {
-            window.location = "./storage_detail";
+            window.location = "./detail";
         });
         var $summaryNumber = $('<p class="' + settings.summaryNumberClass + '"></p>').appendTo($summary).css({opacity: 0});
         $summaryNumber.on('click', function () {
@@ -398,7 +398,7 @@ $(document).ready(function () {
     google.charts.setOnLoadCallback(drawChart1);
     google.charts.setOnLoadCallback(drawChart2);
     $('.service-chart').click(function(){
-        window.location = './service_detail/' + $(this).attr('service');
+        window.location = './service/' + $(this).attr('service');
     });
 });
 

@@ -24,8 +24,8 @@ urlpatterns = [
     url(r'^switch/detail/$', views.switch_detail, name='switch_detail'),
 
     url(r'^storage$', views.storage_asset, name='storage_asset'),
-    url(r'^storage/storage_detail$', views.storage_detail, name='storage_detail'),
-    url(r'^storage/storage_service$', views.service_storage, name='service_storage'),
+    url(r'^storage/total$', views.storage_total, name='storage_total'),
+    url(r'^storage/service$', views.service_storage, name='service_storage'),
 
     url(r'^resource/$', views.service_resources, name='service_resources'),
     url(r'^resource/storage/$', views.service_detail, name='service_detail'),

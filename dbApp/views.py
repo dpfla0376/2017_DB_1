@@ -257,7 +257,7 @@ def storage_asset(request):
     return render(request, 'dbApp/storage_asset.html', {'storage_list': storage_list});
 
 
-def storage_detail(request):
+def storage_total(request):
     cursor = connection.cursor()
     cursor.execute('SELECT * FROM `dbApp_asset` ' +
                    'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.assetInfo_id = dbApp_asset.id ' +
@@ -265,7 +265,7 @@ def storage_detail(request):
                    'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id ' +
                    'INNER JOIN  `dbApp_service` ON dbApp_service.id = dbApp_storageservice.service_id')
     storage_list = dictFetchall(cursor)
-    return render(request, 'dbApp/storage_detail.html', {'storage_list': storage_list});
+    return render(request, 'dbApp/storage_total.html', {'storage_list': storage_list});
 
 
 def service_storage(request):
@@ -753,7 +753,7 @@ def server_detail(request):
 
 def switch_detail(request):
     searchText = request.GET.get("data")
-    switchList = Asset.objects.filter(Q(manageNum=searchText) | Q(manageSpec=searchText) | Q(ip=searchText))
+    switchList = Switch.objects.filter(Q(manageNum=searchText) | Q(manageSpec=searchText) | Q(ip=searchText))
     if switchList.count() == 0:
         return HttpResponse("찾으시는 제품이 없습니다.")
     switch = switchList[0]

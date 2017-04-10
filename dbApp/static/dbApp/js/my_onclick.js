@@ -27,7 +27,7 @@ function td_click_detail_switch(tdObj) {
 
 function td_click_delete_asset(assetNum) {
     myConfirm("delete?", function () {
-        deleteRequest("/dbApp/asset/asset/", assetNum, "asset-id-");
+        deleteRequest("/dbApp/asset/delete/", assetNum, "asset-id-");
     });
 }
 
@@ -74,5 +74,5 @@ function myConfirm(message, callback) {
 }
 
 function td_click_edit_asset(assetNum) {
-    location.href = "/dbApp/asset/edit_asset/?data=" + assetNum;
+    location.href = "/dbApp/asset/edit/?data=" + assetNum;
 }
