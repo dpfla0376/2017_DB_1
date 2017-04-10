@@ -263,7 +263,7 @@
 })(jQuery);
 
 function drawChart1() {
-    console.log("load");
+    console.log("load1");
     $.ajax({
         url: '/dbApp/api/graph/total/storage/'
     }).done(function (response) {
@@ -301,7 +301,7 @@ function drawChart1() {
     });
 }
 function drawChart2() {
-
+    console.log("load2");
     $.ajax({
         url: '/dbApp/api/graph/service/'
     }).done(function (response) {
@@ -321,7 +321,9 @@ function drawChart2() {
                 });
 
                 var doughnutChart = $("#service_graph1_" + service.id.toString());
-                doughnutChart.drawDoughnutChart([
+                console.log(doughnutChart);
+                if(doughnutChart.length > 0) {
+                    doughnutChart.drawDoughnutChart([
                     {
                         title: 'Used',
                         value: usedData,
@@ -333,6 +335,8 @@ function drawChart2() {
                         color: '#6DBCDB'
                     }
                 ]);
+                }
+
             })();
 
             (function ServiceGraph2() {
@@ -386,8 +390,13 @@ function drawChart2() {
                     },
                     bars: 'horizontal' // Required for Material Bar Charts.
                 };
-                var chart = new google.charts.Bar(document.getElementById("service_graph2_" + service.id.toString()));
-                chart.draw(charData, options);
+                //var chart = new google.charts.Bar(document.getElementById("service_graph2_" + service.id.toString()));
+                //chart.draw(charData, options);
+                var chart = document.getElementById("service_graph2_" + service.id.toString());
+                if (chart != null) {
+                    var googleChart = new google.charts.Bar(chart);
+                    googleChart.draw(charData, options);
+                }
             })();
         });
     });
