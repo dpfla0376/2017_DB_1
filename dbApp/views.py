@@ -463,7 +463,7 @@ def add_servers(request, new_asset):
                                            isInRack=False,
                                            size=request.POST.get("server_size"),
                                            core=request.POST.get("server_core_num"),
-                                           ip="127.0.0.1")
+                                           ip=None)
         this_server_manage_num += 1
 
         ServerLocation.objects.create(
@@ -489,7 +489,7 @@ def add_switches(request, new_asset):
                                            isInRack=False,
                                            size=request.POST.get("switch_size"),
                                            serviceOn=False,
-                                           ip="127.0.0.1")
+                                           ip=None)
         this_switch_manage_num += 1
 
         SwitchLocation.objects.create(
