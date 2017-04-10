@@ -1,0 +1,40 @@
+{% extends 'dbApp/navigation_bar.html' %}
+{% block content %}
+    <div class="container">
+        <h2 class="page-header">Storage</h2>
+        <div class="table-responsive">
+            {% if service_list %}
+                {% for service in service_list %}
+                    <h2 class="page-header">{% service.serviceName %}</h2>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>제품명</th>
+                            <th>등록일자</th>
+                            <th>디스크 사양</th>
+                            <th>할당단위크기</th>
+                            <th>Vol(TB)</th>
+                            <th>할당량(TB)</th>
+                            <th>용도</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for storage in storage_list %}
+                            {% if storage_list.service_id == service.id %}
+                                <tr>
+                                    <td>{{ storage.storageAssetName }}</td>
+                                    <td>{{ storage.enrollDate }}</td>
+                                    <td>{{ storage.diskSpec }}</td>
+                                    <td>{{ storage.allocUnitSize }}</td>
+                                    <td>{{ storage.Vol }}</td>
+                                    <td>{{ storage.allocSize }}</td>
+                                    <td>{{ storage.usage }}</td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% endfor %} {% endif %}
+        </div>
+    </div>
+{% endblock content %}
