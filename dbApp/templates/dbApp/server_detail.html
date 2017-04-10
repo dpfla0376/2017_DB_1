@@ -1,0 +1,40 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal"><span>&times;</span><span class="sr-only">close modal</span></button>
+    <h4 class="modal-title">관리번호 [ {{ server_list.0.manageNum }} ] 의 상세 페이지</h4>
+</div>
+<div class="modal-body">
+    {% if server_list %}
+        <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>자산번호</th>
+            <th>관리번호</th>
+            <th>관리스펙</th>
+            <th>위치</th>
+            <th>코어</th>
+            <th>IP</th>
+            <th>ON/OFF</th>
+            <th>Service</th>
+            <th>수정</th>
+            <th>삭제</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for server in server_list %}
+            <tr>
+                <td>{{ server.assetNum }}</td>
+                <td>{{ server.manageNum }}</td>
+                <td>{{ server.manageSpec }}</td>
+                <td>{{ server.location }}</td>
+                <td>{{ server.core }}</td>
+                <td>{{ server.ip }}</td>
+                <td>{{ server.use }}</td>
+                <td>{{ server.serviceName }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+    {% else %}
+        <p>No Data..!!!</p>
+    {% endif %}
+</div>

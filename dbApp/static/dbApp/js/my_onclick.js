@@ -74,5 +74,31 @@ function myConfirm(message, callback) {
 }
 
 function td_click_edit_asset(assetNum) {
-    location.href = "/dbApp/asset/edit/?data=" + assetNum;
+    href = "/dbApp/asset/edit/?data=" + assetNum;
 }
+
+$(document).ready(function () {
+    $('[data-toggle="modal"]').click(function (e) {
+        e.preventDefault();
+        var url = $(this).attr('href');
+        //$('#modal-serverDetail').modal('show').find('.modal-body').load();
+        if (url.indexOf('#') == 0) {
+            $(url).modal('open');
+        } else {
+            $.get(url, function (data) {
+                $('<div id="clue-modal" class="modal fade" tabindex="-1" role="dialog"><div class="modal-dialog"><div class="modal-content">' + data + '</div></div></div>')
+                    .modal()
+                    .on('hidden', function () {
+                        $(data_target).remove();
+                    });
+            }).success(function () {
+                $('input:text:visible:first').focus();
+            });
+        }
+    });
+});
+/*
+ $(document).on('hidden.bs.modal', function (e) {
+ $(e.target).remove();
+
+ });*/

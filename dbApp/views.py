@@ -748,7 +748,34 @@ def server_detail(request):
     if serverList.count() == 0:
         return HttpResponse("찾으시는 제품이 없습니다.")
     server = serverList[0]
-    return HttpResponse("서버 디테일 페이지 이고 서버 관리번호는" + server.manageNum + "입니다.")
+
+    my_prefetch = Prefetch('ss_server', queryset=ServerService.objects.select_related('service'), to_attr="services")
+    server_list = Server.objects.select_related('location', 'assetInfo', 'location__rack_pk').prefetch_related(my_prefetch).filter(manageNum=server.manageNum)
+    temp_list = []
+    for server in server_list:
+        temp_dict = dict()
+        temp_dict['assetNum'] = server.assetInfo.assetNum
+        temp_dict['manageNum'] = server.manageNum
+        temp_dict['manageSpec'] = server.manageSpec
+        temp_dict['core'] = server.core
+        temp_dict['ip'] = server.ip
+        if len(server.services) is not 0:
+            temp_serverservice = server.services[0]
+            temp_dict['use'] = temp_serverservice.Use
+            temp_service = temp_serverservice.service
+            temp_dict['serviceName'] = temp_service.serviceName
+        temp_location = server.location
+        if temp_location.rack_pk is not None:
+            temp_dict['location'] = temp_location.rack_pk.location
+        else:
+            temp_dict['location'] = temp_location.realLocation
+        temp_list.append(temp_dict)
+
+
+    print(temp_list)
+
+    context = {'server_list':temp_list}
+    return render(request, 'dbApp/server_detail.html', context)
 
 
 def switch_detail(request):
