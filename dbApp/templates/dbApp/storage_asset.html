@@ -1,0 +1,35 @@
+{% extends 'dbApp/navigation_bar.html' %}
+{% block content %}
+    <div class="container">
+        <h2 class="page-header">Storage</h2>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>자산번호</th>
+                    <th>관리번호</th>
+                    <th>취득일</th>
+                    <th>현재위치</th>
+                    <th>관리스펙</th>
+                    <th>규격</th>
+                    <th>내용연수</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if storage_list %}
+                    {% for storage in storage_list %}
+                        <tr>
+                            <td>{{ storage.assetNum }}</td>
+                            <td>{{ storage.manageNum }}</td>
+                            <td>{{ storage.acquisitionDate }}</td>
+                            <td>{{ storage.location }}</td>
+                            <td>{{ storage.manageSpec }}</td>
+                            <td>{{ storage.standard }}</td>
+                            <td>{{ storage.maintenanceYear }}</td>
+                        </tr>
+                    {% endfor %} {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock content %}

@@ -14,7 +14,9 @@ from dbApp.models import *
 from datetime import datetime
 
 import json, time, jwt
-#import json, jwt, time
+
+
+# import json, jwt, time
 # Create your views here.
 
 # Private Methods
@@ -53,7 +55,7 @@ def api_graph_storage_total(request):
                    'group by sa.storageForm')
     total_sum_list = dictFetchall(cursor)
 
-    return HttpResponse(json.dumps({ 'total': total_sum_list, 'usage': usage_sum_list }))
+    return HttpResponse(json.dumps({'total': total_sum_list, 'usage': usage_sum_list}))
 
 
 def api_graph_service_info(request):
@@ -231,43 +233,93 @@ def service_resources(request):  # 서비스의 리소스를 보여준다.
     return render(request, 'dbApp/service_resources.html', context)
 
 
-def service_detail(request,pk):
+def storage(request):
     cursor = connection.cursor()
-    cursor.execute('SELECT * FROM `dbApp_asset`INNER JOIN `dbApp_server` ON dbApp_asset.id = dbApp_server.assetInfo_id ' +
-                   'INNER JOIN `dbApp_serverlocation` ON dbApp_serverlocation.server_pk_id = dbApp_server.id ' +
-                   'INNER JOIN `dbApp_rack` ON dbApp_rack.id = dbApp_serverlocation.rack_pk_id '+
-                   'INNER JOIN dbApp_serverservice ON dbApp_serverservice.server_id = dbApp_server.id ' +
-                   'WHERE dbApp_serverservice.service_id = ' + pk)
+    cursor.execute(
+        'SELECT * FROM `dbApp_asset`INNER JOIN `dbApp_server` ON dbApp_asset.id = dbApp_server.assetInfo_id ' +
+        'INNER JOIN `dbApp_serverlocation` ON dbApp_serverlocation.server_pk_id = dbApp_server.id ' +
+        'INNER JOIN `dbApp_rack` ON dbApp_rack.id = dbApp_serverlocation.rack_pk_id ')
     server_list = dictFetchall(cursor)
-    for server in server_list :
-        if server['isInRack'] == 0 :
+    for server in server_list:
+        if server['isInRack'] == 0:
             server['location'] = server['realLocation']
-        if server['Use'] :
+        if server['Use']:
             server['Use'] = True
-        else :
+        else:
+            server['Use'] = False
+
+
+def storage_asset(request):
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM `dbApp_asset` ' +
+                   'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.assetInfo_id = dbApp_asset.id ')
+    storage_list = dictFetchall(cursor)
+    return render(request, 'dbApp/storage_asset.html', {'storage_list': storage_list});
+
+
+def storage_detail(request):
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM `dbApp_asset` ' +
+                   'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.assetInfo_id = dbApp_asset.id ' +
+                   'INNER JOIN `dbApp_storage` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id ' +
+                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id ' +
+                   'INNER JOIN  `dbApp_service` ON dbApp_service.id = dbApp_storageservice.service_id')
+    storage_list = dictFetchall(cursor)
+    return render(request, 'dbApp/storage_detail.html', {'storage_list': storage_list});
+
+
+def service_storage(request):
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM `dbApp_asset` ' +
+                   'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.assetInfo_id = dbApp_asset.id ' +
+                   'INNER JOIN `dbApp_storage` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id ' +
+                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id ')
+    storage_list = dictFetchall(cursor)
+
+    cursor.execute('SELECT * FROM `dbApp_service` ')
+    service_list = dictFetchall(cursor)
+    return render(request, 'dbApp/storage_service.html', {'storage_list': storage_list,
+                                                          'service_list': service_list});
+
+
+def service_detail(request, pk):
+    cursor = connection.cursor()
+    cursor.execute(
+        'SELECT * FROM `dbApp_asset`INNER JOIN `dbApp_server` ON dbApp_asset.id = dbApp_server.assetInfo_id ' +
+        'INNER JOIN `dbApp_serverlocation` ON dbApp_serverlocation.server_pk_id = dbApp_server.id ' +
+        'INNER JOIN `dbApp_rack` ON dbApp_rack.id = dbApp_serverlocation.rack_pk_id ' +
+        'INNER JOIN dbApp_serverservice ON dbApp_serverservice.server_id = dbApp_server.id ' +
+        'WHERE dbApp_serverservice.service_id = ' + pk)
+    server_list = dictFetchall(cursor)
+    for server in server_list:
+        if server['isInRack'] == 0:
+            server['location'] = server['realLocation']
+        if server['Use']:
+            server['Use'] = True
+        else:
             server['Use'] = False
 
     cursor.execute('SELECT * FROM `dbApp_storage` ' +
-                   'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id '+
-                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id '+
+                   'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id ' +
+                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id ' +
                    'where dbApp_storageasset.storageForm = \'SAN\' ' +
-                   'and dbApp_storageservice.service_id = ' + pk )
+                   'and dbApp_storageservice.service_id = ' + pk)
     disk_SAN = dictFetchall(cursor)
     cursor.execute('SELECT * FROM `dbApp_storage` ' +
-                   'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id '+
-                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id '+
+                   'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id ' +
+                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id ' +
                    'where dbApp_storageasset.storageForm = \'NAS\' ' +
-                   'and dbApp_storageservice.service_id = ' + pk )
+                   'and dbApp_storageservice.service_id = ' + pk)
     disk_NAS = dictFetchall(cursor)
     cursor.execute('SELECT * FROM `dbApp_storage` ' +
-                   'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id '+
-                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id '+
+                   'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id ' +
+                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id ' +
                    'where dbApp_storageasset.storageForm = \'TAPE\' ' +
-                   'and dbApp_storageservice.service_id = ' + pk )
+                   'and dbApp_storageservice.service_id = ' + pk)
     disk_TAPE = dictFetchall(cursor)
     service = pk
     return render(request, 'dbApp/service_detail.html', {'service': service,
-                                                         'server_asset_list' : server_list,
+                                                         'server_asset_list': server_list,
                                                          'SAN': disk_SAN,
                                                          'NAS': disk_NAS,
                                                          'TAPE': disk_TAPE
@@ -491,7 +543,7 @@ def add_switches(request, new_asset):
                                            isInRack=False,
                                            size=request.POST.get("switch_size"),
                                            serviceOn=False,
-                                           ip=None)
+                                           ip="127.0.0.1")
         this_switch_manage_num += 1
 
         SwitchLocation.objects.create(
@@ -606,6 +658,7 @@ def asset_detail(request):
                'asset_storage_list': asset_storage_list, 'asset_rack_list': asset_rack_list}
     return render(request, 'dbApp/asset_detail.html', context)
 
+
 #
 def rack_detail(request):
     searchText = request.GET.get("data")
@@ -634,7 +687,7 @@ def rack_detail(request):
     my_prefetch = Prefetch('ss_server', queryset=ServerService.objects.select_related('service'), to_attr="services")
     server_asset_list = Server.objects.select_related('location', 'location__rack_pk').prefetch_related(my_prefetch).filter(location__rack_pk=rack_query_list)
     switch_asset_list = Switch.objects.select_related('location', 'location__rack').filter(location__rack=rack_query_list)
-    
+
     # make server list for rack
     for server in server_asset_list:
         temp_subDict = dict()
