@@ -1,4 +1,8 @@
 {% extends 'dbApp/navigation_bar.html' %}
+{% block head %}
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+{% endblock %}
 {% block content %}
     <div class="container">
 
@@ -7,7 +11,7 @@
                 <div id="doughnutChart" class="chart"></div>
                 <script type="text/javascript">
                     $('#doughnutChart').click(function () {
-                        window.location = './service_detail';
+                        window.location = './service';
                     });
                 </script>
             </div>
@@ -35,12 +39,4 @@
             {% endfor %}
         {% endif %}
     </div>
-
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-        google.load("visualization", "1", {packages: ["corechart"]});
-//        google.load('current', {packages:['bar']});
-        google.setOnLoadCallback(drawChart1);
-    </script>
 {% endblock content %}

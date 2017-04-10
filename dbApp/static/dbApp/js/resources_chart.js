@@ -394,6 +394,8 @@ function drawChart2() {
 }
 $(document).ready(function () {
     google.charts.load('current', {'packages': ['bar']});
+    google.charts.load('current', {'packages': ['corechart']});
+    google.charts.setOnLoadCallback(drawChart1);
     google.charts.setOnLoadCallback(drawChart2);
     $('.service-chart').click(function(){
         window.location = './service_detail/' + $(this).attr('service');

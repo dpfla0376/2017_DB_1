@@ -95,7 +95,7 @@ def api_graph_service_info(request):
 
 class SignUp(View):  # 회원가입
     def get(self, request):
-        return render(request, 'dbApp/resistration.html')
+        return render(request, 'dbApp/registration.html')
 
     def post(self, request):
         data = request.POST
@@ -385,7 +385,7 @@ def welcome(request):
 
 class SignUp(View):
     def get(self, request):
-        return render(request, 'dbApp/resistration.html')
+        return render(request, 'dbApp/registration.html')
     def post(self, request):
         data = request.POST
         name = data['name']

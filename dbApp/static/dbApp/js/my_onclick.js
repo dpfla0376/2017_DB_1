@@ -10,24 +10,24 @@ function changeTrColor(tdObj, oldColor, newColor) {
 }
 function td_click_detail_server(tdObj) {
     var txt = tdObj.text;
-    location.href = "/dbApp/server/server_detail/?data=" + txt;
+    location.href = "/dbApp/server/detail/?data=" + txt;
 }
 function td_click_detail_rack(tdObj) {
     var txt = tdObj.text;
-    location.href = "/dbApp/rack/rack_detail/?data=" + txt;
+    location.href = "/dbApp/rack/detail/?data=" + txt;
 }
 function td_click_detail_asset(tdObj) {
     var txt = tdObj.text;
-    location.href = "/dbApp/asset/asset_detail/?data=" + txt;
+    location.href = "/dbApp/asset/detail/?data=" + txt;
 }
 function td_click_detail_switch(tdObj) {
     var txt = tdObj.text;
-    location.href = "/dbApp/switch/switch_detail/?data=" + txt;
+    location.href = "/dbApp/switch/detail/?data=" + txt;
 }
 
 function td_click_delete_asset(assetNum) {
     myConfirm("delete?", function () {
-        deleteRequest("/dbApp/asset/delete_asset/", assetNum, "asset-id-");
+        deleteRequest("/dbApp/asset/asset/", assetNum, "asset-id-");
     });
 }
 
