@@ -20,17 +20,17 @@
                 {% if switch_asset_list %}
                     {% for switch in switch_asset_list %}
                         <tr id="one-asset-id-{{switch.manageNum}}">
-                        <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a
+                        <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a style="cursor:hand"
                                 onclick="td_click_detail_asset(this)">{{ switch.assetNum }}</a></td>
-                        <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a
+                        <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a style="cursor:hand"
                                 onclick="td_click_detail_asset(this)">{{ switch.manageNum }}</a></td>
                         <td>{{ switch.manageSpec }}</td>
-                        <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a
+                        <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a style="cursor:hand"
                                 onclick="td_click_detail_rack(this)">{{ switch.location }}</a></td>
                         <td>{{ switch.ip }}</td>
                         <td>{{ switch.onOff }}</td>
                          <td>수정</td>
-                            <td><a onclick='td_click_delete_switch("{{ switch.manageNum }}")'>삭제</a></td>
+                            <td><a style="cursor:hand" onclick='td_click_delete_switch("{{ switch.manageNum }}")'>삭제</a></td>
                     {% endfor %}
                 {% endif %}
                 </tbody>

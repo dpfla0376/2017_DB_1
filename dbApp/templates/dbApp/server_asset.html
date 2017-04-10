@@ -40,18 +40,18 @@
                 {% if server_asset_list %}
                     {% for server in server_asset_list %}
                         <tr id="one-asset-id-{{server.managenum}}">
-                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a
+                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a style="cursor:hand"
                                     onclick="td_click_detail_asset(this)">{{ server.assetnum }}</a></td>
-                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a
+                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a style="cursor:hand"
                                     onclick="td_click_detail_server(this)">{{ server.managenum }}</a></td>
                             <td>{{ server.managespec }}</td>
-                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a
+                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a style="cursor:hand"
                                     onclick="td_click_detail_rack(this)">{{ server.location }}</a></td>
                             <td>{{ server.core }}</td>
                             <td>{{ server.ip }}</td>
                             <td>{{ server.onoff }}</td>
                             <td>수정</td>
-                            <td><a onclick='td_click_delete_server("{{ server.managenum }}")'>삭제</a></td>
+                            <td><a style="cursor:hand" onclick='td_click_delete_server("{{ server.managenum }}")'>삭제</a></td>
                         </tr>
                     {% endfor %}
                 {% endif %}
