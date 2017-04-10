@@ -273,13 +273,38 @@ def service_storage(request):
     cursor.execute('SELECT * FROM `dbApp_asset` ' +
                    'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.assetInfo_id = dbApp_asset.id ' +
                    'INNER JOIN `dbApp_storage` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id ' +
-                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id ')
-    storage_list = dictFetchall(cursor)
+                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id ' +
+                   'INNER JOIN `dbApp_service` ON dbApp_storageservice.service_id = dbApp_service.id ')
+    db_storage_list = dictFetchall(cursor)
 
-    cursor.execute('SELECT * FROM `dbApp_service` ')
-    service_list = dictFetchall(cursor)
-    return render(request, 'dbApp/storage_service.html', {'storage_list': storage_list,
-                                                          'service_list': service_list});
+    storage_list = {}
+    for row in db_storage_list:
+        spec = row['manageSpec']
+#        if not hasattr(storage_list, spec):
+        if not spec in storage_list:
+            storage_list[spec] = {
+                'name': spec,
+                'totalSize': row['Vol'],
+                'usageTotal': 0,
+                'remainSize': row['Vol'],
+                'diskSpec': row['diskSpec'],
+                'allocUnitSize': row['allocUnitSize'],
+                'storageForm': row['storageForm'],
+                'list': [],
+                'count': 1
+            }
+
+        storage_list[spec]['count'] = storage_list[spec]['count'] + 1
+        storage_list[spec]['usageTotal'] = storage_list[spec]['usageTotal'] + row['allocSize']
+        storage_list[spec]['remainSize'] = storage_list[spec]['remainSize'] - row['allocSize']
+        storage_list[spec]['list'].append({
+            'allocSize': row['allocSize'],
+            'serviceName': row['serviceName'],
+            'usage': row['usage']
+        })
+
+
+    return render(request, 'dbApp/storage_service.html', {'storage_list': storage_list});
 
 
 def service_detail(request, pk):
