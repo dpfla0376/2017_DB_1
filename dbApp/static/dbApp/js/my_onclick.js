@@ -10,24 +10,24 @@ function changeTrColor(tdObj, oldColor, newColor) {
 }
 function td_click_detail_server(tdObj) {
     var txt = tdObj.text;
-    location.href = "/dbApp/server/server_detail/?data=" + txt;
+    location.href = "/dbApp/server/detail/?data=" + txt;
 }
 function td_click_detail_rack(tdObj) {
     var txt = tdObj.text;
-    location.href = "/dbApp/rack/rack_detail/?data=" + txt;
+    location.href = "/dbApp/rack/detail/?data=" + txt;
 }
 function td_click_detail_asset(tdObj) {
     var txt = tdObj.text;
-    location.href = "/dbApp/asset/asset_detail/?data=" + txt;
+    location.href = "/dbApp/asset/detail/?data=" + txt;
 }
 function td_click_detail_switch(tdObj) {
     var txt = tdObj.text;
-    location.href = "/dbApp/switch/switch_detail/?data=" + txt;
+    location.href = "/dbApp/switch/detail/?data=" + txt;
 }
 
 function td_click_delete_asset(assetNum) {
     myConfirm("삭제하시겠습니까?", function () {
-        deleteRequest("/dbApp/asset/delete_asset/", assetNum, "asset-id-");
+        deleteRequest("/dbApp/asset/delete/", assetNum, "asset-id-");
     });
 }
 
@@ -73,7 +73,7 @@ function myConfirm(message, callback) {
     }
 }
 function td_click_edit_asset(assetNum) {
-    //  save_request("/dbApp/asset/edit/", assetNum, "asset-id-")
+
     document.getElementById("edit-button-" + assetNum).style.display = "none";
     document.getElementById("save-button-" + assetNum).style.display = "block";
 
@@ -112,11 +112,11 @@ function td_click_save_asset(assetNum) {
         type: 'POST',
         data: corrected_asset,
         success: function (result) {
-            alert("저장되었습니다. 페이지를 새로고침합니다.")
+            alert("저장되었습니다. 페이지를 새로고침합니다.");
             location.href = "/dbApp/asset/"
         },
         fail: function (result) {
-            alert("fail")
+            alert("fail");
         }
     });
 
@@ -137,7 +137,7 @@ function get_corrected_asset(assetNum) {
         'acquisitionCost': acq_cost.value,
         'purchaseLocation': purchase.value,
         'maintenanceYear': maintenance.value
-    }
+    };
 
     return target_asset;
 }

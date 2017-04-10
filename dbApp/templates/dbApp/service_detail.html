@@ -1,5 +1,7 @@
 {% extends 'dbApp/navigation_bar.html' %}
-{% load staticfiles %}
+{% block head %}
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+{% endblock head %}
 
 {% block content %}
     <script>
@@ -164,6 +166,6 @@
         </div>
     </div>
 
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
 
 {% endblock content %}

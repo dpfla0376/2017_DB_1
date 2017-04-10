@@ -19,10 +19,10 @@
                     <tbody>
                     {% for server in asset_server_list %}
                         <tr>
-                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a
+                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a style="cursor:hand"
                                     onclick="td_click_detail_server(this)">{{ server.managenum }}</a></td>
                             <td>{{ server.managespec }}</td>
-                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a
+                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a style="cursor:hand"
                                     onclick="td_click_detail_rack(this)">{{ server.location }}</a></td>
                             <td>{{ server.core }}</td>
                             <td>{{ server.ip }}</td>
@@ -49,10 +49,10 @@
                     <tbody>
                     {% for switch in asset_switch_list %}
                         <tr>
-                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a
+                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a style="cursor:hand"
                                     onclick="td_click_detail_switch(this)">{{ switch.manageNum }}</a></td>
                             <td>{{ switch.manageSpec }}</td>
-                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a
+                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a style="cursor:hand"
                                     onclick="td_click_detail_rack(this)">{{ switch.location }}</a></td>
                             <td>{{ switch.ip }}</td>
                             <td>{{ switch.onoff }}</td>
@@ -80,11 +80,11 @@
                     <tbody>
                     {% for rack in asset_rack_list %}
                         <tr>
-                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a
+                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a style="cursor:hand"
                                     onclick="td_click_detail_rack(this)">{{ rack.manageNum }}</a></td>
                             <td>{{ rack.manageSpec }}</td>
                             <td>{{ rack.size }}</td>
-                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a
+                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a style="cursor:hand"
                                     onclick="td_click_detail_rack(this)">{{ rack.location }}</a></td>
                         </tr>
                     {% endfor %}
