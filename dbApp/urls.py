@@ -12,7 +12,8 @@ urlpatterns = [
 
     url(r'^asset/$', views.asset_total, name='asset_total'),
     url(r'^asset/asset_detail/$', views.asset_detail, name='asset_detail'),
-    url(r'^asset/edit_asset/$', views.edit_asset, name='edit_asset'),
+    url(r'^asset/edit/([0-9]+)$', views.edit_asset, name='edit_asset'),
+    url(r'^asset/save/([0-9]+)$', views.save_asset, name='save_asset'),
     url(r'^asset/delete_asset/([0-9]+)/$', views.delete_asset, name='delete_asset'),
 
     url(r'^server/$', views.server_asset, name='server_asset'),

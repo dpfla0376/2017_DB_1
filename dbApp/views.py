@@ -324,7 +324,10 @@ def service_detail(request, pk):
                                                          'NAS': disk_NAS,
                                                          'TAPE': disk_TAPE
                                                          });
+
+
 ''
+
 
 def storage_use(request):
     # server_list = ServerService.objects.all()
@@ -420,6 +423,7 @@ def insert_asset(request):
     context = {'asset_total_list': asset_total_list}
     return render(request, 'dbApp/asset_total.html', context)
 
+
 def sign_in(request):
     data = request.POST
     email = data['email']
@@ -427,7 +431,7 @@ def sign_in(request):
     user = authenticate(username=email, password=password)
     if user is None:
         context = {'messages': 'login failed'}
-        return render(request, 'dbApp/welcome_page.html',context)
+        return render(request, 'dbApp/welcome_page.html', context)
     return service_resources(request)
 
 
@@ -438,12 +442,13 @@ def welcome(request):
 class SignUp(View):
     def get(self, request):
         return render(request, 'dbApp/resistration.html')
+
     def post(self, request):
         data = request.POST
         name = data['name']
         password = data['password']
         email = data['email']
-        user = User.objects.create_user(username = email,email = email,password=password)
+        user = User.objects.create_user(username=email, email=email, password=password)
         user.first_name = name
         return welcome(request)
 
@@ -680,13 +685,15 @@ def rack_detail(request):
         temp_name = temp_name.split("-")
         rack_location = temp_name[0]
         temp_name = temp_name[1]
-        #temp_name = rack.location[-3:]  # ex) C03
+        # temp_name = rack.location[-3:]  # ex) C03
         rack_list[temp] = []
         rack_name[temp_name] = temp
 
     my_prefetch = Prefetch('ss_server', queryset=ServerService.objects.select_related('service'), to_attr="services")
-    server_asset_list = Server.objects.select_related('location', 'location__rack_pk').prefetch_related(my_prefetch).filter(location__rack_pk=rack_query_list)
-    switch_asset_list = Switch.objects.select_related('location', 'location__rack').filter(location__rack=rack_query_list)
+    server_asset_list = Server.objects.select_related('location', 'location__rack_pk').prefetch_related(
+        my_prefetch).filter(location__rack_pk=rack_query_list)
+    switch_asset_list = Switch.objects.select_related('location', 'location__rack').filter(
+        location__rack=rack_query_list)
 
     # make server list for rack
     for server in server_asset_list:
@@ -775,9 +782,32 @@ def search_assets(request):
     return render(request, 'dbApp/searchResult.html', {})
 
 
-def edit_asset(request):
-    selected = request.GET.get("data")
-    return HttpResponse("자산번호" + selected + "를 수정하고싶니?")
+def edit_asset(request, asset_num):
+    return HttpResponse("자산번호" + asset_num + "를 수정하고싶니?")
+
+
+@csrf_exempt
+def save_asset(request, asset_num):
+    target_asset = Asset.objects.filter(assetNum=asset_num).first()
+
+    new_acq_year = str(request.POST.get("acquisitionDate"))[0:4]
+
+    if new_acq_year != str(target_asset.acquisitionDate.year):
+        temp_asset = Asset.objects.filter(assetNum__startswith=new_acq_year).order_by('-assetNum').first()
+        if temp_asset:
+            this_asset_num = str(int(temp_asset.assetNum) + 1)
+        else:
+            this_asset_num = int(new_acq_year) * 1000000 + 1
+        target_asset.assetNum = this_asset_num
+
+    target_asset.acquisitionDate = request.POST.get("acquisitionDate")
+    target_asset.assetName = request.POST.get("assetName")
+    target_asset.standard = request.POST.get("standard")
+    target_asset.acquisitionCost = request.POST.get("acquisitionCost")
+    target_asset.purchaseLocation = request.POST.get("purchaseLocation")
+    target_asset.maintenanceYear = request.POST.get("maintenanceYear")
+    target_asset.save()
+    return HttpResponse("ok")
 
 
 def delete_asset(request, pk):
