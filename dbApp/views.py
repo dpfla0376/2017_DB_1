@@ -280,8 +280,52 @@ def storage_total(request):
                    'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.assetInfo_id = dbApp_asset.id ' +
                    'INNER JOIN `dbApp_storage` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id ' +
                    'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id ' +
-                   'INNER JOIN  `dbApp_service` ON dbApp_service.id = dbApp_storageservice.service_id')
-    storage_list = dictFetchall(cursor)
+                   'INNER JOIN `dbApp_service` ON dbApp_storageservice.service_id = dbApp_service.id ')
+    db_storage_list = dictFetchall(cursor)
+
+    storage_list = {}
+    for row in db_storage_list:
+        spec = row['manageSpec']
+
+        if not spec in storage_list:
+            storage_list[spec] = {
+                'name': spec,
+                'totalCount': 1,
+                'enrollList': {}
+            }
+
+        enroll = row['enrollDate'].isoformat()
+        if not enroll in storage_list[spec]['enrollList']:
+            storage_list[spec]['enrollList'][enroll] = {
+                'date': enroll,
+                'enrollCount': 1,
+                'diskList': {}
+            }
+
+        disk = row['diskSpec']
+        if not disk in storage_list[spec]['enrollList'][enroll]['diskList']:
+            storage_list[spec]['enrollList'][enroll]['diskList'][disk] = {
+                'diskSpec': disk,
+                'list': [],
+                'vol': row['Vol'],
+                'usageTotal': 0,
+                'remainSize': row['Vol'],
+                'diskSpec': row['diskSpec'],
+                'allocUnitSize': row['allocUnitSize'],
+                'storageForm': row['storageForm'],
+                'diskCount': 1
+            }
+
+        storage_list[spec]['totalCount'] = storage_list[spec]['totalCount'] + 1
+        storage_list[spec]['enrollList'][enroll]['enrollCount'] \
+            = storage_list[spec]['enrollList'][enroll]['enrollCount'] + 1
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['diskCount'] = \
+            storage_list[spec]['enrollList'][enroll]['diskList'][disk]['diskCount'] + 1
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['list'].append({
+            'allocSize': row['allocSize'],
+            'serviceName': row['serviceName'],
+            'usage': row['usage']
+        })
     return render(request, 'dbApp/storage_total.html', {'storage_list': storage_list});
 
 
@@ -297,7 +341,6 @@ def check_in_list_date(mylist, mystring):
         if temp_dict['date'] == mystring:
             return temp_dict
     return None
-
 
 def service_storage2(request):
     my_prefetch = Prefetch('storage_service', queryset=StorageService.objects.select_related('service'),
@@ -366,22 +409,24 @@ def service_storage(request):
         if not spec in storage_list:
             storage_list[spec] = {
                 'name': spec,
-                'enroll': [],
-                'totalCount': 1
+                'totalCount': 1,
+                'enrollList': {}
             }
-        enroll = row['enrollDate']
-        if not enroll in storage_list[spec]:
-            storage_list[spec][enroll] = {
-                'Date': enroll,
-                'disk': [],
-                'enrollCount': 1
+        enroll = row['enrollDate'].isoformat()
+        if not enroll in storage_list[spec]['enrollList']:
+            storage_list[spec]['enrollList'][enroll] = {
+                'date': enroll,
+                'enrollCount': 2,
+                'diskList': {}
+
             }
+
         disk = row['diskSpec']
-        if not disk in storage_list[spec][enroll]:
-            storage_list[spec][enroll][disk] = {
+        if not disk in storage_list[spec]['enrollList'][enroll]['diskList']:
+            storage_list[spec]['enrollList'][enroll]['diskList'][disk] = {
                 'diskSpec': disk,
                 'list': [],
-                'Vol': row['Vol'],
+                'vol': row['Vol'],
                 'usageTotal': 0,
                 'remainSize': row['Vol'],
                 'diskSpec': row['diskSpec'],
@@ -391,17 +436,17 @@ def service_storage(request):
             }
 
         storage_list[spec]['totalCount'] = storage_list[spec]['totalCount'] + 1
-        storage_list[spec][enroll]['enrollCount'] = storage_list[spec][enroll]['enrollCount'] + 1
-        storage_list[spec][enroll][disk]['diskCount'] = storage_list[spec][enroll][disk]['diskCount'] + 1
-        storage_list[spec][enroll][disk]['usageTotal'] = storage_list[spec][enroll][disk]['usageTotal'] + row[
-            'allocSize']
-        storage_list[spec][enroll][disk]['remainSize'] = storage_list[spec][enroll][disk]['remainSize'] - row[
-            'allocSize']
-        storage_list[spec][enroll][disk]['list'].append({
+
+        storage_list[spec]['enrollList'][enroll]['enrollCount'] \
+            = storage_list[spec]['enrollList'][enroll]['enrollCount'] + 1
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['diskCount'] = \
+            storage_list[spec]['enrollList'][enroll]['diskList'][disk]['diskCount'] + 1
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['list'].append({
             'allocSize': row['allocSize'],
             'serviceName': row['serviceName'],
             'usage': row['usage']
         })
+
     return render(request, 'dbApp/storage_service.html', {'storage_list': storage_list});
 
 
@@ -535,13 +580,18 @@ def rack_info(request):
         rack_total.append(temp)
     data = []
     for rack in rack_total:
-        position = [None] * 42
+        #TODO 이 아랫부분 지워야됩니다.
+        position = [None] * 43
         for inrack in rack['list']:
+            print(inrack['rackLocation'])
             position[inrack["rackLocation"]] = inrack
         data.append({'data': list(reversed(position)), 'rack': rack})
     context = {'rack_list': rack_total, 'data': data}
     print("--- %s seconds ---" % (time.time() - start_time))
     return render(request, 'dbApp/rack_info.html', context)
+
+
+#    return HttpResponse(json.dumps(context))
 
 
 def insert_asset(request):
@@ -926,10 +976,12 @@ def server_detail(request):
         temp_dict['location'] = temp_location.rack_pk.location
     else:
         temp_dict['location'] = temp_location.realLocation
+<<<<<<< HEAD
 
+=======
+>>>>>>> 641467c7e7a53fc6fe7b17e2a337080010cbc595
     context = {'server_list': temp_dict}
     return render(request, 'dbApp/server_detail.html', context)
-
 
 def switch_detail(request):
     searchText = request.GET.get("data")
