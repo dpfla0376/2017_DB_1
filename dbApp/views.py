@@ -317,10 +317,12 @@ def storage_total(request):
             }
 
         storage_list[spec]['totalCount'] = storage_list[spec]['totalCount'] + 1
-        storage_list[spec]['enrollList'][enroll]['enrollCount'] \
-            = storage_list[spec]['enrollList'][enroll]['enrollCount'] + 1
-        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['diskCount'] = \
-            storage_list[spec]['enrollList'][enroll]['diskList'][disk]['diskCount'] + 1
+        storage_list[spec]['enrollList'][enroll]['enrollCount'] += 1
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['diskCount'] += 1
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['usageTotal'] += row['allocSize']
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['remainSize'] -= row['allocSize']
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['usageTotal'] = \
+            round(storage_list[spec]['enrollList'][enroll]['diskList'][disk]['usageTotal'], 2)
         storage_list[spec]['enrollList'][enroll]['diskList'][disk]['list'].append({
             'allocSize': row['allocSize'],
             'serviceName': row['serviceName'],
@@ -440,16 +442,16 @@ def service_storage(request):
 
         storage_list[spec]['enrollList'][enroll]['enrollCount'] \
             = storage_list[spec]['enrollList'][enroll]['enrollCount'] + 1
-        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['diskCount'] = \
-            storage_list[spec]['enrollList'][enroll]['diskList'][disk]['diskCount'] + 1
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['usageTotal'] += row['allocSize']
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['remainSize'] -= row['allocSize']
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['usageTotal'] = \
+            round(storage_list[spec]['enrollList'][enroll]['diskList'][disk]['usageTotal'], 2)
         storage_list[spec]['enrollList'][enroll]['diskList'][disk]['list'].append({
             'allocSize': row['allocSize'],
             'serviceName': row['serviceName'],
             'usage': row['usage']
         })
-
     return render(request, 'dbApp/storage_service.html', {'storage_list': storage_list});
-
 
 def service_detail(request, pk):
     cursor = connection.cursor()
