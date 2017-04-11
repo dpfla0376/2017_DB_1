@@ -558,6 +558,8 @@ def rack_info(request):
             temp_subDict['rack_pk'] = temp_location.rack_pk.manageNum
             temp_subDict['rackLocation'] = temp_location.rackLocation
             rack_list[temp_subDict['rack_pk']].append(temp_subDict)
+            temp_subDict['drawIndex'] = int(temp_subDict['rackLocation']) + int(temp_subDict['size']) - 1
+
     # make server list for rack
     for switch in switch_asset_list:
         temp_subDict = dict()
@@ -572,6 +574,8 @@ def rack_info(request):
             temp_subDict['rack_pk'] = temp_location.rack.manageNum
             temp_subDict['rackLocation'] = temp_location.rackLocation
             rack_list[temp_subDict['rack_pk']].append(temp_subDict)
+            temp_subDict['drawIndex'] = int(temp_subDict['rackLocation']) + int(temp_subDict['size']) - 1
+
     rack_total = []
     for rack in rack_name:
         temp = dict()
@@ -582,10 +586,9 @@ def rack_info(request):
     data = []
     for rack in rack_total:
         #TODO 이 아랫부분 지워야됩니다.
-        position = [None] * 43
+        position = [None] * 42
         for inrack in rack['list']:
-            print(inrack['rackLocation'])
-            position[inrack["rackLocation"]] = inrack
+            position[(inrack['drawIndex'])-1] = inrack
         data.append({'data': list(reversed(position)), 'rack': rack})
     context = {'rack_list': rack_total, 'data': data}
     print("--- %s seconds ---" % (time.time() - start_time))
@@ -908,6 +911,7 @@ def rack_detail(request):
             temp_subDict['rack_pk'] = temp_location.rack_pk.manageNum
             temp_subDict['rackLocation'] = temp_location.rackLocation
             rack_list[temp_subDict['rack_pk']].append(temp_subDict)
+        temp_subDict['drawIndex'] = int(temp_subDict['rackLocation']) + int(temp_subDict['size']) - 1
     # make server list for rack
     for switch in switch_asset_list:
         temp_subDict = dict()
@@ -928,6 +932,7 @@ def rack_detail(request):
             temp_subDict['rack_pk'] = temp_location.rack.manageNum
             temp_subDict['rackLocation'] = temp_location.rackLocation
             rack_list[temp_subDict['rack_pk']].append(temp_subDict)
+        temp_subDict['drawIndex'] = int(temp_subDict['rackLocation']) + int(temp_subDict['size']) - 1
     rack_total = []
     for rack in rack_name:
         temp = dict()
@@ -940,7 +945,7 @@ def rack_detail(request):
     for rack in rack_total:
         position = [None] * 42
         for inrack in rack['list']:
-            position[inrack["rackLocation"]] = inrack
+            position[(inrack['drawIndex']) - 1] = inrack
         data.append({'data': list(reversed(position)), 'rack': rack})
     context = {'rack_list': rack_total, 'data': data}
     return render(request, 'dbApp/rack_detail.html', context)
