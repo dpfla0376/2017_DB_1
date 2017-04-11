@@ -287,7 +287,10 @@ function drawChart1() {
             var data = google.visualization.arrayToDataTable(
                 [['Storage', 'Use', 'Unuse']].concat(
                     jsonData.total.map(function (d, i) {
-                        return [d.name, Math.round(jsonData.usage[i].size), Math.round(d.size - jsonData.usage[i].size)];
+                        var temp = jsonData.usage[i].size;
+                        console.log("in drawChart1().function StorageBarChart() : " + temp);
+                        if(temp != null) { return [d.name, Math.round(temp), Math.round(d.size - temp)]; }
+                        else { return false; }
                     })
                 )
             );
@@ -321,7 +324,6 @@ function drawChart2() {
                 });
 
                 var doughnutChart = $("#service_graph1_" + service.id.toString());
-                console.log(doughnutChart);
                 if(doughnutChart.length > 0) {
                     doughnutChart.drawDoughnutChart([
                     {
