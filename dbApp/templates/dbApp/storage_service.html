@@ -23,7 +23,7 @@
             </thead>
             <tbody>
             <script language="javascript">
-             var storage = JSON.parse('{{ storage|js }}');
+{#             var storage = JSON.parse('{{ storage|js }}');#}
              var storage_enroll = JSON.parse('{{ storage.enroll|js}}');
              for (var i in storage_enroll) {
                  console.log(storage_enroll[i].Date);

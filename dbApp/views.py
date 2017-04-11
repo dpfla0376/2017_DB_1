@@ -267,6 +267,52 @@ def storage_total(request):
     storage_list = dictFetchall(cursor)
     return render(request, 'dbApp/storage_total.html', {'storage_list': storage_list});
 
+def check_in_list(mylist,mystring):
+    for temp_dict in mylist:
+        if temp_dict['storagename'] == mystring:
+            return temp_dict
+    return None
+
+def service_storage2(request):
+    my_prefetch = Prefetch('storage_service', queryset=StorageService.objects.select_related('service'), to_attr="services")
+    storage_list = Storage.objects.select_related('storageAsset','storageAsset__assetInfo').all().prefetch_related(my_prefetch)
+    temp_list = list()
+    for storagee in storage_list:
+        temp_dict = {}
+        temp_dict['storageassetname'] = storagee.storageAssetName
+        temp_dict['date'] =storagee.enrollDate.isoformat()
+        temp_dict['vol']=storagee.Vol
+        temp_dict['allocunitsize'] = storagee.allocUnitSize
+        temp_dict['diskspec'] = storagee.diskSpec
+        temp_dict['storageform']=storagee.storageAsset.storageForm
+        temp_float = 0
+        temp_list2 = list()
+        temp_dict['servicecount']=len(storagee.services)
+        for storageservice in storagee.services:
+            temp_dict2 = {}
+            temp_float += storageservice.allocSize
+            temp_dict2['allocsize']=storageservice.allocSize
+            temp_dict2['servicename']=storageservice.service.serviceName
+            temp_dict2['usage']=storageservice.usage
+            temp_list2.append(temp_dict2)
+        temp_dict['remain']=storagee.Vol-temp_float
+        temp_dict['servicelist'] = temp_list2
+        temp_list.append(temp_dict)
+    final_list2= list()
+    for storagee in temp_list:
+        tempp= check_in_list(final_list2,storagee['storageassetname'])
+        if tempp is not None:
+            tempp['storageList'].append(storagee)
+            tempp['storagecount']+=1
+        else:
+            temp_dict={}
+            temp_dict['storagename']= storagee['storageassetname']
+            temp_dict['storageList']= [storagee]
+            temp_dict['storagecount']=1
+            final_list2.append(temp_dict)
+    return HttpResponse(json.dumps(final_list2))
+
+
 
 def service_storage(request):
     cursor = connection.cursor()
