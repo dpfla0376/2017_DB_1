@@ -59,7 +59,7 @@ WSGI_APPLICATION = 'dbTeamProject.wsgi.application'
 DATABASES = {
      'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'dbTeam3',
+        'NAME': 'dbTeam33',
         'USER': 'root',
         'PASSWORD': 'sangwon0001',
         'HOST': 'sangwon0001.hopto.org',

@@ -101,27 +101,22 @@ function td_click_edit(type, id) {
         maintenance.innerHTML = "<input type='number' id='maintenance-input-" + id + "' value='" + maintenance_data + "'>";
     }
     else if (type == "server") {
+        $.ajaxSetup({
+            headers: {"X-CSRFToken": getCookie("csrftoken")}
+        });
 
-        var manage_spec = document.getElementById("manage-spec-" + id);
-        var core = document.getElementById("core-" + id);
-        var ip = document.getElementById("ip-" + id);
-        var onoff = document.getElementById("onoff-" + id);
-        var size = document.getElementById("size-" + id);
-        var location = document.getElementById("location-" + id);
+        $.ajax({
+            url: '/dbApp/' + type + '/location/' + id + "/",
+            type: 'POST',
+            success: function (result) {
+                var dict = JSON.parse(result);
+                make_server_inputs(id, dict);
 
-        var manage_spec_data = manage_spec.innerHTML;
-        var core_data = core.innerHTML;
-        var ip_data = ip.innerHTML;
-        var onoff_data = onoff.innerHTML;
-        var size_data = size.innerHTML;
-        var location_data = size.innerHTML;
-
-        manage_spec.innerHTML = "<input type='text' id='manage-spec-input-" + id + "' value='" + manage_spec_data + "'>";
-        core.innerHTML = "<input type='number' id='core-input-" + id + "' value='" + core_data + "'>";
-        ip.innerHTML = "<input type='text' id='ip-input-" + id + "' value='" + ip_data + "'>";
-        onoff.innerHTML = "<input type='text' id='onoff-input-" + id + "' value='" + onoff_data + "'>";
-        size.innerHTML = "<input type='number' id='size-input-" + id + "' value='" + size_data + "'>";
-        location.innerHTML += "<input type='number' id='location-input-" + id + "' value='" + location_data + "'>"+"<input type='number' id='location-in-input-" + id + "' value='" + location_data + "'>"+"<input type='number' id='location-at-input-" + id + "' value='" + location_data + "'>";
+            },
+            fail: function (result) {
+                alert("fail");
+            }
+        });
 
     }
     else if (type == "storage") {
@@ -138,21 +133,22 @@ function td_click_edit(type, id) {
         standard.innerHTML = "<input type='text' id='standard-input-" + id + "' value='" + standard_data + "'>";
     }
     else if (type == "switch") {
+        $.ajaxSetup({
+            headers: {"X-CSRFToken": getCookie("csrftoken")}
+        });
 
-        var manage_spec = document.getElementById("manage-spec-" + id);
-        var ip = document.getElementById("ip-" + id);
-        var onoff = document.getElementById("onoff-" + id);
-        var size = document.getElementById("size-" + id);
+        $.ajax({
+            url: '/dbApp/' + type + '/location/' + id + "/",
+            type: 'POST',
+            success: function (result) {
+                var dict = JSON.parse(result);
+                make_switch_inputs(id, dict);
 
-        var manage_spec_data = manage_spec.innerHTML;
-        var ip_data = ip.innerHTML;
-        var onoff_data = onoff.innerHTML;
-        var size_data = size.innerHTML;
-
-        manage_spec.innerHTML = "<input type='text' id='manage-spec-input-" + id + "' value='" + manage_spec_data + "'>";
-        ip.innerHTML = "<input type='text' id='ip-input-" + id + "' value='" + ip_data + "'>";
-        onoff.innerHTML = "<input type='text' id='onoff-input-" + id + "' value='" + onoff_data + "'>";
-        size.innerHTML = "<input type='number' id='size-input-" + id + "' value='" + size_data + "'>";
+            },
+            fail: function (result) {
+                alert("fail");
+            }
+        });
     }
     else if (type == "rack") {
         var manage_spec = document.getElementById("manage-spec-" + id);
@@ -172,6 +168,78 @@ function td_click_edit(type, id) {
     document.getElementById("save-button-" + id).style.display = "block";
 }
 
+function make_switch_inputs(id, dict) {
+    var manage_spec = document.getElementById("manage-spec-" + id);
+    var ip = document.getElementById("ip-" + id);
+    var onoff = document.getElementById("onoff-" + id);
+    var size = document.getElementById("size-" + id);
+    var location = document.getElementById("location-" + id);
+
+    var manage_spec_data = manage_spec.innerHTML;
+    var ip_data = ip.innerHTML;
+    var onoff_data = onoff.innerHTML;
+    var size_data = size.innerHTML;
+    var location_data = size.innerHTML;
+
+    if (dict['is_in_rack'] == true) {
+        var real_location = ""
+        var rack_manage_num = dict['rack_manage_num']
+        var rack_location = dict['rack_idx']
+    }
+    else {
+        var real_location = dict["real_location"]
+        var rack_manage_num = ""
+        var rack_location = ""
+    }
+    manage_spec.innerHTML = "<input type='text' id='manage-spec-input-" + id + "' value='" + manage_spec_data + "'>";
+    ip.innerHTML = "<input type='text' id='ip-input-" + id + "' value='" + ip_data + "'>";
+    onoff.innerHTML = "<input type='text' id='onoff-input-" + id + "' value='" + onoff_data + "'>";
+    size.innerHTML = "<input type='number' id='size-input-" + id + "' value='" + size_data + "'>";
+
+
+    location.innerHTML = "<input type='radio' name='radio' value='in' id='location-radio-" + id + "'>위치";
+    location.innerHTML += "<br><input type='text' id='location-in-input-" + id + "' value='" + rack_manage_num + "' placeholder='랙 번호'>";
+    location.innerHTML += "<br><input type='number' id='location-at-input-" + id + "'  value='" + rack_location + "' placeholder='해당 위치'>";
+    location.innerHTML += "<br><input type='radio' name='radio' value='etc' id='location-etc-radio-" + id + "'>기타";
+    location.innerHTML += "<br><input type='text' id='location-etc-input-" + id + "' value='" + real_location + "' placeholder='예)지하 창고'>";
+}
+function make_server_inputs(id, dict) {
+    var manage_spec = document.getElementById("manage-spec-" + id);
+    var core = document.getElementById("core-" + id);
+    var ip = document.getElementById("ip-" + id);
+    var onoff = document.getElementById("onoff-" + id);
+    var size = document.getElementById("size-" + id);
+    var location = document.getElementById("location-" + id);
+
+    var manage_spec_data = manage_spec.innerHTML;
+    var core_data = core.innerHTML;
+    var ip_data = ip.innerHTML;
+    var onoff_data = onoff.innerHTML;
+    var size_data = size.innerHTML;
+    var location_data = size.innerHTML;
+
+    if (dict['is_in_rack'] == true) {
+        var real_location = ""
+        var rack_manage_num = dict['rack_manage_num']
+        var rack_location = dict['rack_idx']
+    }
+    else {
+        var real_location = dict["real_location"]
+        var rack_manage_num = ""
+        var rack_location = ""
+    }
+    manage_spec.innerHTML = "<input type='text' id='manage-spec-input-" + id + "' value='" + manage_spec_data + "'>";
+    core.innerHTML = "<input type='number' id='core-input-" + id + "' value='" + core_data + "'>";
+    ip.innerHTML = "<input type='text' id='ip-input-" + id + "' value='" + ip_data + "'>";
+    onoff.innerHTML = "<input type='text' id='onoff-input-" + id + "' value='" + onoff_data + "'>";
+    size.innerHTML = "<input type='number' id='size-input-" + id + "' value='" + size_data + "'>";
+    location.innerHTML = "<input type='radio' name='radio' value='in' id='location-radio-" + id + "'>위치";
+    location.innerHTML += "<br><input type='text' id='location-in-input-" + id + "' value='" + rack_manage_num + "' placeholder='랙 번호'>";
+    location.innerHTML += "<br><input type='number' id='location-at-input-" + id + "'  value='" + rack_location + "' placeholder='해당 위치'>";
+    location.innerHTML += "<br><input type='radio' name='radio' value='etc' id='location-etc-radio-" + id + "'>기타";
+    location.innerHTML += "<br><input type='text' id='location-etc-input-" + id + "' value='" + real_location + "' placeholder='예)지하 창고'>";
+
+}
 function td_click_save(type, id) {
 
     if (type == "asset")
@@ -209,10 +277,12 @@ function get_corrected_storage(id) {
     var location = document.getElementById("location-input-" + id);
     var standard = document.getElementById("standard-input-" + id);
 
+
     var corrected_storage = {
         'manageSpec': manage_spec.value,
         'location': location.value,
         'standard': standard.value
+
     };
     return corrected_storage;
 }
@@ -235,12 +305,40 @@ function get_corrected_switch(id) {
     var onoff = document.getElementById("onoff-input-" + id);
     var size = document.getElementById("size-input-" + id);
 
-    var corrected_switch = {
-        'manageSpec': manage_spec.value,
-        'ip': ip.value,
-        'serviceOn': onoff.value,
-        'size': size.value
-    };
+    var location_radio = document.getElementById("location-radio-" + id);
+    var location_etc_radio = document.getElementById("location-etc-radio-" + id);
+
+    var location_in_input = document.getElementById("location-in-input-" + id);
+    var location_at_input = document.getElementById("location-at-input-" + id);
+    var location_etc_input = document.getElementById("location-etc-input-" + id);
+
+    var radio = document.getElementsByName("radio");
+    if (radio[0].checked) {
+        //랙에 있을 때
+        var corrected_switch = {
+            'manageSpec': manage_spec.value,
+            'serviceOn': onoff.value,
+            'ip': ip.value,
+            'size': size.value,
+            'isInRack': true,
+            'rack_manage_num': location_in_input.value,
+            'rackLocation': location_at_input.value,
+            'realLocation': "",
+        };
+    }
+    else {
+        var corrected_switch = {
+            'manageSpec': manage_spec.value,
+            'serviceOn': onoff.value,
+            'ip': ip.value,
+            'size': size.value,
+            'isInRack': false,
+            'rack_manage_num': "",
+            'rackLocation': "",
+            'realLocation': location_etc_input.value,
+        };
+    }
+
     return corrected_switch;
 }
 function get_corrected_server(id) {
@@ -250,13 +348,42 @@ function get_corrected_server(id) {
     var onoff = document.getElementById("onoff-input-" + id);
     var size = document.getElementById("size-input-" + id);
 
-    var corrected_server = {
-        'manageSpec': manage_spec.value,
-        'core': core.value,
-        'ip': ip.value,
-        'onoff': onoff.value,
-        'size': size.value
-    };
+    var location_radio = document.getElementById("location-radio-" + id);
+    var location_etc_radio = document.getElementById("location-etc-radio-" + id);
+
+    var location_in_input = document.getElementById("location-in-input-" + id);
+    var location_at_input = document.getElementById("location-at-input-" + id);
+    var location_etc_input = document.getElementById("location-etc-input-" + id);
+
+    var radio = document.getElementsByName("radio");
+    if (radio[0].checked) {
+        //랙에 있을 때
+        var corrected_server = {
+            'manageSpec': manage_spec.value,
+            'core': core.value,
+            'ip': ip.value,
+            'onoff': onoff.value,
+            'size': size.value,
+            'isInRack': true,
+            'rack_manage_num': location_in_input.value,
+            'rackLocation': location_at_input.value,
+            'realLocation': "",
+        };
+    }
+    else {
+        var corrected_server = {
+            'manageSpec': manage_spec.value,
+            'core': core.value,
+            'ip': ip.value,
+            'onoff': onoff.value,
+            'size': size.value,
+            'isInRack': false,
+            'rack_manage_num': "",
+            'rackLocation': "",
+            'realLocation': location_etc_input.value,
+        };
+    }
+
     return corrected_server;
 }
 function get_corrected_asset(assetNum) {

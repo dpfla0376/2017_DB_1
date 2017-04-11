@@ -172,7 +172,7 @@ def switch_asset(request):
         else:
             temp_dict['location'] = temp_location.realLocation
         temp = switch.serviceOn
-        if(temp == True):
+        if (temp == True):
             temp_dict['onOff'] = 'On'
         else:
             temp_dict['onOff'] = 'Off'
@@ -185,7 +185,8 @@ def switch_asset(request):
 def server_asset(request):
     start_time = time.time()
     my_prefetch = Prefetch('ss_server', queryset=ServerService.objects.select_related('service'), to_attr="services")
-    server_asset_list = Server.objects.select_related('location', 'assetInfo', 'location__rack_pk').prefetch_related(my_prefetch).all()
+    server_asset_list = Server.objects.select_related('location', 'assetInfo', 'location__rack_pk').prefetch_related(
+        my_prefetch).all()
     temp_list = list()
     for server in server_asset_list:
         temp_dict = dict()
@@ -283,65 +284,70 @@ def storage_total(request):
     storage_list = dictFetchall(cursor)
     return render(request, 'dbApp/storage_total.html', {'storage_list': storage_list});
 
-def check_in_list(mylist,mystring):
+
+def check_in_list(mylist, mystring):
     for temp_dict in mylist:
         if temp_dict['storagename'] == mystring:
             return temp_dict
     return None
-def check_in_list_date(mylist,mystring):
+
+
+def check_in_list_date(mylist, mystring):
     for temp_dict in mylist:
         if temp_dict['date'] == mystring:
             return temp_dict
     return None
 
+
 def service_storage2(request):
-    my_prefetch = Prefetch('storage_service', queryset=StorageService.objects.select_related('service'), to_attr="services")
-    storage_list = Storage.objects.select_related('storageAsset','storageAsset__assetInfo').all().prefetch_related(my_prefetch)
+    my_prefetch = Prefetch('storage_service', queryset=StorageService.objects.select_related('service'),
+                           to_attr="services")
+    storage_list = Storage.objects.select_related('storageAsset', 'storageAsset__assetInfo').all().prefetch_related(
+        my_prefetch)
     temp_list = list()
     for storagee in storage_list:
         temp_dict = {}
         temp_dict['storageassetname'] = storagee.storageAssetName
-        temp_dict['vol']=storagee.Vol
+        temp_dict['vol'] = storagee.Vol
         temp_dict['allocunitsize'] = storagee.allocUnitSize
         temp_dict['diskspec'] = storagee.diskSpec
-        temp_dict['storageform']=storagee.storageAsset.storageForm
+        temp_dict['storageform'] = storagee.storageAsset.storageForm
         temp_float = 0
         temp_list2 = list()
-        temp_dict['servicecount']=len(storagee.services)
+        temp_dict['servicecount'] = len(storagee.services)
         for storageservice in storagee.services:
             temp_dict2 = {}
             temp_float += storageservice.allocSize
-            temp_dict2['allocsize']=storageservice.allocSize
-            temp_dict2['servicename']=storageservice.service.serviceName
-            temp_dict2['usage']=storageservice.usage
+            temp_dict2['allocsize'] = storageservice.allocSize
+            temp_dict2['servicename'] = storageservice.service.serviceName
+            temp_dict2['usage'] = storageservice.usage
             temp_list2.append(temp_dict2)
-        temp_dict['remain']=storagee.Vol-temp_float
+        temp_dict['remain'] = storagee.Vol - temp_float
         temp_dict['servicelist'] = temp_list2
-        temp_date = check_in_list_date(temp_list,storagee.enrollDate.isoformat())
+        temp_date = check_in_list_date(temp_list, storagee.enrollDate.isoformat())
         if temp_date is not None:
             temp_date['storagecount'] += 1
             temp_date['storagelist'].append(temp_dict)
         else:
-            date_dict={}
+            date_dict = {}
             date_dict['date'] = storagee.enrollDate.isoformat()
             date_dict['storagelist'] = [temp_dict]
             date_dict['storagecount'] = 1
-            date_dict['storageassetname']=storagee.storageAssetName
+            date_dict['storageassetname'] = storagee.storageAssetName
         temp_list.append(date_dict)
-    final_list2= list()
+    final_list2 = list()
     for dateDict in temp_list:
-        tempp= check_in_list(final_list2,dateDict['storageassetname'])
+        tempp = check_in_list(final_list2, dateDict['storageassetname'])
         if tempp is not None:
             tempp['dateList'].append(dateDict)
-            tempp['datecount']+=1
+            tempp['datecount'] += 1
         else:
-            temp_dict={}
-            temp_dict['storagename']= dateDict['storageassetname']
-            temp_dict['dateList']= [dateDict]
-            temp_dict['datecount']=1
+            temp_dict = {}
+            temp_dict['storagename'] = dateDict['storageassetname']
+            temp_dict['dateList'] = [dateDict]
+            temp_dict['datecount'] = 1
             final_list2.append(temp_dict)
     return HttpResponse(json.dumps(final_list2))
-
 
 
 def service_storage(request):
@@ -356,7 +362,7 @@ def service_storage(request):
     storage_list = {}
     for row in db_storage_list:
         spec = row['manageSpec']
-#        if not hasattr(storage_list, spec):
+        #        if not hasattr(storage_list, spec):
         if not spec in storage_list:
             storage_list[spec] = {
                 'name': spec,
@@ -367,7 +373,7 @@ def service_storage(request):
         if not enroll in storage_list[spec]:
             storage_list[spec][enroll] = {
                 'Date': enroll,
-                'disk':[],
+                'disk': [],
                 'enrollCount': 1
             }
         disk = row['diskSpec']
@@ -387,8 +393,10 @@ def service_storage(request):
         storage_list[spec]['totalCount'] = storage_list[spec]['totalCount'] + 1
         storage_list[spec][enroll]['enrollCount'] = storage_list[spec][enroll]['enrollCount'] + 1
         storage_list[spec][enroll][disk]['diskCount'] = storage_list[spec][enroll][disk]['diskCount'] + 1
-        storage_list[spec][enroll][disk]['usageTotal'] = storage_list[spec][enroll][disk]['usageTotal'] + row['allocSize']
-        storage_list[spec][enroll][disk]['remainSize'] = storage_list[spec][enroll][disk]['remainSize'] - row['allocSize']
+        storage_list[spec][enroll][disk]['usageTotal'] = storage_list[spec][enroll][disk]['usageTotal'] + row[
+            'allocSize']
+        storage_list[spec][enroll][disk]['remainSize'] = storage_list[spec][enroll][disk]['remainSize'] - row[
+            'allocSize']
         storage_list[spec][enroll][disk]['list'].append({
             'allocSize': row['allocSize'],
             'serviceName': row['serviceName'],
@@ -732,7 +740,7 @@ def asset_detail(request):
     my_prefetch = Prefetch('ss_server', queryset=ServerService.objects.select_related('service'), to_attr="services")
     asset_temp_list = Server.objects.select_related('location', 'assetInfo', 'location__rack_pk').prefetch_related(
         my_prefetch).filter(assetInfo=asset)
-    #asset_temp_list = Server.objects.select_related('location', 'assetInfo', 'location__rack_pk').filter(assetInfo=asset)
+    # asset_temp_list = Server.objects.select_related('location', 'assetInfo', 'location__rack_pk').filter(assetInfo=asset)
     temp_list = []
     for server in asset_temp_list:
         temp_dict = dict()
@@ -895,7 +903,8 @@ def server_detail(request):
     server = serverList[0]
 
     my_prefetch = Prefetch('ss_server', queryset=ServerService.objects.select_related('service'), to_attr="services")
-    server_list = Server.objects.select_related('location', 'assetInfo', 'location__rack_pk').prefetch_related(my_prefetch).filter(manageNum=server.manageNum)
+    server_list = Server.objects.select_related('location', 'assetInfo', 'location__rack_pk').prefetch_related(
+        my_prefetch).filter(manageNum=server.manageNum)
     server = server_list[0]
     temp_dict = dict()
     temp_dict['assetInfo'] = server.assetInfo
@@ -906,7 +915,7 @@ def server_detail(request):
     if len(server.services) is not 0:
         temp_serverservice = server.services[0]
         temp = temp_serverservice.Use
-        if(temp == True):
+        if (temp == True):
             temp_dict['use'] = "On"
         else:
             temp_dict['use'] = "Off"
@@ -918,7 +927,7 @@ def server_detail(request):
     else:
         temp_dict['location'] = temp_location.realLocation
 
-    context = {'server_list':temp_dict}
+    context = {'server_list': temp_dict}
     return render(request, 'dbApp/server_detail.html', context)
 
 
@@ -962,8 +971,41 @@ def edit_asset(request, asset_num):
     return HttpResponse("자산번호" + asset_num + "를 수정")
 
 
-def edit_one_asset(request, manage_num):
+def edit_one_asset(request, asset_type, manage_num):
     return HttpResponse("관리번호" + manage_num + "를 수정")
+
+
+@csrf_exempt
+def get_location(request, asset_type, manage_num):
+    if asset_type == "server":
+        this_server = Server.objects.prefetch_related('location', 'location__rack_pk').get(manageNum=manage_num)
+        is_in_rack = (this_server.location.rack_pk is not None)
+        if is_in_rack:
+            rack_num = this_server.location.rack_pk.manageNum
+            rack_idx = this_server.location.rackLocation
+            real_location = None
+        else:
+            rack_num = None
+            rack_idx = None
+            real_location = this_server.location.realLocation
+    elif asset_type == "switch":
+        this_switch = Switch.objects.prefetch_related('location', 'location__rack').get(manageNum=manage_num)
+        is_in_rack = (this_switch.location.rack is not None)
+        if is_in_rack:
+            rack_num = this_switch.location.rack.manageNum
+            rack_idx = this_switch.location.rackLocation
+            real_location = None
+        else:
+            rack_num = None
+            rack_idx = None
+            real_location = this_switch.location.realLocation
+    temp_dict = dict()
+    temp_dict['is_in_rack'] = is_in_rack
+    temp_dict['rack_manage_num'] = rack_num
+    temp_dict['rack_idx'] = rack_idx
+    temp_dict['real_location'] = real_location
+
+    return HttpResponse(json.dumps(temp_dict))
 
 
 @csrf_exempt
@@ -982,6 +1024,28 @@ def save_asset(request, asset_num):
 @csrf_exempt
 def save_one_asset(request, asset_type, manage_num):
     if asset_type == "server":
+        int_rackLocation = request.POST.get("rackLocation")
+        str_reallocation = request.POST.get("realLocation")
+        rack_managenum = request.POST.get("rack_manage_num")
+
+        my_server = Server.objects.prefetch_related('location', 'location__rack_pk').get(manageNum=manage_num)
+        if request.POST.get("isInRack") == "true":
+            my_server.isInRack = True
+        else:
+            my_server.isInRack = False
+        my_server.save()
+        try:
+            temp_rack = Rack.objects.get(manageNum=rack_managenum)
+            my_server.location.rack_pk = temp_rack
+            my_server.location.rackLocation = int_rackLocation
+            my_server.location.realLocation = None
+            my_server.location.save()
+        except:
+            my_server.location.rack_pk = None
+            my_server.location.rackLocation = None
+            my_server.location.realLocation = str_reallocation
+            my_server.location.save()
+
         target = Server.objects.filter(manageNum=manage_num).first()
         target.manageSpec = request.POST.get("manageSpec")
         target.size = request.POST.get("size")
@@ -995,6 +1059,28 @@ def save_one_asset(request, asset_type, manage_num):
         target.standard = request.POST.get("standard")
         target.save()
     elif asset_type == "switch":
+        int_rackLocation = request.POST.get("rackLocation")
+        str_reallocation = request.POST.get("realLocation")
+        rack_managenum = request.POST.get("rack_manage_num")
+
+        my_switch = Switch.objects.prefetch_related('location', 'location__rack').get(manageNum=manage_num)
+        if request.POST.get("isInRack") == "true":
+            my_switch.isInRack = True
+        else:
+            my_switch.isInRack = False
+        my_switch.save()
+        try:
+            temp_rack = Rack.objects.get(manageNum=rack_managenum)
+            my_switch.location.rack = temp_rack
+            my_switch.location.rackLocation = int_rackLocation
+            my_switch.location.realLocation = None
+            my_switch.location.save()
+        except:
+            my_switch.location.rack = None
+            my_switch.location.rackLocation = None
+            my_switch.location.realLocation = str_reallocation
+            my_switch.location.save()
+
         target = Switch.objects.filter(manageNum=manage_num).first()
         target.manageSpec = request.POST.get("manageSpec")
         target.size = request.POST.get("size")
@@ -1003,7 +1089,7 @@ def save_one_asset(request, asset_type, manage_num):
     elif asset_type == "rack":
         target = Rack.objects.filter(manageNum=manage_num).first()
         target.manageSpec = request.POST.get("manageSpec")
-        #target.location = request.POST.get("location")
+        # target.location = request.POST.get("location")
         target.size = request.POST.get("size")
         target.save()
 
