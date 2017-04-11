@@ -20,22 +20,24 @@
                 <tbody>
                 {% if switch_asset_list %}
                     {% for switch in switch_asset_list %}
-                        <tr id="one-asset-id-{{switch.manageNum}}">
-                        <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a style="cursor:hand"
-                                onclick="td_click_detail_asset(this)">{{ switch.assetNum }}</a></td>
-                        <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a style="cursor:hand"
-                                onclick="td_click_detail_switch(this)">{{ switch.manageNum }}</a></td>
+                        <tr id="one-asset-id-{{ switch.manageNum }}">
+                        <td><a style="cursor:hand"
+                               onclick="td_click_detail_asset(this)">{{ switch.assetNum }}</a></td>
+                        <td><a style="cursor:hand" data-toggle="modal" data-target="#"
+                               href="./detail/?data={{ switch.manageNum }}">{{ switch.manageNum }}</a></td>
                         <td id="manage-spec-{{ switch.manageNum }}">{{ switch.manageSpec }}</td>
-                        <td id="location-{{ switch.manageNum }}" onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a style="cursor:hand"
-                                onclick="td_click_detail_rack(this)">{{ switch.location }}</a></td>
+                        <td id="location-{{ switch.manageNum }}"><a style="cursor:hand"
+                                                                    onclick="td_click_detail_rack(this)">{{ switch.location }}</a>
+                        </td>
                         <td id="size-{{ switch.manageNum }}">{{ switch.size }}</td>
                         <td id="ip-{{ switch.manageNum }}">{{ switch.ip }}</td>
                         <td id="onoff-{{ switch.manageNum }}">{{ switch.onOff }}</td>
-                         <td><a id="edit-button-{{ switch.manageNum }}" style="cursor:hand"
-                                   onclick='td_click_edit("switch","{{ switch.manageNum }}")'>수정</a>
-                                <a hidden id="save-button-{{ switch.manageNum }}" style="cursor:hand"
-                                   onclick='td_click_save("switch","{{ switch.manageNum }}")'>저장</a></td>
-                            <td><a style="cursor:hand" onclick='td_click_delete_switch("{{ switch.manageNum }}")'>삭제</a></td>
+                        <td><a id="edit-button-{{ switch.manageNum }}" style="cursor:hand"
+                               onclick='td_click_edit("switch","{{ switch.manageNum }}")'>수정</a>
+                            <a hidden id="save-button-{{ switch.manageNum }}" style="cursor:hand"
+                               onclick='td_click_save("switch","{{ switch.manageNum }}")'>저장</a></td>
+                        <td><a style="cursor:hand" onclick='td_click_delete_switch("{{ switch.manageNum }}")'>삭제</a>
+                        </td>
                     {% endfor %}
                 {% endif %}
                 </tbody>

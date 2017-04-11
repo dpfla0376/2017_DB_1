@@ -171,7 +171,12 @@ def switch_asset(request):
             temp_dict['location'] = temp_location.rack.location
         else:
             temp_dict['location'] = temp_location.realLocation
-        temp_dict['onOff'] = True
+        temp = switch.serviceOn
+        if(temp == True):
+            temp_dict['onOff'] = 'On'
+        else:
+            temp_dict['onOff'] = 'Off'
+
         temp_list.append(temp_dict)
     context = {'switch_asset_list': temp_list}
     return render(request, 'dbApp/switch_asset.html', context)
@@ -179,7 +184,8 @@ def switch_asset(request):
 
 def server_asset(request):
     start_time = time.time()
-    server_asset_list = Server.objects.select_related('location', 'assetInfo', 'location__rack_pk').all()
+    my_prefetch = Prefetch('ss_server', queryset=ServerService.objects.select_related('service'), to_attr="services")
+    server_asset_list = Server.objects.select_related('location', 'assetInfo', 'location__rack_pk').prefetch_related(my_prefetch).all()
     temp_list = list()
     for server in server_asset_list:
         temp_dict = dict()
@@ -189,12 +195,20 @@ def server_asset(request):
         temp_dict['core'] = server.core
         temp_dict['ip'] = server.ip
         temp_dict['size'] = server.size
+
+        if len(server.services) is not 0:
+            temp_serverservice = server.services[0]
+            temp = temp_serverservice.Use
+            if (temp == True):
+                temp_dict['onoff'] = "On"
+            else:
+                temp_dict['onoff'] = "Off"
+
         temp_location = server.location
         if temp_location.rack_pk is not None:
             temp_dict['location'] = temp_location.rack_pk.location
         else:
             temp_dict['location'] = temp_location.realLocation
-        temp_dict['onoff'] = True
         temp_list.append(temp_dict)
     context = {'server_asset_list': temp_list}
     temppp = render(request, 'dbApp/server_asset.html', context)
@@ -269,19 +283,118 @@ def storage_total(request):
     storage_list = dictFetchall(cursor)
     return render(request, 'dbApp/storage_total.html', {'storage_list': storage_list});
 
+def check_in_list(mylist,mystring):
+    for temp_dict in mylist:
+        if temp_dict['storagename'] == mystring:
+            return temp_dict
+    return None
+def check_in_list_date(mylist,mystring):
+    for temp_dict in mylist:
+        if temp_dict['date'] == mystring:
+            return temp_dict
+    return None
+
+def service_storage2(request):
+    my_prefetch = Prefetch('storage_service', queryset=StorageService.objects.select_related('service'), to_attr="services")
+    storage_list = Storage.objects.select_related('storageAsset','storageAsset__assetInfo').all().prefetch_related(my_prefetch)
+    temp_list = list()
+    for storagee in storage_list:
+        temp_dict = {}
+        temp_dict['storageassetname'] = storagee.storageAssetName
+        temp_dict['vol']=storagee.Vol
+        temp_dict['allocunitsize'] = storagee.allocUnitSize
+        temp_dict['diskspec'] = storagee.diskSpec
+        temp_dict['storageform']=storagee.storageAsset.storageForm
+        temp_float = 0
+        temp_list2 = list()
+        temp_dict['servicecount']=len(storagee.services)
+        for storageservice in storagee.services:
+            temp_dict2 = {}
+            temp_float += storageservice.allocSize
+            temp_dict2['allocsize']=storageservice.allocSize
+            temp_dict2['servicename']=storageservice.service.serviceName
+            temp_dict2['usage']=storageservice.usage
+            temp_list2.append(temp_dict2)
+        temp_dict['remain']=storagee.Vol-temp_float
+        temp_dict['servicelist'] = temp_list2
+        temp_date = check_in_list_date(temp_list,storagee.enrollDate.isoformat())
+        if temp_date is not None:
+            temp_date['storagecount'] += 1
+            temp_date['storagelist'].append(temp_dict)
+        else:
+            date_dict={}
+            date_dict['date'] = storagee.enrollDate.isoformat()
+            date_dict['storagelist'] = [temp_dict]
+            date_dict['storagecount'] = 1
+            date_dict['storageassetname']=storagee.storageAssetName
+        temp_list.append(date_dict)
+    final_list2= list()
+    for dateDict in temp_list:
+        tempp= check_in_list(final_list2,dateDict['storageassetname'])
+        if tempp is not None:
+            tempp['dateList'].append(dateDict)
+            tempp['datecount']+=1
+        else:
+            temp_dict={}
+            temp_dict['storagename']= dateDict['storageassetname']
+            temp_dict['dateList']= [dateDict]
+            temp_dict['datecount']=1
+            final_list2.append(temp_dict)
+    return HttpResponse(json.dumps(final_list2))
+
+
 
 def service_storage(request):
     cursor = connection.cursor()
     cursor.execute('SELECT * FROM `dbApp_asset` ' +
                    'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.assetInfo_id = dbApp_asset.id ' +
                    'INNER JOIN `dbApp_storage` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id ' +
-                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id ')
-    storage_list = dictFetchall(cursor)
+                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id ' +
+                   'INNER JOIN `dbApp_service` ON dbApp_storageservice.service_id = dbApp_service.id ')
+    db_storage_list = dictFetchall(cursor)
 
-    cursor.execute('SELECT * FROM `dbApp_service` ')
-    service_list = dictFetchall(cursor)
-    return render(request, 'dbApp/storage_service.html', {'storage_list': storage_list,
-                                                          'service_list': service_list});
+    storage_list = {}
+    for row in db_storage_list:
+        spec = row['manageSpec']
+#        if not hasattr(storage_list, spec):
+        if not spec in storage_list:
+            storage_list[spec] = {
+                'name': spec,
+                'enroll': [],
+                'totalCount': 1
+            }
+        enroll = row['enrollDate']
+        if not enroll in storage_list[spec]:
+            storage_list[spec][enroll] = {
+                'Date': enroll,
+                'disk':[],
+                'enrollCount': 1
+            }
+        disk = row['diskSpec']
+        if not disk in storage_list[spec][enroll]:
+            storage_list[spec][enroll][disk] = {
+                'diskSpec': disk,
+                'list': [],
+                'Vol': row['Vol'],
+                'usageTotal': 0,
+                'remainSize': row['Vol'],
+                'diskSpec': row['diskSpec'],
+                'allocUnitSize': row['allocUnitSize'],
+                'storageForm': row['storageForm'],
+                'diskCount': 1
+            }
+
+        storage_list[spec]['totalCount'] = storage_list[spec]['totalCount'] + 1
+        storage_list[spec][enroll]['enrollCount'] = storage_list[spec][enroll]['enrollCount'] + 1
+        storage_list[spec][enroll][disk]['diskCount'] = storage_list[spec][enroll][disk]['diskCount'] + 1
+        storage_list[spec][enroll][disk]['usageTotal'] = storage_list[spec][enroll][disk]['usageTotal'] + row['allocSize']
+        storage_list[spec][enroll][disk]['remainSize'] = storage_list[spec][enroll][disk]['remainSize'] - row['allocSize']
+        storage_list[spec][enroll][disk]['list'].append({
+            'allocSize': row['allocSize'],
+            'serviceName': row['serviceName'],
+            'usage': row['usage']
+        })
+    return render(request, 'dbApp/storage_service.html', {'storage_list': storage_list});
 
 
 def service_detail(request, pk):
@@ -378,7 +491,11 @@ def rack_info(request):
         temp_subDict['size'] = server.size
         if len(server.services) is not 0:
             temp_serverservice = server.services[0]
-            temp_subDict['use'] = temp_serverservice.Use
+            temp = temp_serverservice.Use
+            if (temp == True):
+                temp_subDict['use'] = "On"
+            else:
+                temp_subDict['use'] = "Off"
             temp_service = temp_serverservice.service
             temp_subDict['serviceName'] = temp_service.serviceName
             temp_subDict['color'] = temp_service.color
@@ -396,7 +513,6 @@ def rack_info(request):
         temp_subDict['use'] = switch.serviceOn
         temp_subDict['size'] = switch.size
         temp_subDict['color'] = '255, 204, 255'
-
         temp_location = switch.location
         if temp_location.rack is not None:
             temp_subDict['rack_pk'] = temp_location.rack.manageNum
@@ -612,8 +728,11 @@ def asset_detail(request):
     if assetList.count() == 0:
         return HttpResponse("찾으시는 제품이 없습니다.")
     asset = assetList[0]
-    asset_temp_list = Server.objects.select_related('location', 'assetInfo', 'location__rack_pk').filter(
-        assetInfo=asset)
+
+    my_prefetch = Prefetch('ss_server', queryset=ServerService.objects.select_related('service'), to_attr="services")
+    asset_temp_list = Server.objects.select_related('location', 'assetInfo', 'location__rack_pk').prefetch_related(
+        my_prefetch).filter(assetInfo=asset)
+    #asset_temp_list = Server.objects.select_related('location', 'assetInfo', 'location__rack_pk').filter(assetInfo=asset)
     temp_list = []
     for server in asset_temp_list:
         temp_dict = dict()
@@ -623,6 +742,11 @@ def asset_detail(request):
         temp_dict['core'] = server.core
         temp_dict['ip'] = server.ip
         temp_location = server.location
+        if len(server.services) is not 0:
+            temp_serverservice = server.services[0]
+            temp_dict['use'] = temp_serverservice.Use
+            temp_service = temp_serverservice.service
+            temp_dict['serviceName'] = temp_service.serviceName
         if temp_location.rack_pk is not None:
             temp_dict['location'] = temp_location.rack_pk.location
         else:
@@ -644,7 +768,11 @@ def asset_detail(request):
             temp_dict['location'] = temp_location.rack.location
         else:
             temp_dict['location'] = temp_location.realLocation
-        temp_dict['onOff'] = True
+        temp = switch.serviceOn
+        if (temp == True):
+            temp_dict['onOff'] = 'On'
+        else:
+            temp_dict['onOff'] = 'Off'
         temp_list.append(temp_dict)
     asset_switch_list = temp_list
 
@@ -708,7 +836,11 @@ def rack_detail(request):
         temp_subDict['size'] = server.size
         if len(server.services) is not 0:
             temp_serverservice = server.services[0]
-            temp_subDict['use'] = temp_serverservice.Use
+            temp = temp_serverservice.Use
+            if (temp == True):
+                temp_subDict['use'] = "On"
+            else:
+                temp_subDict['use'] = "Off"
             temp_service = temp_serverservice.service
             temp_subDict['serviceName'] = temp_service.serviceName
             temp_subDict['color'] = temp_service.color
@@ -720,14 +852,18 @@ def rack_detail(request):
     # make server list for rack
     for switch in switch_asset_list:
         temp_subDict = dict()
-        temp_subDict['assetNum'] = server.assetInfo.assetNum
+        temp_subDict['assetNum'] = switch.assetInfo.assetNum
         temp_subDict['manageNum'] = switch.manageNum
         temp_subDict['manageSpec'] = switch.manageSpec
         temp_subDict['ip'] = switch.ip
         temp_subDict['use'] = switch.serviceOn
         temp_subDict['size'] = switch.size
         temp_subDict['color'] = '255, 204, 255'
-
+        temp = switch.serviceOn
+        if (temp == True):
+            temp_subDict['onOff'] = 'On'
+        else:
+            temp_subDict['onOff'] = 'Off'
         temp_location = switch.location
         if temp_location.rack is not None:
             temp_subDict['rack_pk'] = temp_location.rack.manageNum
@@ -757,7 +893,33 @@ def server_detail(request):
     if serverList.count() == 0:
         return HttpResponse("찾으시는 제품이 없습니다.")
     server = serverList[0]
-    return HttpResponse("서버 디테일 페이지 이고 서버 관리번호는" + server.manageNum + "입니다.")
+
+    my_prefetch = Prefetch('ss_server', queryset=ServerService.objects.select_related('service'), to_attr="services")
+    server_list = Server.objects.select_related('location', 'assetInfo', 'location__rack_pk').prefetch_related(my_prefetch).filter(manageNum=server.manageNum)
+    server = server_list[0]
+    temp_dict = dict()
+    temp_dict['assetInfo'] = server.assetInfo
+    temp_dict['manageNum'] = server.manageNum
+    temp_dict['manageSpec'] = server.manageSpec
+    temp_dict['core'] = server.core
+    temp_dict['ip'] = server.ip
+    if len(server.services) is not 0:
+        temp_serverservice = server.services[0]
+        temp = temp_serverservice.Use
+        if(temp == True):
+            temp_dict['use'] = "On"
+        else:
+            temp_dict['use'] = "Off"
+        temp_service = temp_serverservice.service
+        temp_dict['serviceName'] = temp_service.serviceName
+    temp_location = server.location
+    if temp_location.rack_pk is not None:
+        temp_dict['location'] = temp_location.rack_pk.location
+    else:
+        temp_dict['location'] = temp_location.realLocation
+
+    context = {'server_list':temp_dict}
+    return render(request, 'dbApp/server_detail.html', context)
 
 
 def switch_detail(request):
@@ -766,16 +928,28 @@ def switch_detail(request):
     if switchList.count() == 0:
         return HttpResponse("찾으시는 제품이 없습니다.")
     switch = switchList[0]
-    return HttpResponse("스위치 디테일 페이지 이고 스위치 이름은" + switch.manageNum + "입니다.")
 
+    switch_list = Switch.objects.select_related('location', 'location__rack').filter(manageNum=switch.manageNum)
+    switch = switch_list[0]
 
-# def asset_detail(request):
-#    searchText = request.GET.get("data")
-#    assetList = Asset.objects.filter(Q(assetNum=searchText) | Q(assetName=searchText) | Q(standard=searchText))
-#    if assetList.count() == 0:
-#        return HttpResponse("찾으시는 제품이 없습니다.")
-#    asset = assetList[0]
-#    return HttpResponse("에셋 디테일 페이지 이고 자산번호는" + asset.assetNum + "입니다.")
+    temp_dict = {}
+    temp_dict['assetInfo'] = switch.assetInfo
+    temp_dict['manageNum'] = switch.manageNum
+    temp_dict['manageSpec'] = switch.manageSpec
+    temp_dict['ip'] = switch.ip
+    temp_location = switch.location
+    if temp_location.rack is not None:
+        temp_dict['location'] = temp_location.rack.location
+    else:
+        temp_dict['location'] = temp_location.realLocation
+    temp = switch.serviceOn
+    if (temp == True):
+        temp_dict['onOff'] = 'On'
+    else:
+        temp_dict['onOff'] = 'Off'
+
+    context = {'switch_list': temp_dict}
+    return render(request, 'dbApp/switch_detail.html', context)
 
 
 def search_assets(request):

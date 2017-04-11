@@ -1,40 +1,58 @@
 {% extends 'dbApp/navigation_bar.html' %}
+{% load define %}
 {% block content %}
-    <div class="container">
-        <h2 class="page-header">Storage</h2>
-        <div class="table-responsive">
-            {% if service_list %}
-                {% for service in service_list %}
-                    <h2 class="page-header">{{ service.serviceName }}</h2>
-                    <table class="table table-striped">
-                        <thead>
-                        <tr>
-                            <th>제품명</th>
-                            <th>등록일자</th>
-                            <th>디스크 사양</th>
-                            <th>할당단위크기</th>
-                            <th>Vol(TB)</th>
-                            <th>할당량(TB)</th>
-                            <th>용도</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for storage in storage_list %}
-                            {% if storage_list.service_id == service.id %}
-                                <tr>
-                                    <td>{{ storage.storageAssetName }}</td>
-                                    <td>{{ storage.enrollDate }}</td>
-                                    <td>{{ storage.diskSpec }}</td>
-                                    <td>{{ storage.allocUnitSize }}</td>
-                                    <td>{{ storage.Vol }}</td>
-                                    <td>{{ storage.allocSize }}</td>
-                                    <td>{{ storage.usage }}</td>
-                                </tr>
-                            {% endif %}
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                {% endfor %} {% endif %}
-        </div>
+<div class="container">
+    <h2 class="page-header">Storage</h2>
+    <div class="table-responsive">
+        {% if storage_list %}
+        {% for name, storage in storage_list.items %}
+            <h2 class="subhead">{{ storage.name }}</h2>
+            <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>등록일자</th>
+                <th>할당단위크기</th>
+                <th>Vol</th>
+                <th>remainSize</th>
+                <th>diskSpec</th>
+                <th>storageForm</th>
+                <th>allocUnitSize(TB)</th>
+                <th>serviceName</th>
+                <th>usage</th>
+            </tr>
+            </thead>
+            <tbody>
+            <script language="javascript">
+{#             var storage = JSON.parse('{{ storage|js }}');#}
+             var storage_enroll = JSON.parse('{{ storage.enroll|js}}');
+             for (var i in storage_enroll) {
+                 console.log(storage_enroll[i].Date);
+             }
+            </script>
+             <!--            <tr >
+//        < td rowspan = "{{ enrollRow.enrollCount }}" style="vertical-align : middle" >{{ enrollRow.Date }} < / td >
+        < / tr >
+        {% for disk in storage.enroll.disk %}
+            <tr>
+            <td rowspan = "{{ disk.diskCount }}" style = "vertical-align : middle" >{{ disk.diskSpec }} < / td >
+            < td rowspan = "{{ disk.diskCount }}" style = "vertical-align : middle" >{{ disk.storageForm }} < / td >
+            < td rowspan = "{{ disk.diskCount }}" style = "vertical-align : middle" >{{ disk.allocUnitSize }} < / td >
+            < td rowspan = "{{ disk.diskCount }}" style = "vertical-align : middle" >{{ disk.Vol }} < / td >
+            < td rowspan = "{{ disk.diskCount }}" style="vertical-align : middle" >{{ disk.remainSize }} < / td >
+        < / tr >
+        {% endfor %}
+        {% for row in storage.list %}
+            <tr>
+            <td>{{ row.allocSize }}</ td>
+            <td>{{ row.serviceName }}</ td>
+            <td>{{ row.usage }}</ td>
+            </ tr>
+        {% endfor %}{}
+        -->
+
+        </tbody>
+        </table>
+        {% endfor %} {% endif %}
     </div>
+</div>
 {% endblock content %}

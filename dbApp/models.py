@@ -96,7 +96,7 @@ class SwitchLocation(models.Model):
 
 
 class StorageService(models.Model):
-    storage = models.ForeignKey(Storage, on_delete=models.CASCADE)
+    storage = models.ForeignKey(Storage, on_delete=models.CASCADE,related_name='storage_service')
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
     allocSize = models.FloatField()
     usage = models.CharField(max_length=45)

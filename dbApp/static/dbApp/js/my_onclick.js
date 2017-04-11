@@ -24,6 +24,10 @@ function td_click_detail_switch(tdObj) {
     var txt = tdObj.text;
     location.href = "/dbApp/switch/detail/?data=" + txt;
 }
+function td_click_detail_service(tdObj) {
+    var txt = tdObj.text;
+    location.href = "/dbApp/service/detail/?data=" + txt;
+}
 
 function td_click_delete_asset(assetNum) {
     myConfirm("삭제하시겠습니까?", function () {
@@ -292,3 +296,23 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+
+$(document).ready(function () {
+    $('[data-toggle="modal"]').click(function (e) {
+        e.preventDefault();
+        var url = $(this).attr('href');
+        if (url.indexOf('#') == 0) {
+            $(url).modal('open');
+        } else {
+            $.get(url, function (data) {
+                $('<div class="modal fade"><div class="modal-dialog" style="width:70%;text-align: center"><div class="modal-content">' + data + '</div></div></div>')
+                    .modal()
+                    .on('hidden', function () {
+                        $(data_target).remove();
+                    });
+            }).success(function () {
+                $('input:text:visible:first').focus();
+            });
+        }
+    });
+});

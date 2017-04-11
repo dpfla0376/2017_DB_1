@@ -14,19 +14,23 @@
                         <th>코어</th>
                         <th>IP</th>
                         <th>ON/OFF</th>
+                        <th>Service</th>
+                        <th>수정</th>
+                        <th>삭제</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for server in asset_server_list %}
                         <tr>
-                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a style="cursor:hand"
-                                    onclick="td_click_detail_server(this)">{{ server.managenum }}</a></td>
+                            <td><a style="cursor:hand" data-toggle="modal" data-target="#"
+                                            href="/dbApp/server/detail/?data={{ server.managenum }}">{{ server.managenum }}</a></td>
                             <td>{{ server.managespec }}</td>
-                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a style="cursor:hand"
+                            <td><a style="cursor:hand"
                                     onclick="td_click_detail_rack(this)">{{ server.location }}</a></td>
                             <td>{{ server.core }}</td>
                             <td>{{ server.ip }}</td>
-                            <td>{{ server.onoff }}</td>
+                            <td>{{ server.use }}</td>
+                            <td>{{ server.serviceName }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -49,13 +53,13 @@
                     <tbody>
                     {% for switch in asset_switch_list %}
                         <tr>
-                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a style="cursor:hand"
-                                    onclick="td_click_detail_switch(this)">{{ switch.manageNum }}</a></td>
+                            <td><a style="cursor:hand" data-toggle="modal" data-target="#"
+                                            href="/dbApp/switch/detail/?data={{ switch.manageNum }}">{{ switch.manageNum }}</a></td>
                             <td>{{ switch.manageSpec }}</td>
-                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a style="cursor:hand"
+                            <td><a style="cursor:hand"
                                     onclick="td_click_detail_rack(this)">{{ switch.location }}</a></td>
                             <td>{{ switch.ip }}</td>
-                            <td>{{ switch.onoff }}</td>
+                            <td>{{ switch.onOff }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -80,11 +84,11 @@
                     <tbody>
                     {% for rack in asset_rack_list %}
                         <tr>
-                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a style="cursor:hand"
+                            <td><a style="cursor:hand"
                                     onclick="td_click_detail_rack(this)">{{ rack.manageNum }}</a></td>
                             <td>{{ rack.manageSpec }}</td>
                             <td>{{ rack.size }}</td>
-                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a style="cursor:hand"
+                            <td><a style="cursor:hand"
                                     onclick="td_click_detail_rack(this)">{{ rack.location }}</a></td>
                         </tr>
                     {% endfor %}

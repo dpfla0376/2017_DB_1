@@ -41,12 +41,12 @@
                 {% if server_asset_list %}
                     {% for server in server_asset_list %}
                         <tr id="one-asset-id-{{server.managenum}}">
-                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a style="cursor:hand"
+                            <td><a style="cursor:hand"
                                     onclick="td_click_detail_asset(this)">{{ server.assetnum }}</a></td>
-                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a style="cursor:hand"
-                                    onclick="td_click_detail_server(this)">{{ server.managenum }}</a></td>
+                         <td><a style="cursor:hand" data-toggle="modal" data-target="#"
+                                            href="./detail/?data={{ server.managenum }}">{{ server.managenum }}</a>
                             <td id="manage-spec-{{server.managenum}}">{{ server.managespec }}</td>
-                            <td id="location-{{server.managenum}}"onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a style="cursor:hand"
+                            <td id="location-{{server.managenum}}"><a style="cursor:hand"
                                     onclick="td_click_detail_rack(this)">{{ server.location }}</a></td>
                             <td id="core-{{server.managenum}}">{{ server.core }}</td>
                             <td id="ip-{{server.managenum}}">{{ server.ip }}</td>
@@ -55,6 +55,7 @@
                             <td><a id="edit-button-{{ server.managenum }}" style="cursor:hand" onclick='td_click_edit("server","{{ server.managenum }}")'>수정</a>
                             <a hidden id="save-button-{{ server.managenum }}" style="cursor:hand" onclick='td_click_save("server","{{ server.managenum }}")'>저장</a></td>
                             <td><a style="cursor:hand" onclick='td_click_delete_server("{{ server.managenum }}")'>삭제</a></td>
+
                         </tr>
                     {% endfor %}
                 {% endif %}
