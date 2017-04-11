@@ -82,14 +82,13 @@ def api_graph_service_info(request):
         core_info['core'] = int(core.get('core'))
         service_core_info.append(core_info)
 
-    cursor.execute('SELECT sv.id, sa.storageForm AS type, SUM(ss.allocSize) as size ' +
+    cursor.execute('SELECT sv.id, ss.uses, sa.storageForm AS type, SUM(ss.allocSize) as sizes ' +
                    'FROM `dbApp_service` sv ' +
                    'INNER JOIN `dbApp_storageservice` ss ON ss.service_id = sv.id ' +
                    'INNER JOIN `dbApp_storage` st ON st.id = ss.storage_id ' +
                    'INNER JOIN `dbApp_storageasset` sa ON sa.id = st.storageAsset_id ' +
-                   'GROUP BY sv.id, sa.storageForm')
+                   'GROUP BY sv.id, sa.storageForm, ss.uses')
     service_storage_info = dictFetchall(cursor)
-
     return HttpResponse(json.dumps({'list': service_list, 'core': service_core_info, 'storage': service_storage_info}))
 
 

@@ -111,7 +111,7 @@
         });
         var $summaryNumber = $('<p class="' + settings.summaryNumberClass + '"></p>').appendTo($summary).css({opacity: 0});
         $summaryNumber.on('click', function () {
-           console.log(this);
+            console.log(this);
         });
 
         for (var i = 0, len = data.length; i < len; i++) {
@@ -288,8 +288,12 @@ function drawChart1() {
                 [['Storage', 'Use', 'Unuse']].concat(
                     jsonData.total.map(function (d, i) {
                         var temp = jsonData.usage[i].size;
-                        if(temp != null) { return [d.name, Math.round(temp), Math.round(d.size - temp)]; }
-                        else { return false; }
+                        if (temp != null) {
+                            return [d.name, Math.round(temp), Math.round(d.size - temp)];
+                        }
+                        else {
+                            return false;
+                        }
                     })
                 )
             );
@@ -323,68 +327,72 @@ function drawChart2() {
                 });
 
                 var doughnutChart = $("#service_graph1_" + service.id.toString());
-                console.log(doughnutChart);
-                if(doughnutChart.length > 0) {
+                if (doughnutChart.length > 0) {
                     doughnutChart.drawDoughnutChart([
-                    {
-                        title: 'Used',
-                        value: usedData,
-                        color: '#2C3E50'
-                    },
-                    {
-                        title: 'Unused',
-                        value: unusedData,
-                        color: '#6DBCDB'
-                    }
-                ]);
+                        {
+                            title: 'Used',
+                            value: usedData,
+                            color: '#2C3E50'
+                        },
+                        {
+                            title: 'Unused',
+                            value: unusedData,
+                            color: '#6DBCDB'
+                        }
+                    ]);
                 }
 
             })();
 
             (function ServiceGraph2() {
-                var typeList = []
+                var typeList = [];
                 jsonData.storage.forEach(function (data) {
                     if (data.id == service.id) {
                         typeList.push({
                             type: data.type,
-                            size: data.size,
-                            //isUse: data.use
+                            isUse: data.uses,
+                            size: data.sizes
                         });
+//                            console.log("data : " + data.uses);
                     }
                 });
-                SANuseData = 0
-                SANunUseData = 0
+                var SANuseData = 0.0;
+                var SANunUseData = 0.0;
+                var NASuseData = 0.0;
+                var NASunUseData = 0.0;
+                var TAPEuseData = 0.0;
+                var TAPEunUseData = 0.0;
+                typeList.forEach(function (index) {
+                    if (index.type == "SAN") {
+                        if (index.isUse) {
+                            console.log("size ; " +     index.isUse);
+                            SANuseData += index.size;
 
-                NASuseData = 0
-                NASunUseData = 0
+                        }
+                        else
+                            SANunUseData += index.size;
+                    }
+                    else if (index.type == "NAS") {
+                        if (index.isUse)
+                            NASuseData += index.size;
+                        else
+                            NASunUseData += index.size;
+                    }
+                    else {
+                        if (index.isUse)
+                            TAPEuseData += index.size;
+                        else
+                            TAPEunUseData += index.size;
+                    }
+                });
 
-                TAPEuseData = 0
-                TAPEunUseData = 0
-/*
-                typeList.forEach(function (index){
-                    if(index.type == 'SAN')
-                        if(index.isUse)
-                            SANuseData += index.size
-                        else
-                            SANunUseData += index.size
-                    else if(index.type == 'NAS')
-                        if(index.isUse)
-                            NASuseData += index.size
-                        else
-                            NASunUseData += index.size
-                    else
-                        if(index.isUse)
-                            TAPEuseData += index.size
-                        else
-                            TAPEunUseData += index.size
-                }*/
-
+                console.log("san use : " + SANuseData);
 
                 var charData = google.visualization.arrayToDataTable([
-                    ['', 'Use', 'Unuse'],
-                    ['SAN', 1000, 400],
-                    ['NAS', 1170, 460],
-                    ['TAPE', 660, 1120]
+                    ['Storage', 'Use', 'Unuse'],
+                    ['SAN', SANuseData, SANunUseData],
+                    ['NAS', NASuseData, NASunUseData],
+                    ['TAPE', TAPEuseData, TAPEunUseData]
                 ]);
                 var options = {
                     chart: {
@@ -408,7 +416,7 @@ $(document).ready(function () {
     google.charts.load('current', {'packages': ['corechart']});
     google.charts.setOnLoadCallback(drawChart1);
     google.charts.setOnLoadCallback(drawChart2);
-    $('.service-chart').click(function(){
+    $('.service-chart').click(function () {
         window.location = './service/' + $(this).attr('service');
     });
 });
