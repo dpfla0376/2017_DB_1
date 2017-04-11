@@ -164,6 +164,7 @@ def switch_asset(request):
         temp_dict['assetNum'] = switch.assetInfo.assetNum
         temp_dict['manageNum'] = switch.manageNum
         temp_dict['manageSpec'] = switch.manageSpec
+        temp_dict['size'] = switch.size
         temp_dict['ip'] = switch.ip
         temp_location = switch.location
         if temp_location.rack is not None:
@@ -187,6 +188,7 @@ def server_asset(request):
         temp_dict['managespec'] = server.manageSpec
         temp_dict['core'] = server.core
         temp_dict['ip'] = server.ip
+        temp_dict['size'] = server.size
         temp_location = server.location
         if temp_location.rack_pk is not None:
             temp_dict['location'] = temp_location.rack_pk.location
@@ -518,7 +520,7 @@ def add_servers(request, new_asset):
     for i in range(0, int(server_number)):
         new_server = Server.objects.create(manageNum="S" + str(this_server_manage_num),
                                            assetInfo=new_asset,
-                                           manageSpec=new_asset.assetName,
+                                           manageSpec=request.POST.get("server_manage_spec"),
                                            isInRack=False,
                                            size=request.POST.get("server_size"),
                                            core=request.POST.get("server_core_num"),
@@ -544,7 +546,7 @@ def add_switches(request, new_asset):
     for i in range(0, switch_number):
         new_switch = Switch.objects.create(manageNum="N" + str(this_switch_manage_num),
                                            assetInfo=new_asset,
-                                           manageSpec=new_asset.assetName,
+                                           manageSpec=request.POST.get("switch_manage_spec"),
                                            isInRack=False,
                                            size=request.POST.get("switch_size"),
                                            serviceOn=False,
@@ -571,7 +573,7 @@ def add_racks(request, new_asset):
     for i in range(0, rack_number):
         new_rack = Rack.objects.create(manageNum="R" + str(this_rack_manage_num),
                                        assetInfo=new_asset,
-                                       manageSpec=new_asset.assetName,
+                                       manageSpec=request.POST.get("rack_manage_spec"),
                                        size=request.POST.get("rack_size"),
                                        location=str(request.POST.get("rack_location")))
         this_rack_manage_num += 1
@@ -783,23 +785,16 @@ def search_assets(request):
 
 
 def edit_asset(request, asset_num):
-    return HttpResponse("자산번호" + asset_num + "를 수정하고싶니?")
+    return HttpResponse("자산번호" + asset_num + "를 수정")
+
+
+def edit_one_asset(request, manage_num):
+    return HttpResponse("관리번호" + manage_num + "를 수정")
 
 
 @csrf_exempt
 def save_asset(request, asset_num):
     target_asset = Asset.objects.filter(assetNum=asset_num).first()
-
-    new_acq_year = str(request.POST.get("acquisitionDate"))[0:4]
-
-    if new_acq_year != str(target_asset.acquisitionDate.year):
-        temp_asset = Asset.objects.filter(assetNum__startswith=new_acq_year).order_by('-assetNum').first()
-        if temp_asset:
-            this_asset_num = str(int(temp_asset.assetNum) + 1)
-        else:
-            this_asset_num = int(new_acq_year) * 1000000 + 1
-        target_asset.assetNum = this_asset_num
-
     target_asset.acquisitionDate = request.POST.get("acquisitionDate")
     target_asset.assetName = request.POST.get("assetName")
     target_asset.standard = request.POST.get("standard")
@@ -807,6 +802,37 @@ def save_asset(request, asset_num):
     target_asset.purchaseLocation = request.POST.get("purchaseLocation")
     target_asset.maintenanceYear = request.POST.get("maintenanceYear")
     target_asset.save()
+    return HttpResponse("ok")
+
+
+@csrf_exempt
+def save_one_asset(request, asset_type, manage_num):
+    if asset_type == "server":
+        target = Server.objects.filter(manageNum=manage_num).first()
+        target.manageSpec = request.POST.get("manageSpec")
+        target.size = request.POST.get("size")
+        target.core = request.POST.get("core")
+        target.ip = request.POST.get("ip")
+        target.save()
+    elif asset_type == "storage":
+        target = StorageAsset.objects.filter(manageNum=manage_num).first()
+        target.manageSpec = request.POST.get("manageSpec")
+        target.location = request.POST.get("location")
+        target.standard = request.POST.get("standard")
+        target.save()
+    elif asset_type == "switch":
+        target = Switch.objects.filter(manageNum=manage_num).first()
+        target.manageSpec = request.POST.get("manageSpec")
+        target.size = request.POST.get("size")
+        target.ip = request.POST.get("ip")
+        target.save()
+    elif asset_type == "rack":
+        target = Rack.objects.filter(manageNum=manage_num).first()
+        target.manageSpec = request.POST.get("manageSpec")
+        #target.location = request.POST.get("location")
+        target.size = request.POST.get("size")
+        target.save()
+
     return HttpResponse("ok")
 
 
@@ -847,6 +873,14 @@ def delete_one_asset(request, asset_type, manage_num):
         except Rack.DoesNotExist:
             return HttpResponse("error", 404)
         rack.delete()
+    elif asset_type == "storage":
+        try:
+            storage = StorageAsset.objects.filter(manageNum=manage_num)
+            if Storage.count() == 0:
+                raise StorageAsset.DoesNotExist
+        except StorageAsset.DoesNotExist:
+            return HttpResponse("error", 404)
+        storage.delete()
 
     server_prefetch = Prefetch('server', to_attr='servers')
     switch_prefetch = Prefetch('switch', to_attr='switches')

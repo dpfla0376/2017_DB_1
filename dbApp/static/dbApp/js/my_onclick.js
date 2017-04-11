@@ -72,48 +72,127 @@ function myConfirm(message, callback) {
         callback();
     }
 }
-function td_click_edit_asset(assetNum) {
+function td_click_edit(type, id) {
 
-    document.getElementById("edit-button-" + assetNum).style.display = "none";
-    document.getElementById("save-button-" + assetNum).style.display = "block";
+    if (type == "asset") {
+        var acq_date = document.getElementById("acq-date-" + id);
+        var name = document.getElementById("name-" + id);
+        var standard = document.getElementById("standard-" + id);
+        var acq_cost = document.getElementById("acq-cost-" + id);
+        var purchase = document.getElementById("purchase-" + id);
+        var maintenance = document.getElementById("maintenance-" + id);
 
-    var acq_date = document.getElementById("acq-date-" + assetNum);
-    var name = document.getElementById("name-" + assetNum);
-    var standard = document.getElementById("standard-" + assetNum);
-    var acq_cost = document.getElementById("acq-cost-" + assetNum);
-    var purchase = document.getElementById("purchase-" + assetNum);
-    var maintenance = document.getElementById("maintenance-" + assetNum);
+        var acq_date_data = acq_date.innerHTML;
+        var name_data = name.innerHTML;
+        var standard_data = standard.innerHTML;
+        var acq_cost_data = acq_cost.innerHTML;
+        var purchase_data = purchase.innerHTML;
+        var maintenance_data = maintenance.innerHTML;
 
-    var acq_date_data = acq_date.innerHTML;
-    var name_data = name.innerHTML;
-    var standard_data = standard.innerHTML;
-    var acq_cost_data = acq_cost.innerHTML;
-    var purchase_data = purchase.innerHTML;
-    var maintenance_data = maintenance.innerHTML;
+        acq_date.innerHTML = "<input type='date' id='acq-date-input-" + id + " value='" + acq_date_data + "'>";
+        name.innerHTML = "<input type='text' id='name-input-" + id + "' value='" + name_data + "'>";
+        standard.innerHTML = "<input type='text' id='standard-input-" + id + "' value='" + standard_data + "'>";
+        acq_cost.innerHTML = "<input type='number' id='acq-cost-input-" + id + "' value='" + acq_cost_data + "'>";
+        purchase.innerHTML = "<input type='text' id='purchase-input-" + id + "' value='" + purchase_data + "'>";
+        maintenance.innerHTML = "<input type='number' id='maintenance-input-" + id + "' value='" + maintenance_data + "'>";
+    }
+    else if (type == "server") {
 
-    acq_date.innerHTML = "<input type='date' id='acq-date-input" + assetNum + "' value='" + acq_date_data + "'>";
-    name.innerHTML = "<input type='text' id='name-input" + assetNum + "' value='" + name_data + "'>";
-    standard.innerHTML = "<input type='text' id='standard-input" + assetNum + "' value='" + standard_data + "'>";
-    acq_cost.innerHTML = "<input type='number' id='acq-cost-input" + assetNum + "' value='" + acq_cost_data + "'>";
-    purchase.innerHTML = "<input type='text' id='purchase-input" + assetNum + "' value='" + purchase_data + "'>";
-    maintenance.innerHTML = "<input type='number' id='maintenance-input" + assetNum + "' value='" + maintenance_data + "'>";
+        var manage_spec = document.getElementById("manage-spec-" + id);
+        var core = document.getElementById("core-" + id);
+        var ip = document.getElementById("ip-" + id);
+        var onoff = document.getElementById("onoff-" + id);
+        var size = document.getElementById("size-" + id);
+        var location = document.getElementById("location-" + id);
 
+        var manage_spec_data = manage_spec.innerHTML;
+        var core_data = core.innerHTML;
+        var ip_data = ip.innerHTML;
+        var onoff_data = onoff.innerHTML;
+        var size_data = size.innerHTML;
+        var location_data = size.innerHTML;
+
+        manage_spec.innerHTML = "<input type='text' id='manage-spec-input-" + id + "' value='" + manage_spec_data + "'>";
+        core.innerHTML = "<input type='number' id='core-input-" + id + "' value='" + core_data + "'>";
+        ip.innerHTML = "<input type='text' id='ip-input-" + id + "' value='" + ip_data + "'>";
+        onoff.innerHTML = "<input type='text' id='onoff-input-" + id + "' value='" + onoff_data + "'>";
+        size.innerHTML = "<input type='number' id='size-input-" + id + "' value='" + size_data + "'>";
+        location.innerHTML += "<input type='number' id='location-input-" + id + "' value='" + location_data + "'>"+"<input type='number' id='location-in-input-" + id + "' value='" + location_data + "'>"+"<input type='number' id='location-at-input-" + id + "' value='" + location_data + "'>";
+
+    }
+    else if (type == "storage") {
+        var manage_spec = document.getElementById("manage-spec-" + id);
+        var standard = document.getElementById("standard-" + id);
+        var location = document.getElementById("location-" + id);
+
+        var manage_spec_data = manage_spec.innerHTML;
+        var location_data = location.innerHTML;
+        var standard_data = standard.innerHTML;
+
+        manage_spec.innerHTML = "<input type='text' id='manage-spec-input-" + id + "' value='" + manage_spec_data + "'>";
+        location.innerHTML = "<input type='text' id='location-input-" + id + "' value='" + location_data + "'>";
+        standard.innerHTML = "<input type='text' id='standard-input-" + id + "' value='" + standard_data + "'>";
+    }
+    else if (type == "switch") {
+
+        var manage_spec = document.getElementById("manage-spec-" + id);
+        var ip = document.getElementById("ip-" + id);
+        var onoff = document.getElementById("onoff-" + id);
+        var size = document.getElementById("size-" + id);
+
+        var manage_spec_data = manage_spec.innerHTML;
+        var ip_data = ip.innerHTML;
+        var onoff_data = onoff.innerHTML;
+        var size_data = size.innerHTML;
+
+        manage_spec.innerHTML = "<input type='text' id='manage-spec-input-" + id + "' value='" + manage_spec_data + "'>";
+        ip.innerHTML = "<input type='text' id='ip-input-" + id + "' value='" + ip_data + "'>";
+        onoff.innerHTML = "<input type='text' id='onoff-input-" + id + "' value='" + onoff_data + "'>";
+        size.innerHTML = "<input type='number' id='size-input-" + id + "' value='" + size_data + "'>";
+    }
+    else if (type == "rack") {
+        var manage_spec = document.getElementById("manage-spec-" + id);
+        var size = document.getElementById("size-" + id);
+        var location = document.getElementById("location-" + id);
+
+        var manage_spec_data = manage_spec.innerHTML;
+        //var location_data = location.innerHTML;
+        var size_data = size.innerHTML;
+
+        manage_spec.innerHTML = "<input type='text' id='manage-spec-input-" + id + "' value='" + manage_spec_data + "'>";
+        // location.innerHTML = "<input type='text' id='loaction-input-" + id + "' value='" + location_data + "'>";
+        size.innerHTML = "<input type='number' id='size-input-" + id + "' value='" + size_data + "'>";
+
+    }
+    document.getElementById("edit-button-" + id).style.display = "none";
+    document.getElementById("save-button-" + id).style.display = "block";
 }
 
-function td_click_save_asset(assetNum) {
-    var corrected_asset = get_corrected_asset(assetNum);
+function td_click_save(type, id) {
+
+    if (type == "asset")
+        var updated = get_corrected_asset(id);
+    else if (type == "server")
+        var updated = get_corrected_server(id);
+    else if (type == "storage")
+        var updated = get_corrected_storage(id);
+    else if (type == "rack")
+        var updated = get_corrected_rack(id);
+    else if (type == "switch")
+        var updated = get_corrected_switch(id);
+
 
     $.ajaxSetup({
         headers: {"X-CSRFToken": getCookie("csrftoken")}
     });
 
     $.ajax({
-        url: '/dbApp/asset/save/' + assetNum,
+        url: '/dbApp/' + type + '/save/' + id + "/",
         type: 'POST',
-        data: corrected_asset,
+        data: updated,
         success: function (result) {
             alert("저장되었습니다. 페이지를 새로고침합니다.");
-            location.href = "/dbApp/asset/"
+            location.href = "/dbApp/" + type + "/"
         },
         fail: function (result) {
             alert("fail");
@@ -121,14 +200,68 @@ function td_click_save_asset(assetNum) {
     });
 
 }
+function get_corrected_storage(id) {
+    var manage_spec = document.getElementById("manage-spec-input-" + id);
+    var location = document.getElementById("location-input-" + id);
+    var standard = document.getElementById("standard-input-" + id);
 
+    var corrected_storage = {
+        'manageSpec': manage_spec.value,
+        'location': location.value,
+        'standard': standard.value
+    };
+    return corrected_storage;
+}
+
+function get_corrected_rack(id) {
+    var manage_spec = document.getElementById("manage-spec-input-" + id);
+    //var location = document.getElementById("location-input-" + id);
+    var size = document.getElementById("size-input-" + id);
+
+    var corrected_rack = {
+        'manageSpec': manage_spec.value,
+        //  'location': location.value,
+        'size': size.value
+    };
+    return corrected_rack;
+}
+function get_corrected_switch(id) {
+    var manage_spec = document.getElementById("manage-spec-input-" + id);
+    var ip = document.getElementById("ip-input-" + id);
+    var onoff = document.getElementById("onoff-input-" + id);
+    var size = document.getElementById("size-input-" + id);
+
+    var corrected_switch = {
+        'manageSpec': manage_spec.value,
+        'ip': ip.value,
+        'serviceOn': onoff.value,
+        'size': size.value
+    };
+    return corrected_switch;
+}
+function get_corrected_server(id) {
+    var manage_spec = document.getElementById("manage-spec-input-" + id);
+    var core = document.getElementById("core-input-" + id);
+    var ip = document.getElementById("ip-input-" + id);
+    var onoff = document.getElementById("onoff-input-" + id);
+    var size = document.getElementById("size-input-" + id);
+
+    var corrected_server = {
+        'manageSpec': manage_spec.value,
+        'core': core.value,
+        'ip': ip.value,
+        'onoff': onoff.value,
+        'size': size.value
+    };
+    return corrected_server;
+}
 function get_corrected_asset(assetNum) {
-    var acq_date = document.getElementById("acq-date-input" + assetNum);
-    var name = document.getElementById("name-input" + assetNum);
-    var standard = document.getElementById("standard-input" + assetNum);
-    var acq_cost = document.getElementById("acq-cost-input" + assetNum);
-    var purchase = document.getElementById("purchase-input" + assetNum);
-    var maintenance = document.getElementById("maintenance-input" + assetNum);
+    var acq_date = document.getElementById("acq-date-input-" + assetNum);
+    var name = document.getElementById("name-input-" + assetNum);
+    var standard = document.getElementById("standard-input-" + assetNum);
+    var acq_cost = document.getElementById("acq-cost-input-" + assetNum);
+    var purchase = document.getElementById("purchase-input-" + assetNum);
+    var maintenance = document.getElementById("maintenance-input-" + assetNum);
 
     var target_asset = {
         'acquisitionDate': acq_date.value,
@@ -142,29 +275,6 @@ function get_corrected_asset(assetNum) {
     return target_asset;
 }
 
-function edit_request(url, id, id_name) {
-    $.ajax({
-        url: url + id,
-        success: function (result) {
-            alert("success");
-        },
-        fail: function (error) {
-            alert("fail");
-        }
-    });
-}
-
-function reload_request(url, id, id_name) {
-    $.ajax({
-        url: url + id,
-        success: function (result) {
-            $("#" + id_name + id).reload();
-        },
-        fail: function (error) {
-            alert("fail");
-        }
-    });
-}
 
 // using jQuery
 function getCookie(name) {

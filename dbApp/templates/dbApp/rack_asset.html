@@ -23,11 +23,12 @@
                                     onclick="td_click_detail_asset(this)">{{ rack.assetNum }}</a></td>
                             <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a style="cursor:hand"
                                     onclick="td_click_detail_rack(this)">{{ rack.manageNum }}</a></td>
-                            <td>{{ rack.manageSpec }}</td>
-                            <td>{{ rack.size }}</td>
-                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a style="cursor:hand"
+                            <td id="manage-spec-{{rack.manageNum}}">{{ rack.manageSpec }}</td>
+                            <td id="size-{{rack.manageNum}}">{{ rack.size }}</td>
+                            <td id="location-{{rack.manageNum}}" onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a style="cursor:hand"
                                     onclick="td_click_detail_rack(this)">{{ rack.location }}</a></td>
-                            <td>수정</td>
+                            <td><a id="edit-button-{{ rack.manageNum }}" style="cursor:hand" onclick='td_click_edit("rack","{{ rack.manageNum }}")'>수정</a>
+                            <a hidden id="save-button-{{ rack.manageNum }}" style="cursor:hand" onclick='td_click_save("rack","{{ rack.manageNum }}")'>저장</a></td>
                             <td><a style="cursor:hand" onclick='td_click_delete_rack("{{ rack.manageNum }}")'>삭제</a></td>
                         </tr>
                     {% endfor %}
