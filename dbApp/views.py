@@ -280,8 +280,52 @@ def storage_total(request):
                    'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.assetInfo_id = dbApp_asset.id ' +
                    'INNER JOIN `dbApp_storage` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id ' +
                    'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id ' +
-                   'INNER JOIN  `dbApp_service` ON dbApp_service.id = dbApp_storageservice.service_id')
-    storage_list = dictFetchall(cursor)
+                   'INNER JOIN `dbApp_service` ON dbApp_storageservice.service_id = dbApp_service.id ')
+    db_storage_list = dictFetchall(cursor)
+
+    storage_list = {}
+    for row in db_storage_list:
+        spec = row['manageSpec']
+
+        if not spec in storage_list:
+            storage_list[spec] = {
+                'name': spec,
+                'totalCount': 1,
+                'enrollList': {}
+            }
+
+        enroll = row['enrollDate'].isoformat()
+        if not enroll in storage_list[spec]['enrollList']:
+            storage_list[spec]['enrollList'][enroll] = {
+                'date': enroll,
+                'enrollCount': 1,
+                'diskList': {}
+            }
+
+        disk = row['diskSpec']
+        if not disk in storage_list[spec]['enrollList'][enroll]['diskList']:
+            storage_list[spec]['enrollList'][enroll]['diskList'][disk] = {
+                'diskSpec': disk,
+                'list': [],
+                'vol': row['Vol'],
+                'usageTotal': 0,
+                'remainSize': row['Vol'],
+                'diskSpec': row['diskSpec'],
+                'allocUnitSize': row['allocUnitSize'],
+                'storageForm': row['storageForm'],
+                'diskCount': 1
+            }
+
+        storage_list[spec]['totalCount'] = storage_list[spec]['totalCount'] + 1
+        storage_list[spec]['enrollList'][enroll]['enrollCount'] \
+            = storage_list[spec]['enrollList'][enroll]['enrollCount'] + 1
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['diskCount'] = \
+            storage_list[spec]['enrollList'][enroll]['diskList'][disk]['diskCount'] + 1
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['list'].append({
+            'allocSize': row['allocSize'],
+            'serviceName': row['serviceName'],
+            'usage': row['usage']
+        })
     return render(request, 'dbApp/storage_total.html', {'storage_list': storage_list});
 
 

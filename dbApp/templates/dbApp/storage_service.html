@@ -10,27 +10,30 @@
                 <table class="table table-striped">
                     <thead>
                     <tr>
+
                         <th>등록일자</th>
-                        <th>diskSpec</th>
-                        <th>Vol</th>
-                        <th>storageForm</th>
-                        <th>allocUnitSize(TB)</th>
-                        <th>remainSize</th>
-                        <th>allocSize</th>
-                        <th>serviceName</th>
-                        <th>usage</th>
+                        <th>디스크 사양</th>
+                        <th>형식</th>
+                        <th>할당단위크기</th>
+                        <th>Vol(TB)</th>
+                        <th>가용량</th>
+                        <th>할당량(TB)</th>
+                        <th>서비스명</th>
+                        <th>용도</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for date, enroll in storage.enrollList.items %}
-                        <td rowspan="{{ enroll.enrollCount }}" style="vertical-align : middle">{{ enroll.date }} </td>
+                        <td rowspan="{{ enroll.enrollCount }}"
+                            style="vertical-align : middle">{{ enroll.date }} </td>
                         {% for diskSpec, disk in enroll.diskList.items %}
-                            <td rowspan="{{ disk.diskCount }}" style="vertical-align : middle">{{ disk.diskSpec }} </td>
-                            <td rowspan="{{ disk.diskCount }}" style="vertical-align : middle">{{ disk.vol }} </td>
+                            <td rowspan="{{ disk.diskCount }}"
+                                style="vertical-align : middle">{{ disk.diskSpec }} </td>
                             <td rowspan="{{ disk.diskCount }}"
                                 style="vertical-align : middle">{{ disk.storageForm }} </td>
                             <td rowspan="{{ disk.diskCount }}"
                                 style="vertical-align : middle">{{ disk.allocUnitSize }} </td>
+                            <td rowspan="{{ disk.diskCount }}" style="vertical-align : middle">{{ disk.vol }} </td>
                             <td rowspan="{{ disk.diskCount }}"
                                 style="vertical-align : middle">{{ disk.remainSize }} </td>
                             {% for row in disk.list %}
@@ -42,7 +45,6 @@
                             {% endfor %}
                         {% endfor %}
                     {% endfor %}
-
                     </tbody>
                 </table>
             {% endfor %}{% endif %}
