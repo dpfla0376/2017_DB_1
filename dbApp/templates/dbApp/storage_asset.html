@@ -8,24 +8,29 @@
                 <tr>
                     <th>자산번호</th>
                     <th>관리번호</th>
-                    <th>취득일</th>
                     <th>현재위치</th>
                     <th>관리스펙</th>
                     <th>규격</th>
-                    <th>내용연수</th>
+                    <th>수정</th>
+                    <th>삭제</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% if storage_list %}
                     {% for storage in storage_list %}
-                        <tr>
+                        <tr id="one-asset-id-{{ storage.manageNum }}">
                             <td>{{ storage.assetNum }}</td>
                             <td>{{ storage.manageNum }}</td>
-                            <td>{{ storage.acquisitionDate }}</td>
-                            <td>{{ storage.location }}</td>
-                            <td>{{ storage.manageSpec }}</td>
-                            <td>{{ storage.standard }}</td>
-                            <td>{{ storage.maintenanceYear }}</td>
+                            <td id="location-{{ storage.manageNum }}">{{ storage.location }}</td>
+                            <td id="manage-spec-{{ storage.manageNum }}">{{ storage.manageSpec }}</td>
+                            <td id="standard-{{ storage.manageNum }}">{{ storage.standard }}</td>
+                            <td><a id="edit-button-{{ storage.manageNum }}" style="cursor:hand"
+                                   onclick='td_click_edit("storage","{{ storage.manageNum }}")'>수정</a>
+                                <a hidden id="save-button-{{ storage.manageNum }}" style="cursor:hand"
+                                   onclick='td_click_save("storage","{{ storage.manageNum }}")'>저장</a></td>
+                            <td><a style="cursor:hand"
+                                   onclick='td_click_delete_storage("{{ storage.manageNum }}")'>삭제</a>
+                            </td>
                         </tr>
                     {% endfor %} {% endif %}
                 </tbody>

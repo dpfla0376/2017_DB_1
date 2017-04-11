@@ -41,8 +41,8 @@
                             <td>{{ asset.storageNum }}</td>
                             <td>{{ asset.rackNum }}</td>
                             <td>{{ asset.totalNum }}</td>
-                            <td><a id="edit-button-{{ asset.assetNum }}" style="cursor:hand" onclick="td_click_edit_asset({{ asset.assetNum }})">수정</a>
-                                <a hidden id="save-button-{{ asset.assetNum }}" style="cursor:hand" onclick="td_click_save_asset({{ asset.assetNum }})">저장</a>
+                            <td><a id="edit-button-{{ asset.assetNum }}" style="cursor:hand" onclick='td_click_edit("asset", {{ asset.assetNum }})'>수정</a>
+                                <a hidden id="save-button-{{ asset.assetNum }}" style="cursor:hand" onclick='td_click_save("asset",{{ asset.assetNum }})'>저장</a>
                             </td>
                             <td><a style="cursor:hand" onclick="td_click_delete_asset({{ asset.assetNum }})">삭제</a></td>
                         </tr>

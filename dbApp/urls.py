@@ -21,6 +21,8 @@ urlpatterns = [
     url(r'^server/detail/$', views.server_detail, name='server_detail'),
 
     url(r'^(?P<asset_type>[\w]+)/delete/(?P<manage_num>[\w]+)/$', views.delete_one_asset, name='delete_one_asset'),
+    url(r'^(?P<asset_type>[\w]+)/edit/(?P<manage_num>[\w]+)/$', views.edit_one_asset, name='edit_one_asset'),
+    url(r'^(?P<asset_type>[\w]+)/save/(?P<manage_num>[\w]+)/$', views.save_one_asset, name='save_one_asset'),
 
     url(r'^switch/$', views.switch_asset, name='switch_asset'),
     url(r'^switch/detail/$', views.switch_detail, name='switch_detail'),
