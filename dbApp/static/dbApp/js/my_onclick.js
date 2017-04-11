@@ -79,26 +79,7 @@ function myConfirm(message, callback) {
 function td_click_edit(type, id) {
 
     if (type == "asset") {
-        var acq_date = document.getElementById("acq-date-" + id);
-        var name = document.getElementById("name-" + id);
-        var standard = document.getElementById("standard-" + id);
-        var acq_cost = document.getElementById("acq-cost-" + id);
-        var purchase = document.getElementById("purchase-" + id);
-        var maintenance = document.getElementById("maintenance-" + id);
-
-        var acq_date_data = acq_date.innerHTML;
-        var name_data = name.innerHTML;
-        var standard_data = standard.innerHTML;
-        var acq_cost_data = acq_cost.innerHTML;
-        var purchase_data = purchase.innerHTML;
-        var maintenance_data = maintenance.innerHTML;
-
-        acq_date.innerHTML = "<input type='date' id='acq-date-input-" + id + " value='" + acq_date_data + "'>";
-        name.innerHTML = "<input type='text' id='name-input-" + id + "' value='" + name_data + "'>";
-        standard.innerHTML = "<input type='text' id='standard-input-" + id + "' value='" + standard_data + "'>";
-        acq_cost.innerHTML = "<input type='number' id='acq-cost-input-" + id + "' value='" + acq_cost_data + "'>";
-        purchase.innerHTML = "<input type='text' id='purchase-input-" + id + "' value='" + purchase_data + "'>";
-        maintenance.innerHTML = "<input type='number' id='maintenance-input-" + id + "' value='" + maintenance_data + "'>";
+        make_asset_inputs(id);
     }
     else if (type == "server") {
         $.ajaxSetup({
@@ -168,6 +149,29 @@ function td_click_edit(type, id) {
     document.getElementById("save-button-" + id).style.display = "block";
 }
 
+function make_asset_inputs(id) {
+    var acq_date = document.getElementById("acq-date-" + id);
+    var name = document.getElementById("name-" + id);
+    var standard = document.getElementById("standard-" + id);
+    var acq_cost = document.getElementById("acq-cost-" + id);
+    var purchase = document.getElementById("purchase-" + id);
+    var maintenance = document.getElementById("maintenance-" + id);
+
+    var acq_date_data = acq_date.innerHTML;
+    var name_data = name.innerHTML;
+    var standard_data = standard.innerHTML;
+    var acq_cost_data = acq_cost.innerHTML;
+    var purchase_data = purchase.innerHTML;
+    var maintenance_data = maintenance.innerHTML;
+
+    acq_date.innerHTML = "<input type='date' id='acq-date-input-" + id + "' value='" + acq_date_data + "'>";
+    name.innerHTML = "<input type='text' id='name-input-" + id + "' value='" + name_data + "'>";
+    standard.innerHTML = "<input type='text' id='standard-input-" + id + "' value='" + standard_data + "'>";
+    acq_cost.innerHTML = "<input type='number' id='acq-cost-input-" + id + "' value='" + acq_cost_data + "'>";
+    purchase.innerHTML = "<input type='text' id='purchase-input-" + id + "' value='" + purchase_data + "'>";
+    maintenance.innerHTML = "<input type='number' id='maintenance-input-" + id + "' value='" + maintenance_data + "'>";
+
+}
 function make_switch_inputs(id, dict) {
     var manage_spec = document.getElementById("manage-spec-" + id);
     var ip = document.getElementById("ip-" + id);
@@ -387,6 +391,7 @@ function get_corrected_server(id) {
     return corrected_server;
 }
 function get_corrected_asset(assetNum) {
+
     var acq_date = document.getElementById("acq-date-input-" + assetNum);
     var name = document.getElementById("name-input-" + assetNum);
     var standard = document.getElementById("standard-input-" + assetNum);
@@ -394,7 +399,7 @@ function get_corrected_asset(assetNum) {
     var purchase = document.getElementById("purchase-input-" + assetNum);
     var maintenance = document.getElementById("maintenance-input-" + assetNum);
 
-    var target_asset = {
+    var corrected_asset = {
         'acquisitionDate': acq_date.value,
         'assetName': name.value,
         'standard': standard.value,
@@ -403,9 +408,8 @@ function get_corrected_asset(assetNum) {
         'maintenanceYear': maintenance.value
     };
 
-    return target_asset;
+    return corrected_asset;
 }
-
 
 // using jQuery
 function getCookie(name) {
