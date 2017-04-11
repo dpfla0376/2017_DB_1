@@ -284,26 +284,40 @@ def service_storage(request):
         if not spec in storage_list:
             storage_list[spec] = {
                 'name': spec,
-                'totalSize': row['Vol'],
+                'enroll': [],
+                'totalCount': 1
+            }
+        enroll = row['enrollDate']
+        if not enroll in storage_list[spec]:
+            storage_list[spec][enroll] = {
+                'Date': enroll,
+                'disk':[],
+                'enrollCount': 1
+            }
+        disk = row['diskSpec']
+        if not disk in storage_list[spec][enroll]:
+            storage_list[spec][enroll][disk] = {
+                'diskSpec': disk,
+                'list': [],
+                'Vol': row['Vol'],
                 'usageTotal': 0,
                 'remainSize': row['Vol'],
                 'diskSpec': row['diskSpec'],
                 'allocUnitSize': row['allocUnitSize'],
                 'storageForm': row['storageForm'],
-                'list': [],
-                'count': 1
+                'diskCount': 1
             }
 
-        storage_list[spec]['count'] = storage_list[spec]['count'] + 1
-        storage_list[spec]['usageTotal'] = storage_list[spec]['usageTotal'] + row['allocSize']
-        storage_list[spec]['remainSize'] = storage_list[spec]['remainSize'] - row['allocSize']
-        storage_list[spec]['list'].append({
+        storage_list[spec]['totalCount'] = storage_list[spec]['totalCount'] + 1
+        storage_list[spec][enroll]['enrollCount'] = storage_list[spec][enroll]['enrollCount'] + 1
+        storage_list[spec][enroll][disk]['diskCount'] = storage_list[spec][enroll][disk]['diskCount'] + 1
+        storage_list[spec][enroll][disk]['usageTotal'] = storage_list[spec][enroll][disk]['usageTotal'] + row['allocSize']
+        storage_list[spec][enroll][disk]['remainSize'] = storage_list[spec][enroll][disk]['remainSize'] - row['allocSize']
+        storage_list[spec][enroll][disk]['list'].append({
             'allocSize': row['allocSize'],
             'serviceName': row['serviceName'],
             'usage': row['usage']
         })
-
-
     return render(request, 'dbApp/storage_service.html', {'storage_list': storage_list});
 
 
