@@ -528,8 +528,10 @@ def rack_info(request):
         rack_total.append(temp)
     data = []
     for rack in rack_total:
-        position = [None] * 42
+        #TODO 이 아랫부분 지워야됩니다.
+        position = [None] * 43
         for inrack in rack['list']:
+            print(inrack['rackLocation'])
             position[inrack["rackLocation"]] = inrack
         data.append({'data': list(reversed(position)), 'rack': rack})
     context = {'rack_list': rack_total, 'data': data}
@@ -922,10 +924,8 @@ def server_detail(request):
         temp_dict['location'] = temp_location.rack_pk.location
     else:
         temp_dict['location'] = temp_location.realLocation
-
     context = {'server_list': temp_dict}
     return render(request, 'dbApp/server_detail.html', context)
-
 
 def switch_detail(request):
     searchText = request.GET.get("data")
