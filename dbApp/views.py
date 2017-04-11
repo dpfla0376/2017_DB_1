@@ -284,6 +284,11 @@ def check_in_list(mylist,mystring):
         if temp_dict['storagename'] == mystring:
             return temp_dict
     return None
+def check_in_list_date(mylist,mystring):
+    for temp_dict in mylist:
+        if temp_dict['date'] == mystring:
+            return temp_dict
+    return None
 
 def service_storage2(request):
     my_prefetch = Prefetch('storage_service', queryset=StorageService.objects.select_related('service'), to_attr="services")
@@ -292,7 +297,6 @@ def service_storage2(request):
     for storagee in storage_list:
         temp_dict = {}
         temp_dict['storageassetname'] = storagee.storageAssetName
-        temp_dict['date'] =storagee.enrollDate.isoformat()
         temp_dict['vol']=storagee.Vol
         temp_dict['allocunitsize'] = storagee.allocUnitSize
         temp_dict['diskspec'] = storagee.diskSpec
@@ -309,18 +313,28 @@ def service_storage2(request):
             temp_list2.append(temp_dict2)
         temp_dict['remain']=storagee.Vol-temp_float
         temp_dict['servicelist'] = temp_list2
-        temp_list.append(temp_dict)
+        temp_date = check_in_list_date(temp_list,storagee.enrollDate.isoformat())
+        if temp_date is not None:
+            temp_date['storagecount'] += 1
+            temp_date['storagelist'].append(temp_dict)
+        else:
+            date_dict={}
+            date_dict['date'] = storagee.enrollDate.isoformat()
+            date_dict['storagelist'] = [temp_dict]
+            date_dict['storagecount'] = 1
+            date_dict['storageassetname']=storagee.storageAssetName
+        temp_list.append(date_dict)
     final_list2= list()
-    for storagee in temp_list:
-        tempp= check_in_list(final_list2,storagee['storageassetname'])
+    for dateDict in temp_list:
+        tempp= check_in_list(final_list2,dateDict['storageassetname'])
         if tempp is not None:
-            tempp['storageList'].append(storagee)
-            tempp['storagecount']+=1
+            tempp['dateList'].append(dateDict)
+            tempp['datecount']+=1
         else:
             temp_dict={}
-            temp_dict['storagename']= storagee['storageassetname']
-            temp_dict['storageList']= [storagee]
-            temp_dict['storagecount']=1
+            temp_dict['storagename']= dateDict['storageassetname']
+            temp_dict['dateList']= [dateDict]
+            temp_dict['datecount']=1
             final_list2.append(temp_dict)
     return HttpResponse(json.dumps(final_list2))
 
