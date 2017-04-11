@@ -976,10 +976,7 @@ def server_detail(request):
         temp_dict['location'] = temp_location.rack_pk.location
     else:
         temp_dict['location'] = temp_location.realLocation
-<<<<<<< HEAD
 
-=======
->>>>>>> 641467c7e7a53fc6fe7b17e2a337080010cbc595
     context = {'server_list': temp_dict}
     return render(request, 'dbApp/server_detail.html', context)
 
