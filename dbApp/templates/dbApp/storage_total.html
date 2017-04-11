@@ -22,30 +22,38 @@
                 <tbody>
                 {% if storage_list %}
                     {% for name, storage in storage_list.items %}
-                        <td rowspan="{{ storage.totalCount }}"
-                                style="vertical-align : middle">{{ storage.name}} </td>
+                        <tr>
+                            <td rowspan="{{ storage.totalCount }}"
+                                style="vertical-align : middle">{{ storage.name }}</td>
+
                             {% for date, enroll in storage.enrollList.items %}
                                 <td rowspan="{{ enroll.enrollCount }}"
-                                style="vertical-align : middle">{{ enroll.date }} </td>
-                            {% for diskSpec, disk in enroll.diskList.items %}
-                                <td rowspan="{{ disk.diskCount }}"
-                                    style="vertical-align : middle">{{ disk.diskSpec }} </td>
-                                <td rowspan="{{ disk.diskCount }}"
-                                    style="vertical-align : middle">{{ disk.storageForm }} </td>
-                                <td rowspan="{{ disk.diskCount }}"
-                                    style="vertical-align : middle">{{ disk.allocUnitSize }} </td>
-                                <td rowspan="{{ disk.diskCount }}" style="vertical-align : middle">{{ disk.vol }} </td>
-                                <td rowspan="{{ disk.diskCount }}"
-                                    style="vertical-align : middle">{{ disk.remainSize }} </td>
-                                {% for row in disk.list %}
-                                    <tr>
-                                        <td>{{ row.allocSize }}</td>
-                                        <td>{{ row.serviceName }}</td>
-                                        <td>{{ row.usage }}</td>
+                                    style="vertical-align : middle">{{ enroll.date }}</td>
+
+                                {% for diskSpec, disk in enroll.diskList.items %}
+                                    <td rowspan="{{ disk.diskCount }}"
+                                        style="vertical-align : middle">{{ disk.diskSpec }}</td>
+                                    <td rowspan="{{ disk.diskCount }}"
+                                        style="vertical-align : middle">{{ disk.storageForm }}</td>
+                                    <td rowspan="{{ disk.diskCount }}"
+                                        style="vertical-align : middle">{{ disk.allocUnitSize }}</td>
+                                    <td rowspan="{{ disk.diskCount }}"
+                                        style="vertical-align : middle">{{ disk.vol }}</td>
+                                    <td rowspan="{{ disk.diskCount }}"
+                                        style="vertical-align : middle">{{ disk.remainSize }}</td>
+
+                                    {% for row in disk.list %}
+                                        {% if forloop.counter != 1 %}
+                                            <tr>
+                                        {% endif %}
+                                    <td>{{ row.allocSize }}</td>
+                                    <td>{{ row.serviceName }}</td>
+                                    <td>{{ row.usage }}</td>
                                     </tr>
+                                    {% endfor %}
                                 {% endfor %}
                             {% endfor %}
-                        {% endfor %}
+
                     {% endfor %}
                 {% endif %}
                 </tbody>

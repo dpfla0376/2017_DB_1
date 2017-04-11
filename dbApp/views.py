@@ -290,7 +290,7 @@ def storage_total(request):
         if not spec in storage_list:
             storage_list[spec] = {
                 'name': spec,
-                'totalCount': 1,
+                'totalCount': 0,
                 'enrollList': {}
             }
 
@@ -298,7 +298,7 @@ def storage_total(request):
         if not enroll in storage_list[spec]['enrollList']:
             storage_list[spec]['enrollList'][enroll] = {
                 'date': enroll,
-                'enrollCount': 1,
+                'enrollCount': 0,
                 'diskList': {}
             }
 
@@ -313,19 +313,22 @@ def storage_total(request):
                 'diskSpec': row['diskSpec'],
                 'allocUnitSize': row['allocUnitSize'],
                 'storageForm': row['storageForm'],
-                'diskCount': 1
+                'diskCount': 0
             }
 
         storage_list[spec]['totalCount'] = storage_list[spec]['totalCount'] + 1
-        storage_list[spec]['enrollList'][enroll]['enrollCount'] \
-            = storage_list[spec]['enrollList'][enroll]['enrollCount'] + 1
-        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['diskCount'] = \
-            storage_list[spec]['enrollList'][enroll]['diskList'][disk]['diskCount'] + 1
+        storage_list[spec]['enrollList'][enroll]['enrollCount'] += 1
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['diskCount'] += 1
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['usageTotal'] += row['allocSize']
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['remainSize'] -= row['allocSize']
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['usageTotal'] = \
+            round(storage_list[spec]['enrollList'][enroll]['diskList'][disk]['usageTotal'], 2)
         storage_list[spec]['enrollList'][enroll]['diskList'][disk]['list'].append({
             'allocSize': row['allocSize'],
             'serviceName': row['serviceName'],
             'usage': row['usage']
         })
+    print(storage_list)
     return render(request, 'dbApp/storage_total.html', {'storage_list': storage_list});
 
 
@@ -439,16 +442,16 @@ def service_storage(request):
 
         storage_list[spec]['enrollList'][enroll]['enrollCount'] \
             = storage_list[spec]['enrollList'][enroll]['enrollCount'] + 1
-        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['diskCount'] = \
-            storage_list[spec]['enrollList'][enroll]['diskList'][disk]['diskCount'] + 1
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['usageTotal'] += row['allocSize']
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['remainSize'] -= row['allocSize']
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['usageTotal'] = \
+            round(storage_list[spec]['enrollList'][enroll]['diskList'][disk]['usageTotal'], 2)
         storage_list[spec]['enrollList'][enroll]['diskList'][disk]['list'].append({
             'allocSize': row['allocSize'],
             'serviceName': row['serviceName'],
             'usage': row['usage']
         })
-
     return render(request, 'dbApp/storage_service.html', {'storage_list': storage_list});
-
 
 def service_detail(request, pk):
     cursor = connection.cursor()
