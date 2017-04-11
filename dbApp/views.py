@@ -279,19 +279,104 @@ def storage_total(request):
     storage_list = dictFetchall(cursor)
     return render(request, 'dbApp/storage_total.html', {'storage_list': storage_list});
 
+def check_in_list(mylist,mystring):
+    for temp_dict in mylist:
+        if temp_dict['storagename'] == mystring:
+            return temp_dict
+    return None
+
+def service_storage2(request):
+    my_prefetch = Prefetch('storage_service', queryset=StorageService.objects.select_related('service'), to_attr="services")
+    storage_list = Storage.objects.select_related('storageAsset','storageAsset__assetInfo').all().prefetch_related(my_prefetch)
+    temp_list = list()
+    for storagee in storage_list:
+        temp_dict = {}
+        temp_dict['storageassetname'] = storagee.storageAssetName
+        temp_dict['date'] =storagee.enrollDate.isoformat()
+        temp_dict['vol']=storagee.Vol
+        temp_dict['allocunitsize'] = storagee.allocUnitSize
+        temp_dict['diskspec'] = storagee.diskSpec
+        temp_dict['storageform']=storagee.storageAsset.storageForm
+        temp_float = 0
+        temp_list2 = list()
+        temp_dict['servicecount']=len(storagee.services)
+        for storageservice in storagee.services:
+            temp_dict2 = {}
+            temp_float += storageservice.allocSize
+            temp_dict2['allocsize']=storageservice.allocSize
+            temp_dict2['servicename']=storageservice.service.serviceName
+            temp_dict2['usage']=storageservice.usage
+            temp_list2.append(temp_dict2)
+        temp_dict['remain']=storagee.Vol-temp_float
+        temp_dict['servicelist'] = temp_list2
+        temp_list.append(temp_dict)
+    final_list2= list()
+    for storagee in temp_list:
+        tempp= check_in_list(final_list2,storagee['storageassetname'])
+        if tempp is not None:
+            tempp['storageList'].append(storagee)
+            tempp['storagecount']+=1
+        else:
+            temp_dict={}
+            temp_dict['storagename']= storagee['storageassetname']
+            temp_dict['storageList']= [storagee]
+            temp_dict['storagecount']=1
+            final_list2.append(temp_dict)
+    return HttpResponse(json.dumps(final_list2))
+
+
 
 def service_storage(request):
     cursor = connection.cursor()
     cursor.execute('SELECT * FROM `dbApp_asset` ' +
                    'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.assetInfo_id = dbApp_asset.id ' +
                    'INNER JOIN `dbApp_storage` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id ' +
-                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id ')
-    storage_list = dictFetchall(cursor)
+                   'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id ' +
+                   'INNER JOIN `dbApp_service` ON dbApp_storageservice.service_id = dbApp_service.id ')
+    db_storage_list = dictFetchall(cursor)
 
-    cursor.execute('SELECT * FROM `dbApp_service` ')
-    service_list = dictFetchall(cursor)
-    return render(request, 'dbApp/storage_service.html', {'storage_list': storage_list,
-                                                          'service_list': service_list});
+    storage_list = {}
+    for row in db_storage_list:
+        spec = row['manageSpec']
+#        if not hasattr(storage_list, spec):
+        if not spec in storage_list:
+            storage_list[spec] = {
+                'name': spec,
+                'enroll': [],
+                'totalCount': 1
+            }
+        enroll = row['enrollDate']
+        if not enroll in storage_list[spec]:
+            storage_list[spec][enroll] = {
+                'Date': enroll,
+                'disk':[],
+                'enrollCount': 1
+            }
+        disk = row['diskSpec']
+        if not disk in storage_list[spec][enroll]:
+            storage_list[spec][enroll][disk] = {
+                'diskSpec': disk,
+                'list': [],
+                'Vol': row['Vol'],
+                'usageTotal': 0,
+                'remainSize': row['Vol'],
+                'diskSpec': row['diskSpec'],
+                'allocUnitSize': row['allocUnitSize'],
+                'storageForm': row['storageForm'],
+                'diskCount': 1
+            }
+
+        storage_list[spec]['totalCount'] = storage_list[spec]['totalCount'] + 1
+        storage_list[spec][enroll]['enrollCount'] = storage_list[spec][enroll]['enrollCount'] + 1
+        storage_list[spec][enroll][disk]['diskCount'] = storage_list[spec][enroll][disk]['diskCount'] + 1
+        storage_list[spec][enroll][disk]['usageTotal'] = storage_list[spec][enroll][disk]['usageTotal'] + row['allocSize']
+        storage_list[spec][enroll][disk]['remainSize'] = storage_list[spec][enroll][disk]['remainSize'] - row['allocSize']
+        storage_list[spec][enroll][disk]['list'].append({
+            'allocSize': row['allocSize'],
+            'serviceName': row['serviceName'],
+            'usage': row['usage']
+        })
+    return render(request, 'dbApp/storage_service.html', {'storage_list': storage_list});
 
 
 def service_detail(request, pk):
@@ -336,7 +421,10 @@ def service_detail(request, pk):
                                                          'NAS': disk_NAS,
                                                          'TAPE': disk_TAPE
                                                          });
+
+
 ''
+
 
 def storage_use(request):
     # server_list = ServerService.objects.all()
@@ -435,6 +523,7 @@ def insert_asset(request):
     context = {'asset_total_list': asset_total_list}
     return render(request, 'dbApp/asset_total.html', context)
 
+
 def sign_in(request):
     data = request.POST
     email = data['email']
@@ -442,7 +531,7 @@ def sign_in(request):
     user = authenticate(username=email, password=password)
     if user is None:
         context = {'messages': 'login failed'}
-        return render(request, 'dbApp/welcome_page.html',context)
+        return render(request, 'dbApp/welcome_page.html', context)
     return service_resources(request)
 
 
@@ -453,12 +542,13 @@ def welcome(request):
 class SignUp(View):
     def get(self, request):
         return render(request, 'dbApp/registration.html')
+
     def post(self, request):
         data = request.POST
         name = data['name']
         password = data['password']
         email = data['email']
-        user = User.objects.create_user(username = email,email = email,password=password)
+        user = User.objects.create_user(username=email, email=email, password=password)
         user.first_name = name
         return welcome(request)
 
@@ -707,13 +797,15 @@ def rack_detail(request):
         temp_name = temp_name.split("-")
         rack_location = temp_name[0]
         temp_name = temp_name[1]
-        #temp_name = rack.location[-3:]  # ex) C03
+        # temp_name = rack.location[-3:]  # ex) C03
         rack_list[temp] = []
         rack_name[temp_name] = temp
 
     my_prefetch = Prefetch('ss_server', queryset=ServerService.objects.select_related('service'), to_attr="services")
-    server_asset_list = Server.objects.select_related('location', 'location__rack_pk').prefetch_related(my_prefetch).filter(location__rack_pk=rack_query_list)
-    switch_asset_list = Switch.objects.select_related('location', 'location__rack').filter(location__rack=rack_query_list)
+    server_asset_list = Server.objects.select_related('location', 'location__rack_pk').prefetch_related(
+        my_prefetch).filter(location__rack_pk=rack_query_list)
+    switch_asset_list = Switch.objects.select_related('location', 'location__rack').filter(
+        location__rack=rack_query_list)
 
     # make server list for rack
     for server in server_asset_list:
@@ -848,9 +940,32 @@ def search_assets(request):
     return render(request, 'dbApp/searchResult.html', {})
 
 
-def edit_asset(request):
-    selected = request.GET.get("data")
-    return HttpResponse("자산번호" + selected + "를 수정하고싶니?")
+def edit_asset(request, asset_num):
+    return HttpResponse("자산번호" + asset_num + "를 수정하고싶니?")
+
+
+@csrf_exempt
+def save_asset(request, asset_num):
+    target_asset = Asset.objects.filter(assetNum=asset_num).first()
+
+    new_acq_year = str(request.POST.get("acquisitionDate"))[0:4]
+
+    if new_acq_year != str(target_asset.acquisitionDate.year):
+        temp_asset = Asset.objects.filter(assetNum__startswith=new_acq_year).order_by('-assetNum').first()
+        if temp_asset:
+            this_asset_num = str(int(temp_asset.assetNum) + 1)
+        else:
+            this_asset_num = int(new_acq_year) * 1000000 + 1
+        target_asset.assetNum = this_asset_num
+
+    target_asset.acquisitionDate = request.POST.get("acquisitionDate")
+    target_asset.assetName = request.POST.get("assetName")
+    target_asset.standard = request.POST.get("standard")
+    target_asset.acquisitionCost = request.POST.get("acquisitionCost")
+    target_asset.purchaseLocation = request.POST.get("purchaseLocation")
+    target_asset.maintenanceYear = request.POST.get("maintenanceYear")
+    target_asset.save()
+    return HttpResponse("ok")
 
 
 def delete_asset(request, pk):

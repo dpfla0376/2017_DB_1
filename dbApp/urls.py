@@ -11,9 +11,11 @@ urlpatterns = [
     url(r'^rack/detail/$', views.rack_detail, name='rack_detail'),
 
     url(r'^asset/$', views.asset_total, name='asset_total'),
-    url(r'^asset/detail/$', views.asset_detail, name='asset_detail'),
-    url(r'^asset/edit/$', views.edit_asset, name='edit_asset'),
+
+    url(r'^asset/edit/([0-9]+)$', views.edit_asset, name='edit_asset'),
+    url(r'^asset/save/([0-9]+)$', views.save_asset, name='save_asset'),
     url(r'^asset/delete/([0-9]+)/$', views.delete_asset, name='delete_asset'),
+    url(r'^asset/detail/$', views.asset_detail, name='asset_detail'),
 
     url(r'^server/$', views.server_asset, name='server_asset'),
     url(r'^server/detail/$', views.server_detail, name='server_detail'),
@@ -26,6 +28,7 @@ urlpatterns = [
     url(r'^storage$', views.storage_asset, name='storage_asset'),
     url(r'^storage/total$', views.storage_total, name='storage_total'),
     url(r'^storage/service$', views.service_storage, name='service_storage'),
+    url(r'^storage/service2$', views.service_storage2, name='service_storage2'),
 
     url(r'^resource/$', views.service_resources, name='service_resources'),
     url(r'^resource/storage/$', views.service_detail, name='service_detail'),
