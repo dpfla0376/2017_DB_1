@@ -171,7 +171,7 @@ def switch_asset(request):
         else:
             temp_dict['location'] = temp_location.realLocation
         temp = switch.serviceOn
-        if(temp == True):
+        if (temp == True):
             temp_dict['onOff'] = 'On'
         else:
             temp_dict['onOff'] = 'Off'
@@ -184,7 +184,8 @@ def switch_asset(request):
 def server_asset(request):
     start_time = time.time()
     my_prefetch = Prefetch('ss_server', queryset=ServerService.objects.select_related('service'), to_attr="services")
-    server_asset_list = Server.objects.select_related('location', 'assetInfo', 'location__rack_pk').prefetch_related(my_prefetch).all()
+    server_asset_list = Server.objects.select_related('location', 'assetInfo', 'location__rack_pk').prefetch_related(
+        my_prefetch).all()
     temp_list = list()
     for server in server_asset_list:
         temp_dict = dict()
@@ -279,66 +280,19 @@ def storage_total(request):
     storage_list = dictFetchall(cursor)
     return render(request, 'dbApp/storage_total.html', {'storage_list': storage_list});
 
-def check_in_list(mylist,mystring):
+
+def check_in_list(mylist, mystring):
     for temp_dict in mylist:
         if temp_dict['storagename'] == mystring:
             return temp_dict
     return None
-def check_in_list_date(mylist,mystring):
+
+
+def check_in_list_date(mylist, mystring):
     for temp_dict in mylist:
         if temp_dict['date'] == mystring:
             return temp_dict
     return None
-
-def service_storage2(request):
-    my_prefetch = Prefetch('storage_service', queryset=StorageService.objects.select_related('service'), to_attr="services")
-    storage_list = Storage.objects.select_related('storageAsset','storageAsset__assetInfo').all().prefetch_related(my_prefetch)
-    temp_list = list()
-    for storagee in storage_list:
-        temp_dict = {}
-        temp_dict['storageassetname'] = storagee.storageAssetName
-        temp_dict['vol']=storagee.Vol
-        temp_dict['allocunitsize'] = storagee.allocUnitSize
-        temp_dict['diskspec'] = storagee.diskSpec
-        temp_dict['storageform']=storagee.storageAsset.storageForm
-        temp_float = 0
-        temp_list2 = list()
-        temp_dict['servicecount']=len(storagee.services)
-        for storageservice in storagee.services:
-            temp_dict2 = {}
-            temp_float += storageservice.allocSize
-            temp_dict2['allocsize']=storageservice.allocSize
-            temp_dict2['servicename']=storageservice.service.serviceName
-            temp_dict2['usage']=storageservice.usage
-            temp_list2.append(temp_dict2)
-        temp_dict['remain']=storagee.Vol-temp_float
-        temp_dict['servicelist'] = temp_list2
-        temp_date = check_in_list_date(temp_list,storagee.enrollDate.isoformat())
-        if temp_date is not None:
-            temp_date['storagecount'] += 1
-            temp_date['storagelist'].append(temp_dict)
-        else:
-            date_dict={}
-            date_dict['date'] = storagee.enrollDate.isoformat()
-            date_dict['storagelist'] = [temp_dict]
-            date_dict['storagecount'] = 1
-            date_dict['storageassetname']=storagee.storageAssetName
-        temp_list.append(date_dict)
-    final_list2= list()
-    for dateDict in temp_list:
-        tempp= check_in_list(final_list2,dateDict['storageassetname'])
-        if tempp is not None:
-            tempp['dateList'].append(dateDict)
-            tempp['datecount']+=1
-        else:
-            temp_dict={}
-            temp_dict['storagename']= dateDict['storageassetname']
-            temp_dict['dateList']= [dateDict]
-            temp_dict['datecount']=1
-            final_list2.append(temp_dict)
-    return HttpResponse(json.dumps(final_list2))
-
-
 
 def service_storage(request):
     cursor = connection.cursor()
@@ -352,26 +306,28 @@ def service_storage(request):
     storage_list = {}
     for row in db_storage_list:
         spec = row['manageSpec']
-#        if not hasattr(storage_list, spec):
+
         if not spec in storage_list:
             storage_list[spec] = {
                 'name': spec,
-                'enroll': [],
-                'totalCount': 1
+                'totalCount': 1,
+                'enrollList': {}
             }
-        enroll = row['enrollDate']
-        if not enroll in storage_list[spec]:
-            storage_list[spec][enroll] = {
-                'Date': enroll,
-                'disk':[],
-                'enrollCount': 1
+
+        enroll = row['enrollDate'].isoformat()
+        if not enroll in storage_list[spec]['enrollList']:
+            storage_list[spec]['enrollList'][enroll] = {
+                'date': enroll,
+                'enrollCount': 2,
+                'diskList': {}
             }
+
         disk = row['diskSpec']
-        if not disk in storage_list[spec][enroll]:
-            storage_list[spec][enroll][disk] = {
+        if not disk in storage_list[spec]['enrollList'][enroll]['diskList']:
+            storage_list[spec]['enrollList'][enroll]['diskList'][disk] = {
                 'diskSpec': disk,
                 'list': [],
-                'Vol': row['Vol'],
+                'vol': row['Vol'],
                 'usageTotal': 0,
                 'remainSize': row['Vol'],
                 'diskSpec': row['diskSpec'],
@@ -381,15 +337,16 @@ def service_storage(request):
             }
 
         storage_list[spec]['totalCount'] = storage_list[spec]['totalCount'] + 1
-        storage_list[spec][enroll]['enrollCount'] = storage_list[spec][enroll]['enrollCount'] + 1
-        storage_list[spec][enroll][disk]['diskCount'] = storage_list[spec][enroll][disk]['diskCount'] + 1
-        storage_list[spec][enroll][disk]['usageTotal'] = storage_list[spec][enroll][disk]['usageTotal'] + row['allocSize']
-        storage_list[spec][enroll][disk]['remainSize'] = storage_list[spec][enroll][disk]['remainSize'] - row['allocSize']
-        storage_list[spec][enroll][disk]['list'].append({
+        storage_list[spec]['enrollList'][enroll]['enrollCount'] \
+            = storage_list[spec]['enrollList'][enroll]['enrollCount'] + 1
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['diskCount'] = \
+            storage_list[spec]['enrollList'][enroll]['diskList'][disk]['diskCount'] + 1
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['list'].append({
             'allocSize': row['allocSize'],
             'serviceName': row['serviceName'],
             'usage': row['usage']
         })
+
     return render(request, 'dbApp/storage_service.html', {'storage_list': storage_list});
 
 
@@ -530,6 +487,9 @@ def rack_info(request):
     context = {'rack_list': rack_total, 'data': data}
     print("--- %s seconds ---" % (time.time() - start_time))
     return render(request, 'dbApp/rack_info.html', context)
+
+
+#    return HttpResponse(json.dumps(context))
 
 
 def insert_asset(request):
@@ -728,7 +688,7 @@ def asset_detail(request):
     my_prefetch = Prefetch('ss_server', queryset=ServerService.objects.select_related('service'), to_attr="services")
     asset_temp_list = Server.objects.select_related('location', 'assetInfo', 'location__rack_pk').prefetch_related(
         my_prefetch).filter(assetInfo=asset)
-    #asset_temp_list = Server.objects.select_related('location', 'assetInfo', 'location__rack_pk').filter(assetInfo=asset)
+    # asset_temp_list = Server.objects.select_related('location', 'assetInfo', 'location__rack_pk').filter(assetInfo=asset)
     temp_list = []
     for server in asset_temp_list:
         temp_dict = dict()
@@ -891,7 +851,8 @@ def server_detail(request):
     server = serverList[0]
 
     my_prefetch = Prefetch('ss_server', queryset=ServerService.objects.select_related('service'), to_attr="services")
-    server_list = Server.objects.select_related('location', 'assetInfo', 'location__rack_pk').prefetch_related(my_prefetch).filter(manageNum=server.manageNum)
+    server_list = Server.objects.select_related('location', 'assetInfo', 'location__rack_pk').prefetch_related(
+        my_prefetch).filter(manageNum=server.manageNum)
     server = server_list[0]
     temp_dict = dict()
     temp_dict['assetInfo'] = server.assetInfo
@@ -902,7 +863,7 @@ def server_detail(request):
     if len(server.services) is not 0:
         temp_serverservice = server.services[0]
         temp = temp_serverservice.Use
-        if(temp == True):
+        if (temp == True):
             temp_dict['use'] = "On"
         else:
             temp_dict['use'] = "Off"
@@ -914,7 +875,7 @@ def server_detail(request):
     else:
         temp_dict['location'] = temp_location.realLocation
 
-    context = {'server_list':temp_dict}
+    context = {'server_list': temp_dict}
     return render(request, 'dbApp/server_detail.html', context)
 
 
