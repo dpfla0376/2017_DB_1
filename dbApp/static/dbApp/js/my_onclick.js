@@ -24,6 +24,10 @@ function td_click_detail_switch(tdObj) {
     var txt = tdObj.text;
     location.href = "/dbApp/switch/detail/?data=" + txt;
 }
+function td_click_detail_service(tdObj) {
+    var txt = tdObj.text;
+    location.href = "/dbApp/service/detail/?data=" + txt;
+}
 
 function td_click_delete_asset(assetNum) {
     myConfirm("delete?", function () {
@@ -81,12 +85,11 @@ $(document).ready(function () {
     $('[data-toggle="modal"]').click(function (e) {
         e.preventDefault();
         var url = $(this).attr('href');
-        //$('#modal-serverDetail').modal('show').find('.modal-body').load();
         if (url.indexOf('#') == 0) {
             $(url).modal('open');
         } else {
             $.get(url, function (data) {
-                $('<div id="clue-modal" class="modal fade" tabindex="-1" role="dialog"><div class="modal-dialog"><div class="modal-content">' + data + '</div></div></div>')
+                $('<div class="modal fade"><div class="modal-dialog" style="width:70%;text-align: center"><div class="modal-content">' + data + '</div></div></div>')
                     .modal()
                     .on('hidden', function () {
                         $(data_target).remove();

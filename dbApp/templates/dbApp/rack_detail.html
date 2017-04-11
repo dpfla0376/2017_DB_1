@@ -131,14 +131,14 @@
                                     document.write('<tbody>');
                                 }
                                 document.write('<tr>');
-                                document.write('<td onmouseover="changeTrColor(this,\'#FFFFFF\', \'#F4FFFD\')"><a style="cursor:hand" onclick="td_click_detail_asset(this)">' + rackdatalist[i].assetNum + '</a></td>');
-                                document.write('<td onmouseover="changeTrColor(this,\'#FFFFFF\', \'#F4FFFD\')"><a style="cursor:hand" onclick="td_click_detail_server(this)">' + rackdatalist[i].manageNum + '</a></td>');
+                                document.write('<td><a style="cursor:hand" onclick="td_click_detail_asset(this)">' + rackdatalist[i].assetNum + '</a></td>');
+                                document.write('<td><a style="cursor:hand" data-toggle="modal" data-target="#" href="/dbApp/server/detail/?data='+rackdatalist[i].manageNum +'">' + rackdatalist[i].manageNum + '</a></td>');
                                 document.write('<td>' + rackdatalist[i].manageSpec + '</td>');
                                 document.write('<td>' + rackdatalist[i].core.toString() + '</td>');
                                 document.write('<td>' + rackdatalist[i].ip + '</td>');
                                 if(rackdatalist[i].use == true) { document.write('<td>ON</td>'); }
                                 else { document.write('<td>OFF</td>'); }
-                                document.write('<td onmouseover="changeTrColor(this,\'#FFFFFF\', \'#F4FFFD\')"><a style="cursor:hand" onclick="td_click_detail_service(this)">' + rackdatalist[i].serviceName + '</td>');
+                                document.write('<td><a style="cursor:hand" onclick="td_click_detail_service(this)">' + rackdatalist[i].serviceName + '</a></td>');
                                 document.write('</tr>');
                                 count++;
                             }
@@ -169,8 +169,8 @@
                                     document.write('<tbody>');
                                 }
                                 document.write('<tr>');
-                                document.write('<td onmouseover="changeTrColor(this,\'#FFFFFF\', \'#F4FFFD\')"><a style="cursor:hand" onclick="td_click_detail_asset(this)">' + rackdatalist[i].assetNum + '</td>');
-                                document.write('<td onmouseover="changeTrColor(this,\'#FFFFFF\', \'#F4FFFD\')"><a style="cursor:hand" onclick="td_click_detail_switch(this)">' + rackdatalist[i].manageNum + '</td>');
+                                document.write('<td><a style="cursor:hand" onclick="td_click_detail_asset(this)">' + rackdatalist[i].assetNum + '</a></td>');
+                                document.write('<td><a style="cursor:hand" data-toggle="modal" data-target="#" href="/dbApp/switch/detail/?data=' + rackdatalist[i].manageNum + '">' + rackdatalist[i].manageNum + '</a></td>');
                                 document.write('<td>' + rackdatalist[i].manageSpec + '</td>');
                                 document.write('<td>' + rackdatalist[i].ip + '</td>');
                                 if(rackdatalist[i].use == true) { document.write('<td>ON</td>'); }
