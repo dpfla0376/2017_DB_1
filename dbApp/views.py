@@ -317,10 +317,12 @@ def storage_total(request):
             }
 
         storage_list[spec]['totalCount'] = storage_list[spec]['totalCount'] + 1
-        storage_list[spec]['enrollList'][enroll]['enrollCount'] \
-            = storage_list[spec]['enrollList'][enroll]['enrollCount'] + 1
-        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['diskCount'] = \
-            storage_list[spec]['enrollList'][enroll]['diskList'][disk]['diskCount'] + 1
+        storage_list[spec]['enrollList'][enroll]['enrollCount'] += 1
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['diskCount'] += 1
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['usageTotal'] += row['allocSize']
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['remainSize'] -= row['allocSize']
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['usageTotal'] = \
+            round(storage_list[spec]['enrollList'][enroll]['diskList'][disk]['usageTotal'], 2)
         storage_list[spec]['enrollList'][enroll]['diskList'][disk]['list'].append({
             'allocSize': row['allocSize'],
             'serviceName': row['serviceName'],
@@ -440,16 +442,16 @@ def service_storage(request):
 
         storage_list[spec]['enrollList'][enroll]['enrollCount'] \
             = storage_list[spec]['enrollList'][enroll]['enrollCount'] + 1
-        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['diskCount'] = \
-            storage_list[spec]['enrollList'][enroll]['diskList'][disk]['diskCount'] + 1
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['usageTotal'] += row['allocSize']
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['remainSize'] -= row['allocSize']
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['usageTotal'] = \
+            round(storage_list[spec]['enrollList'][enroll]['diskList'][disk]['usageTotal'], 2)
         storage_list[spec]['enrollList'][enroll]['diskList'][disk]['list'].append({
             'allocSize': row['allocSize'],
             'serviceName': row['serviceName'],
             'usage': row['usage']
         })
-
     return render(request, 'dbApp/storage_service.html', {'storage_list': storage_list});
-
 
 def service_detail(request, pk):
     cursor = connection.cursor()
@@ -1065,6 +1067,7 @@ def get_location(request, asset_type, manage_num):
 
 @csrf_exempt
 def save_asset(request, asset_num):
+    print("save_asset")
     target_asset = Asset.objects.filter(assetNum=asset_num).first()
     target_asset.acquisitionDate = request.POST.get("acquisitionDate")
     target_asset.assetName = request.POST.get("assetName")
@@ -1077,13 +1080,13 @@ def save_asset(request, asset_num):
 
 
 @csrf_exempt
-def save_one_asset(request, asset_type, manage_num):
+def save_one_asset(request, asset_type, id):
     if asset_type == "server":
         int_rackLocation = request.POST.get("rackLocation")
         str_reallocation = request.POST.get("realLocation")
         rack_managenum = request.POST.get("rack_manage_num")
 
-        my_server = Server.objects.prefetch_related('location', 'location__rack_pk').get(manageNum=manage_num)
+        my_server = Server.objects.prefetch_related('location', 'location__rack_pk').get(manageNum=id)
         if request.POST.get("isInRack") == "true":
             my_server.isInRack = True
         else:
@@ -1101,14 +1104,14 @@ def save_one_asset(request, asset_type, manage_num):
             my_server.location.realLocation = str_reallocation
             my_server.location.save()
 
-        target = Server.objects.filter(manageNum=manage_num).first()
+        target = Server.objects.filter(manageNum=id).first()
         target.manageSpec = request.POST.get("manageSpec")
         target.size = request.POST.get("size")
         target.core = request.POST.get("core")
         target.ip = request.POST.get("ip")
         target.save()
     elif asset_type == "storage":
-        target = StorageAsset.objects.filter(manageNum=manage_num).first()
+        target = StorageAsset.objects.filter(manageNum=id).first()
         target.manageSpec = request.POST.get("manageSpec")
         target.location = request.POST.get("location")
         target.standard = request.POST.get("standard")
@@ -1118,7 +1121,7 @@ def save_one_asset(request, asset_type, manage_num):
         str_reallocation = request.POST.get("realLocation")
         rack_managenum = request.POST.get("rack_manage_num")
 
-        my_switch = Switch.objects.prefetch_related('location', 'location__rack').get(manageNum=manage_num)
+        my_switch = Switch.objects.prefetch_related('location', 'location__rack').get(manageNum=id)
         if request.POST.get("isInRack") == "true":
             my_switch.isInRack = True
         else:
@@ -1136,18 +1139,27 @@ def save_one_asset(request, asset_type, manage_num):
             my_switch.location.realLocation = str_reallocation
             my_switch.location.save()
 
-        target = Switch.objects.filter(manageNum=manage_num).first()
+        target = Switch.objects.filter(manageNum=id).first()
         target.manageSpec = request.POST.get("manageSpec")
         target.size = request.POST.get("size")
         target.ip = request.POST.get("ip")
         target.save()
     elif asset_type == "rack":
-        target = Rack.objects.filter(manageNum=manage_num).first()
+        target = Rack.objects.filter(manageNum=id).first()
         target.manageSpec = request.POST.get("manageSpec")
         # target.location = request.POST.get("location")
         target.size = request.POST.get("size")
         target.save()
-
+    elif asset_type == "asset":
+        print("save_asset")
+        target_asset = Asset.objects.filter(assetNum=id).first()
+        target_asset.acquisitionDate = request.POST.get("acquisitionDate")
+        target_asset.assetName = request.POST.get("assetName")
+        target_asset.standard = request.POST.get("standard")
+        target_asset.acquisitionCost = request.POST.get("acquisitionCost")
+        target_asset.purchaseLocation = request.POST.get("purchaseLocation")
+        target_asset.maintenanceYear = request.POST.get("maintenanceYear")
+        target_asset.save()
     return HttpResponse("ok")
 
 

@@ -100,7 +100,7 @@ class StorageService(models.Model):
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
     allocSize = models.FloatField()
     usage = models.CharField(max_length=45)
-
+    uses = models.BooleanField(default=1)
 
 class UserService(models.Model):
     user = models.ForeignKey(User)
