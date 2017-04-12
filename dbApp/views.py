@@ -672,11 +672,16 @@ def add(request, add_type):
             hex_color = request.POST.get("service_color").lstrip('#')
             rgb_tuple = tuple(int(hex_color[i:i + 2], 16) for i in (0, 2, 4))
             rgb = str(rgb_tuple[0]) + "," + str(rgb_tuple[1]) + "," + str(rgb_tuple[2])
-
-            temp_service = Service.objects.create(serviceName=request.POST.get("service_name"),
+            context={}
+            try:
+                Service.objects.get(serviceName=request.POST.get("service_name"))
+                context = {'messages': '이미 있는 서비스 입니다.'}
+            except Service.DoesNotExist:
+                Service.objects.create(serviceName=request.POST.get("service_name"),
                                                   makeDate=request.POST.get("service_make_date"),
                                                   color=rgb)
-            context = {'messages': '완료되었습니다.'}
+                context = {'messages': '완료되었습니다.'}
+
             return render(request, 'dbApp/add_service.html', context)
     else:
         if add_type == "asset":
