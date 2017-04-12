@@ -82,14 +82,13 @@ def api_graph_service_info(request):
         core_info['core'] = int(core.get('core'))
         service_core_info.append(core_info)
 
-    cursor.execute('SELECT sv.id, sa.storageForm AS type, SUM(ss.allocSize) as size ' +
+    cursor.execute('SELECT sv.id, ss.uses, sa.storageForm AS type, SUM(ss.allocSize) as sizes ' +
                    'FROM `dbApp_service` sv ' +
                    'INNER JOIN `dbApp_storageservice` ss ON ss.service_id = sv.id ' +
                    'INNER JOIN `dbApp_storage` st ON st.id = ss.storage_id ' +
                    'INNER JOIN `dbApp_storageasset` sa ON sa.id = st.storageAsset_id ' +
-                   'GROUP BY sv.id, sa.storageForm')
+                   'GROUP BY sv.id, sa.storageForm, ss.uses')
     service_storage_info = dictFetchall(cursor)
-
     return HttpResponse(json.dumps({'list': service_list, 'core': service_core_info, 'storage': service_storage_info}))
 
 
@@ -250,20 +249,16 @@ def service_resources(request):  # 서비스의 리소스를 보여준다.
     return render(request, 'dbApp/service_resources.html', context)
 
 
-def storage(request):
+def storage_detail(request):
+    searchText = request.GET.get("data")
+
     cursor = connection.cursor()
     cursor.execute(
-        'SELECT * FROM `dbApp_asset`INNER JOIN `dbApp_server` ON dbApp_asset.id = dbApp_server.assetInfo_id ' +
-        'INNER JOIN `dbApp_serverlocation` ON dbApp_serverlocation.server_pk_id = dbApp_server.id ' +
-        'INNER JOIN `dbApp_rack` ON dbApp_rack.id = dbApp_serverlocation.rack_pk_id ')
-    server_list = dictFetchall(cursor)
-    for server in server_list:
-        if server['isInRack'] == 0:
-            server['location'] = server['realLocation']
-        if server['Use']:
-            server['Use'] = True
-        else:
-            server['Use'] = False
+        'SELECT * FROM `dbApp_asset` ' +
+                   'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.assetInfo_id = dbApp_asset.id ' +
+                    'WHERE dbApp_storageasset.manageNum = ' + '\"'+searchText+'\"')
+    storage_list = dictFetchall(cursor)
+    return render(request, 'dbApp/storage_detail.html',{'storage_list': storage_list[0]})
 
 
 def storage_asset(request):
@@ -271,7 +266,7 @@ def storage_asset(request):
     cursor.execute('SELECT * FROM `dbApp_asset` ' +
                    'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.assetInfo_id = dbApp_asset.id ')
     storage_list = dictFetchall(cursor)
-    return render(request, 'dbApp/storage_asset.html', {'storage_list': storage_list});
+    return render(request, 'dbApp/storage_asset.html', {'storage_list': storage_list})
 
 
 def storage_total(request):
@@ -345,6 +340,7 @@ def check_in_list_date(mylist, mystring):
             return temp_dict
     return None
 
+
 def service_storage2(request):
     my_prefetch = Prefetch('storage_service', queryset=StorageService.objects.select_related('service'),
                            to_attr="services")
@@ -412,14 +408,14 @@ def service_storage(request):
         if not spec in storage_list:
             storage_list[spec] = {
                 'name': spec,
-                'totalCount': 1,
+                'totalCount': 0,
                 'enrollList': {}
             }
         enroll = row['enrollDate'].isoformat()
         if not enroll in storage_list[spec]['enrollList']:
             storage_list[spec]['enrollList'][enroll] = {
                 'date': enroll,
-                'enrollCount': 2,
+                'enrollCount': 0,
                 'diskList': {}
 
             }
@@ -435,13 +431,12 @@ def service_storage(request):
                 'diskSpec': row['diskSpec'],
                 'allocUnitSize': row['allocUnitSize'],
                 'storageForm': row['storageForm'],
-                'diskCount': 1
+                'diskCount': 0
             }
 
         storage_list[spec]['totalCount'] = storage_list[spec]['totalCount'] + 1
-
-        storage_list[spec]['enrollList'][enroll]['enrollCount'] \
-            = storage_list[spec]['enrollList'][enroll]['enrollCount'] + 1
+        storage_list[spec]['enrollList'][enroll]['enrollCount'] += 1
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['diskCount'] += 1
         storage_list[spec]['enrollList'][enroll]['diskList'][disk]['usageTotal'] += row['allocSize']
         storage_list[spec]['enrollList'][enroll]['diskList'][disk]['remainSize'] -= row['allocSize']
         storage_list[spec]['enrollList'][enroll]['diskList'][disk]['usageTotal'] = \
@@ -452,6 +447,7 @@ def service_storage(request):
             'usage': row['usage']
         })
     return render(request, 'dbApp/storage_service.html', {'storage_list': storage_list});
+
 
 def service_detail(request, pk):
     cursor = connection.cursor()
@@ -587,10 +583,10 @@ def rack_info(request):
         rack_total.append(temp)
     data = []
     for rack in rack_total:
-        #TODO 이 아랫부분 지워야됩니다.
+        # TODO 이 아랫부분 지워야됩니다.
         position = [None] * 42
         for inrack in rack['list']:
-            position[(inrack['drawIndex'])-1] = inrack
+            position[(inrack['drawIndex']) - 1] = inrack
         data.append({'data': list(reversed(position)), 'rack': rack})
     context = {'rack_list': rack_total, 'data': data}
     print("--- %s seconds ---" % (time.time() - start_time))
@@ -988,6 +984,7 @@ def server_detail(request):
     context = {'server_list': temp_dict}
     return render(request, 'dbApp/server_detail.html', context)
 
+
 def switch_detail(request):
     searchText = request.GET.get("data")
     switchList = Switch.objects.filter(Q(manageNum=searchText) | Q(manageSpec=searchText) | Q(ip=searchText))
@@ -1143,6 +1140,10 @@ def save_one_asset(request, asset_type, id):
         target.manageSpec = request.POST.get("manageSpec")
         target.size = request.POST.get("size")
         target.ip = request.POST.get("ip")
+        if request.POST.get("serviceOn") == "On":
+            target.serviceOn = True
+        else:
+            target.serviceOn = False
         target.save()
     elif asset_type == "rack":
         target = Rack.objects.filter(manageNum=id).first()

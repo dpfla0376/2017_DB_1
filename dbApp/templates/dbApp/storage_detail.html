@@ -1,0 +1,56 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal"><span>&times;</span><span
+            class="sr-only">close modal</span></button>
+    <h4 class="modal-title">관리번호 [ {{ storage_list.manageNum }} ] 의 상세 페이지</h4>
+</div>
+<div class="modal-body" style="display: inline-block; text-align: left">
+    {% if storage_list %}
+        <h4>▶ Asset Information</h4>
+        <table id="storage_list_asset" class="table table-striped">
+            <thead>
+            <tr>
+                <th>자산번호</th>
+                <th>취득일</th>
+                <th>자산명</th>
+                <th>규격</th>
+                <th>취득원가</th>
+                <th>구입처</th>
+                <th>내용연수</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ storage_list.assetNum }}</td>
+                    <td>{{ storage_list.acquisitionDate }}</td>
+                    <td>{{ storage_list.assetName }}</td>
+                    <td>{{ storage_list.standard }}</td>
+                    <td>{{ storage_list.acquisitionCost }}</td>
+                    <td>{{ storage_list.purchaseLocation }}</td>
+                    <td>{{ storage_list.maintenanceYear }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <h4>▶ Storage Infomation</h4>
+        <table id="storage_list_server" class="table table-striped">
+            <thead>
+            <tr>
+                <th>관리번호</th>
+                <th>관리스펙</th>
+                <th>위치</th>
+                <th>수정</th>
+                <th>삭제</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ storage_list.manageNum }}</td>
+                    <td>{{ storage_list.manageSpec }}</td>
+                    <td><a style="cursor:hand" onclick="td_click_detail_rack(this)">{{ storage_list.location }}</a></td>
+
+                </tr>
+            </tbody>
+        </table>
+    {% else %}
+        <p>No Data..!!!</p>
+    {% endif %}
+</div>

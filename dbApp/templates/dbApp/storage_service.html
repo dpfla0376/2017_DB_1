@@ -37,7 +37,9 @@
                             <td rowspan="{{ disk.diskCount }}"
                                 style="vertical-align : middle">{{ disk.remainSize }} </td>
                             {% for row in disk.list %}
-                                <tr>
+                                {% if forloop.counter != 1 %}
+                                    <tr>
+                                {% endif %}
                                     <td>{{ row.allocSize }}</td>
                                     <td>{{ row.serviceName }}</td>
                                     <td>{{ row.usage }}</td>

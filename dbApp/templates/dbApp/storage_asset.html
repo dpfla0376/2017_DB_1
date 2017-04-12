@@ -19,8 +19,10 @@
                 {% if storage_list %}
                     {% for storage in storage_list %}
                         <tr id="one-asset-id-{{ storage.manageNum }}">
-                            <td>{{ storage.assetNum }}</td>
-                            <td>{{ storage.manageNum }}</td>
+                            <td onmouseover="changeTrColor(this,'#FFFFFF', '#F4FFFD')"><a style="cursor:hand"
+                                                                                          onclick="td_click_detail_asset(this)">{{ storage.assetNum }}</a></td>
+                            <td><a style="cursor:hand" data-toggle="modal" data-target="#"
+                               href="./detail/?data={{ storage.manageNum }}">{{ storage.manageNum }}</a></td>
                             <td id="location-{{ storage.manageNum }}">{{ storage.location }}</td>
                             <td id="manage-spec-{{ storage.manageNum }}">{{ storage.manageSpec }}</td>
                             <td id="standard-{{ storage.manageNum }}">{{ storage.standard }}</td>
