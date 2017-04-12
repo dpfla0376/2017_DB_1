@@ -26,7 +26,7 @@
                             <td id="alloc_size-{{storage.managenum}}">{{ storage.alloc_size }}</td>
                             <td id="size-{{storage.managenum}}">{{ storage.vol }}</td>
                             <td id="remain-{{storage.managenum}}">{{ storage.remain_size }}</td>
-                        <form action="/dbApp/resource/service/{{ service }}/addsan/{{ storage.managenum }}/" method="post">
+                        <form action="/dbApp/resource/service/{{ service }}/addnas/{{ storage.managenum }}/" method="post">
                             {% csrf_token %}
                             <td><input name = "usage" type='text' id='manage-spec-usage-"{{ storage.managenum}}"'></td>
                             <td><input name = "count" type='text' id='manage-spec-input-"{{ storage.managenum}}"'></td>
