@@ -153,9 +153,9 @@ function td_click_edit(type, id) {
         alloc_size.innerHTML = "<input type='text' id='alloc-size-input-" + id + "' value='" + current_alloc_size + "'>";
         alloc_size.innerHTML += "<br><a id='save-button-" + id + "' style='cursor:hand'>저장</a >"
 
-        $("#save-button-"+id).click(
-            function(){
-                 td_click_save_new_alloc(id);
+        $("#save-button-" + id).click(
+            function () {
+                td_click_save_new_alloc(id);
             }
         );
     }
@@ -180,7 +180,21 @@ function make_asset_inputs(id) {
     var purchase_data = purchase.innerHTML;
     var maintenance_data = maintenance.innerHTML;
 
-    acq_date.innerHTML = "<input type='date' id='acq-date-input-" + id + "' value='" + acq_date_data + "'>";
+    function pad(n, width, z) {
+        z = z || '0';
+        n = n + '';
+        return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+    }
+
+    var temp = acq_date_data.split('년 ');
+    var year = temp[0];
+    temp = temp[1].split('월 ');
+    var month = temp[0];
+    temp = temp[1].split('일');
+    var day = temp[0];
+    alert(year + '-' + pad(month,2) + '-' + pad(day,2));
+
+    acq_date.innerHTML = "<input type='date' id='acq-date-input-" + id + "' value='" +year + '-' + pad(month,2) + '-' + pad(day,2) + "'>";
     name.innerHTML = "<input type='text' id='name-input-" + id + "' value='" + name_data + "'>";
     standard.innerHTML = "<input type='text' id='standard-input-" + id + "' value='" + standard_data + "'>";
     acq_cost.innerHTML = "<input type='number' id='acq-cost-input-" + id + "' value='" + acq_cost_data + "'>";
@@ -257,12 +271,12 @@ function make_server_inputs(id, dict) {
     location.innerHTML += "<br><input type='text' id='location-etc-input-" + id + "' value='" + real_location + "' placeholder='예)지하 창고'>";
 
 }
-function td_click_save_new_alloc(id){
-      var alloc_size = document.getElementById("alloc-size-input-" + id);
-        var updated = {
-            'alloc_size' : alloc_size.value
-        }
-      $.ajaxSetup({
+function td_click_save_new_alloc(id) {
+    var alloc_size = document.getElementById("alloc-size-input-" + id);
+    var updated = {
+        'alloc_size': alloc_size.value
+    }
+    $.ajaxSetup({
         headers: {"X-CSRFToken": getCookie("csrftoken")}
     });
 
