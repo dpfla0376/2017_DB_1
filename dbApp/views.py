@@ -1079,7 +1079,10 @@ def save_asset(request, asset_num):
 
 @csrf_exempt
 def save_new_alloc_size(request, id):
-    print(id + "/" + request.POST.get("alloc-size"))
+    target_storage_asset = StorageAsset.objects.filter(manageNum=id).first()
+    target_storage = Storage.objects.filter(storageAsset=target_storage_asset.id).first()
+    target_storage.allocUnitSize = request.POST.get("alloc_size")
+    target_storage.save()
     return HttpResponse("ok")
 
 
