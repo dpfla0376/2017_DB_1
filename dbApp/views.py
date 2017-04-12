@@ -344,6 +344,7 @@ def check_in_list_date(mylist, mystring):
             return temp_dict
     return None
 
+
 def service_storage2(request):
     my_prefetch = Prefetch('storage_service', queryset=StorageService.objects.select_related('service'),
                            to_attr="services")
@@ -451,6 +452,7 @@ def service_storage(request):
             'usage': row['usage']
         })
     return render(request, 'dbApp/storage_service.html', {'storage_list': storage_list});
+
 
 def service_detail(request, pk):
     cursor = connection.cursor()
@@ -586,10 +588,10 @@ def rack_info(request):
         rack_total.append(temp)
     data = []
     for rack in rack_total:
-        #TODO 이 아랫부분 지워야됩니다.
+        # TODO 이 아랫부분 지워야됩니다.
         position = [None] * 42
         for inrack in rack['list']:
-            position[(inrack['drawIndex'])-1] = inrack
+            position[(inrack['drawIndex']) - 1] = inrack
         data.append({'data': list(reversed(position)), 'rack': rack})
     context = {'rack_list': rack_total, 'data': data}
     print("--- %s seconds ---" % (time.time() - start_time))
@@ -987,6 +989,7 @@ def server_detail(request):
     context = {'server_list': temp_dict}
     return render(request, 'dbApp/server_detail.html', context)
 
+
 def switch_detail(request):
     searchText = request.GET.get("data")
     switchList = Switch.objects.filter(Q(manageNum=searchText) | Q(manageSpec=searchText) | Q(ip=searchText))
@@ -1142,6 +1145,10 @@ def save_one_asset(request, asset_type, id):
         target.manageSpec = request.POST.get("manageSpec")
         target.size = request.POST.get("size")
         target.ip = request.POST.get("ip")
+        if request.POST.get("serviceOn") == "On":
+            target.serviceOn = True
+        else:
+            target.serviceOn = False
         target.save()
     elif asset_type == "rack":
         target = Rack.objects.filter(manageNum=id).first()

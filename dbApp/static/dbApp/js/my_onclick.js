@@ -211,14 +211,12 @@ function make_server_inputs(id, dict) {
     var manage_spec = document.getElementById("manage-spec-" + id);
     var core = document.getElementById("core-" + id);
     var ip = document.getElementById("ip-" + id);
-    var onoff = document.getElementById("onoff-" + id);
     var size = document.getElementById("size-" + id);
     var location = document.getElementById("location-" + id);
 
     var manage_spec_data = manage_spec.innerHTML;
     var core_data = core.innerHTML;
     var ip_data = ip.innerHTML;
-    var onoff_data = onoff.innerHTML;
     var size_data = size.innerHTML;
     var location_data = size.innerHTML;
 
@@ -235,7 +233,6 @@ function make_server_inputs(id, dict) {
     manage_spec.innerHTML = "<input type='text' id='manage-spec-input-" + id + "' value='" + manage_spec_data + "'>";
     core.innerHTML = "<input type='number' id='core-input-" + id + "' value='" + core_data + "'>";
     ip.innerHTML = "<input type='text' id='ip-input-" + id + "' value='" + ip_data + "'>";
-    onoff.innerHTML = "<input type='text' id='onoff-input-" + id + "' value='" + onoff_data + "'>";
     size.innerHTML = "<input type='number' id='size-input-" + id + "' value='" + size_data + "'>";
     location.innerHTML = "<input type='radio' name='radio' value='in' id='location-radio-" + id + "'>위치";
     location.innerHTML += "<br><input type='text' id='location-in-input-" + id + "' value='" + rack_manage_num + "' placeholder='랙 번호'>";
@@ -349,7 +346,6 @@ function get_corrected_server(id) {
     var manage_spec = document.getElementById("manage-spec-input-" + id);
     var core = document.getElementById("core-input-" + id);
     var ip = document.getElementById("ip-input-" + id);
-    var onoff = document.getElementById("onoff-input-" + id);
     var size = document.getElementById("size-input-" + id);
 
     var location_radio = document.getElementById("location-radio-" + id);
@@ -366,7 +362,6 @@ function get_corrected_server(id) {
             'manageSpec': manage_spec.value,
             'core': core.value,
             'ip': ip.value,
-            'onoff': onoff.value,
             'size': size.value,
             'isInRack': true,
             'rack_manage_num': location_in_input.value,
@@ -379,7 +374,6 @@ function get_corrected_server(id) {
             'manageSpec': manage_spec.value,
             'core': core.value,
             'ip': ip.value,
-            'onoff': onoff.value,
             'size': size.value,
             'isInRack': false,
             'rack_manage_num': "",
