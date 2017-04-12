@@ -408,14 +408,14 @@ def service_storage(request):
         if not spec in storage_list:
             storage_list[spec] = {
                 'name': spec,
-                'totalCount': 1,
+                'totalCount': 0,
                 'enrollList': {}
             }
         enroll = row['enrollDate'].isoformat()
         if not enroll in storage_list[spec]['enrollList']:
             storage_list[spec]['enrollList'][enroll] = {
                 'date': enroll,
-                'enrollCount': 2,
+                'enrollCount': 0,
                 'diskList': {}
 
             }
@@ -431,13 +431,12 @@ def service_storage(request):
                 'diskSpec': row['diskSpec'],
                 'allocUnitSize': row['allocUnitSize'],
                 'storageForm': row['storageForm'],
-                'diskCount': 1
+                'diskCount': 0
             }
 
         storage_list[spec]['totalCount'] = storage_list[spec]['totalCount'] + 1
-
-        storage_list[spec]['enrollList'][enroll]['enrollCount'] \
-            = storage_list[spec]['enrollList'][enroll]['enrollCount'] + 1
+        storage_list[spec]['enrollList'][enroll]['enrollCount'] += 1
+        storage_list[spec]['enrollList'][enroll]['diskList'][disk]['diskCount'] += 1
         storage_list[spec]['enrollList'][enroll]['diskList'][disk]['usageTotal'] += row['allocSize']
         storage_list[spec]['enrollList'][enroll]['diskList'][disk]['remainSize'] -= row['allocSize']
         storage_list[spec]['enrollList'][enroll]['diskList'][disk]['usageTotal'] = \
