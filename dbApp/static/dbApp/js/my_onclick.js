@@ -231,11 +231,16 @@ function make_switch_inputs(id, dict) {
     onoff.innerHTML = "<input type='text' id='onoff-input-" + id + "' value='" + onoff_data + "'>";
     size.innerHTML = "<input type='number' id='size-input-" + id + "' value='" + size_data + "'>";
 
-
-    location.innerHTML = "<input type='radio' name='radio' value='in' id='location-radio-" + id + "'>위치";
+    if(dict['is_in_rack'] == true)
+        location.innerHTML = "<input type='radio' checked='' name='radio' value='in' id='location-radio-" + id + "'>위치";
+    else
+        location.innerHTML = "<input type='radio' name='radio' value='in' id='location-radio-" + id + "'>위치";
     location.innerHTML += "<br><input type='text' id='location-in-input-" + id + "' value='" + rack_manage_num + "' placeholder='랙 번호'>";
     location.innerHTML += "<br><input type='number' id='location-at-input-" + id + "'  value='" + rack_location + "' placeholder='해당 위치'>";
-    location.innerHTML += "<br><input type='radio' name='radio' value='etc' id='location-etc-radio-" + id + "'>기타";
+    if(dict['is_in_rack'] == true)
+        location.innerHTML += "<br><input type='radio' name='radio' value='etc' id='location-etc-radio-" + id + "'>기타";
+    else
+        location.innerHTML += "<br><input type='radio' checked='' name='radio' value='etc' id='location-etc-radio-" + id + "'>기타";
     location.innerHTML += "<br><input type='text' id='location-etc-input-" + id + "' value='" + real_location + "' placeholder='예)지하 창고'>";
 }
 function make_server_inputs(id, dict) {
@@ -265,10 +270,16 @@ function make_server_inputs(id, dict) {
     core.innerHTML = "<input type='number' id='core-input-" + id + "' value='" + core_data + "'>";
     ip.innerHTML = "<input type='text' id='ip-input-" + id + "' value='" + ip_data + "'>";
     size.innerHTML = "<input type='number' id='size-input-" + id + "' value='" + size_data + "'>";
-    location.innerHTML = "<input type='radio' name='radio' value='in' id='location-radio-" + id + "'>위치";
+    if(dict['is_in_rack'] == true)
+        location.innerHTML = "<input type='radio' checked='' name='radio' value='in' id='location-radio-" + id + "'>위치";
+    else
+        location.innerHTML = "<input type='radio' name='radio' value='in' id='location-radio-" + id + "'>위치";
     location.innerHTML += "<br><input type='text' id='location-in-input-" + id + "' value='" + rack_manage_num + "' placeholder='랙 번호'>";
     location.innerHTML += "<br><input type='number' id='location-at-input-" + id + "'  value='" + rack_location + "' placeholder='해당 위치'>";
-    location.innerHTML += "<br><input type='radio' name='radio' value='etc' id='location-etc-radio-" + id + "'>기타";
+    if(dict['is_in_rack'] == true)
+        location.innerHTML += "<br><input type='radio' name='radio' value='etc' id='location-etc-radio-" + id + "'>기타";
+    else
+        location.innerHTML += "<br><input type='radio' checked='' name='radio' value='etc' id='location-etc-radio-" + id + "'>기타";
     location.innerHTML += "<br><input type='text' id='location-etc-input-" + id + "' value='" + real_location + "' placeholder='예)지하 창고'>";
 
 }
@@ -287,6 +298,7 @@ function td_click_save_new_alloc(id) {
         data: updated,
         success: function (result) {
             alert("저장되었습니다. 페이지를 새로고침합니다.");
+             $("#" + id).reload();
             location.href = "/dbApp/storage/total/"
         },
         fail: function (result) {
