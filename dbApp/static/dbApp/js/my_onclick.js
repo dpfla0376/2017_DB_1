@@ -137,11 +137,12 @@ function td_click_edit(type, id) {
         var location = document.getElementById("location-" + id);
 
         var manage_spec_data = manage_spec.innerHTML;
-        //var location_data = location.innerHTML;
+        var location_data = location.innerHTML;
+        var current_location_data = $("#location-" + id).find('a').html();
         var size_data = size.innerHTML;
 
         manage_spec.innerHTML = "<input type='text' id='manage-spec-input-" + id + "' value='" + manage_spec_data + "'>";
-        // location.innerHTML = "<input type='text' id='location-input-" + id + "' value='" + location_data + "'>";
+        location.innerHTML = "<input type='text' id='location-input-" + id + "' value='" + current_location_data + "'>";
         size.innerHTML = "<input type='number' id='size-input-" + id + "' value='" + size_data + "'>";
     }
     else if (type == "alloc_size") {
@@ -342,12 +343,12 @@ function get_corrected_storage(id) {
 
 function get_corrected_rack(id) {
     var manage_spec = document.getElementById("manage-spec-input-" + id);
-    //var location = document.getElementById("location-input-" + id);
+    var location = document.getElementById("location-input-" + id);
     var size = document.getElementById("size-input-" + id);
 
     var corrected_rack = {
         'manageSpec': manage_spec.value,
-        //  'location': location.value,
+        'location': location.value,
         'size': size.value
     };
     return corrected_rack;

@@ -1163,7 +1163,7 @@ def save_one_asset(request, asset_type, id):
     elif asset_type == "rack":
         target = Rack.objects.filter(manageNum=id).first()
         target.manageSpec = request.POST.get("manageSpec")
-        # target.location = request.POST.get("location")
+        target.location = request.POST.get("location")
         target.size = request.POST.get("size")
         target.save()
     elif asset_type == "asset":
