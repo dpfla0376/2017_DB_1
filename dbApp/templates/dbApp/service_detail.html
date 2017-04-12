@@ -78,11 +78,11 @@
                 {% if server_asset_list %}
                     {% for server in server_asset_list %}
                         <tr>
-                            <td>{{ server.assetNum }}</td>
-                            <td>{{ server.manageNum }}</td>
+                            <td onclick="td_click_detail_asset(this)">{{ server.assetNum }}</td>
+                            <td onclick="td_click_detail_server(this)">{{ server.manageNum }}</td>
                             <td>{{ server.manageSpec }}</td>
                             <td>{{ server.acquisitionDate }}</td>
-                            <td>{{ server.location }}</td>
+                            <td onclick="td_click_detail_rack(this)">{{ server.location }}</td>
                             <td>{{ server.core }}</td>
                             <td>{{ server.ip }}</td>
                             <td> {{ server.assetName }} </td>
@@ -98,7 +98,7 @@
             <h2 class="sub-header"><div id='container'>
     <div id='box-left'>SAN</div>
     <div id='box-center'>  </div>
-    <div id='box-right'>추가</div>
+    <button id='box-right' style="text-align: center" onclick="location.href='/dbApp/resource/service/{{ service }}/addsan'" >+</button>
 </div></h2>
             <table class="table table-striped">
                 <thead>

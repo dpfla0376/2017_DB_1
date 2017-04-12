@@ -1,0 +1,40 @@
+{% extends 'dbApp/navigation_bar.html' %}
+{% block content %}
+    <div class="container">
+        <h2 class="page-header">추가 가능한 SAN</h2>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>제품명</th>
+                    <th>등록일자</th>
+                    <th>디스크 사양</th>
+                    <th>형식</th>
+                    <th>할당단위크기</th>
+                    <th>Vol(TB)</th>
+                    <th>가용량</th>
+                    <th>할당할 사이즈</th>
+                    <th>추가</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if storage_asset_list %}
+                    {% for storage in storage_asset_list %}
+                            <td id="name-{{storage.managenum}}">{{ storage.name }}</td>
+                            <td id="enrolldate-{{storage.managenum}}">{{ storage.enrolldate }}</td>
+                            <td id="spec-{{storage.managenum}}">{{ storage.spec }}</td>
+                            <td id="format-{{storage.managenum}}">{{ storage.format }}</td>
+                            <td id="alloc_size-{{storage.managenum}}">{{ storage.alloc_size }}</td>
+                            <td id="size-{{storage.managenum}}">{{ storage.vol }}</td>
+                            <td id="remain-{{storage.managenum}}">{{ storage.remain_size }}</td>
+                            <td id="alloc_count-{{storage.managenum}}"><input type='text' id='manage-spec-input-" + id + "' value='" + manage_spec_data + "'></td>
+                            <td><a style="cursor:hand" onclick="location.href='/dbApp/resource/service/{{ service }}/addsan/{{ storage.managenum }}/'">추가</a></td>
+                       </tr>
+                    {% endfor %}
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock content %}
+

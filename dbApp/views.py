@@ -15,7 +15,7 @@ from datetime import datetime
 
 import json, time, jwt
 
-is_test = False
+is_test = True
 # import json, jwt, time
 # Create your views here.
 
@@ -583,6 +583,43 @@ def service_add_server_api(request,pk,manage_num):
     except:
         ServerService.objects.create(server=server,service=service)
     return HttpResponseRedirect('/dbApp/resource/service/'+str(pk)+'/addserver/')
+
+
+def service_add_san(request,pk):
+    #############################로그인#############################
+    user = getUser(request.session) #여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
+    if user is None:
+       return HttpResponseRedirect('/dbApp/')
+    #############################로그인#############################
+
+    my_prefetch = Prefetch('storage_service', to_attr="services")
+    storage_list = Storage.objects.select_related('storageAsset').filter(storageAsset__storageForm='SAN').prefetch_related(my_prefetch)
+    storage_list2 = list()
+    for storage in storage_list:
+        remain_size = storage.Vol
+        for storageservice in storage.services:
+            remain_size -= storageservice.allocSize
+        if remain_size > 0:
+            storage_list2.append(storage)
+    storage_list = list()
+    for storage in storage_list2:
+        temp_san_dict = {}
+        temp_san_dict['managenum']=storage.id
+        temp_san_dict['name']=storage.storageAssetName
+        temp_san_dict['enrolldate']=storage.enrollDate
+        temp_san_dict['spec']=storage.diskSpec
+        temp_san_dict['format']=storage.storageAsset.storageForm
+        temp_san_dict['alloc_size']=storage.allocUnitSize
+        temp_san_dict['vol']=storage.Vol
+        remain_size = storage.Vol
+        for storageservice in storage.services:
+            remain_size -= storageservice.allocSize
+        if remain_size > 0:
+            storage_list.append(storage)
+        temp_san_dict['remain_size']=remain_size
+        storage_list.append(temp_san_dict)
+    context = {'storage_asset_list': storage_list,'service':pk}
+    return render(request, 'dbApp/service_add_san.html', context)
 
 
 def storage_use(request):
