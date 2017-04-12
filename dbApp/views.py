@@ -43,6 +43,33 @@ def getUser(session):
         return None
 
 
+def make_server_dict_list(server_list):
+    temp_list = list()
+    for server in server_list:
+        temp_dict = dict()
+        temp_dict['assetnum'] = server.assetInfo.assetNum
+        temp_dict['managenum'] = server.manageNum
+        temp_dict['managespec'] = server.manageSpec
+        temp_dict['core'] = server.core
+        temp_dict['ip'] = server.ip
+        temp_dict['size'] = server.size
+
+        if len(server.services) is not 0:
+            temp_serverservice = server.services[0]
+            temp = temp_serverservice.Use
+            if (temp == True):
+                temp_dict['onoff'] = "On"
+            else:
+                temp_dict['onoff'] = "Off"
+
+        temp_location = server.location
+        if temp_location.rack_pk is not None:
+            temp_dict['location'] = temp_location.rack_pk.location
+        else:
+            temp_dict['location'] = temp_location.realLocation
+        temp_list.append(temp_dict)
+    return temp_list
+
 # API
 def api_graph_storage_total(request):
     cursor = connection.cursor()
@@ -203,31 +230,7 @@ def server_asset(request):
     my_prefetch = Prefetch('ss_server', queryset=ServerService.objects.select_related('service'), to_attr="services")
     server_asset_list = Server.objects.select_related('location', 'assetInfo', 'location__rack_pk').prefetch_related(
         my_prefetch).all()
-    temp_list = list()
-    for server in server_asset_list:
-        temp_dict = dict()
-        temp_dict['assetnum'] = server.assetInfo.assetNum
-        temp_dict['managenum'] = server.manageNum
-        temp_dict['managespec'] = server.manageSpec
-        temp_dict['core'] = server.core
-        temp_dict['ip'] = server.ip
-        temp_dict['size'] = server.size
-
-        if len(server.services) is not 0:
-            temp_serverservice = server.services[0]
-            temp = temp_serverservice.Use
-            if (temp == True):
-                temp_dict['onoff'] = "On"
-            else:
-                temp_dict['onoff'] = "Off"
-
-        temp_location = server.location
-        if temp_location.rack_pk is not None:
-            temp_dict['location'] = temp_location.rack_pk.location
-        else:
-            temp_dict['location'] = temp_location.realLocation
-        temp_list.append(temp_dict)
-    context = {'server_asset_list': temp_list}
+    context = {'server_asset_list': make_server_dict_list(server_asset_list)}
     temppp = render(request, 'dbApp/server_asset.html', context)
     print("--- %s seconds ---" % (time.time() - start_time))
     return temppp
@@ -548,7 +551,37 @@ def service_detail(request, pk):
                                                          });
 
 
-''
+def service_add_server(request,pk):
+    #############################로그인#############################
+    user = getUser(request.session) #여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
+    if user is None:
+       return HttpResponseRedirect('/dbApp/')
+    #############################로그인#############################
+
+    my_prefetch = Prefetch('ss_server', to_attr="services")
+    server_list = Server.objects.select_related('assetInfo','location','location__rack_pk').all().prefetch_related(my_prefetch)
+    server_list2 = list()
+    for server in server_list:
+        if len(server.services) == 0:
+            server_list2.append(server)
+    context = {'server_asset_list': make_server_dict_list(server_list2),'service':pk}
+    return render(request, 'dbApp/service_add_server.html', context)
+
+
+def service_add_server_api(request,pk,manage_num):
+    #############################로그인#############################
+    user = getUser(request.session) #여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
+    if user is None:
+       return HttpResponseRedirect('/dbApp/')
+    #############################로그인#############################
+
+    server = Server.objects.get(manageNum=manage_num)
+    service = Service.objects.get(id=pk)
+    try:
+        ServerService.objects.get(server=server,service=service)
+    except:
+        ServerService.objects.create(server=server,service=service)
+    return HttpResponseRedirect('/dbApp/resource/service/'+str(pk)+'/addserver/')
 
 
 def storage_use(request):

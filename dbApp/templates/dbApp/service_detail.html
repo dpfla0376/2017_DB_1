@@ -6,14 +6,14 @@
       display: flex;
     }
     #box-left {
-      flex-basis: 80px;
+      flex-basis:200px;
     }
     #box-center {
       flex: 1;
       text-align: center;
     }
     #box-right {
-      flex-basis: 150px;
+      flex-basis: 40px;
       text-align: right;
     }
 </style>
@@ -56,7 +56,7 @@
 <div id='container'>
     <div id='box-left'>서버</div>
     <div id='box-center'>  </div>
-    <div id='box-right'>추가</div>
+    <button id='box-right' style="text-align: center" onclick="location.href='/dbApp/resource/service/{{ service }}/addserver'" >+</button>
 </div></h2>
             <table class="table table-striped">
                 <thead>

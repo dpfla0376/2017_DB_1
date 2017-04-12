@@ -1,0 +1,42 @@
+{% extends 'dbApp/navigation_bar.html' %}
+{% block content %}
+    <div class="container">
+        <h2 class="page-header">추가 가능한 SERVER</h2>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>자산번호</th>
+                    <th>관리번호</th>
+                    <th>관리스펙</th>
+                    <th>위치</th>
+                    <th>코어</th>
+                    <th>IP</th>
+                    <th>크기</th>
+                    <th>추가</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if server_asset_list %}
+                    {% for server in server_asset_list %}
+                        <tr id="one-asset-id-{{server.managenum}}">
+                            <td><a style="cursor:hand"
+                                    onclick="td_click_detail_asset(this)">{{ server.assetnum }}</a></td>
+                         <td><a style="cursor:hand" data-toggle="modal" data-target="#"
+                                            href="./detail/?data={{ server.managenum }}">{{ server.managenum }}</a>
+                            <td id="manage-spec-{{server.managenum}}">{{ server.managespec }}</td>
+                            <td id="location-{{server.managenum}}"><a style="cursor:hand"
+                                    onclick="td_click_detail_rack(this)">{{ server.location }}</a></td>
+                            <td id="core-{{server.managenum}}">{{ server.core }}</td>
+                            <td id="ip-{{server.managenum}}">{{ server.ip }}</td>
+                            <td id="size-{{server.managenum}}">{{ server.size }}</td>
+                            <td><a style="cursor:hand" onclick="location.href='/dbApp/resource/service/{{ service }}/addserver/{{ server.managenum }}/'">추가</a></td>
+                       </tr>
+                    {% endfor %}
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock content %}
+

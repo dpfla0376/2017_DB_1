@@ -17,7 +17,9 @@ function td_click_detail_rack(tdObj) {
     location.href = "/dbApp/rack/detail/?data=" + txt;
 }
 function td_click_detail_asset(tdObj) {
+    console.log(tdObj);
     var txt = tdObj.text;
+
     location.href = "/dbApp/asset/detail/?data=" + txt;
 }
 function td_click_detail_switch(tdObj) {
