@@ -787,6 +787,15 @@ def add_storages(request, new_asset):
         this_storage_manage_num += 1
 
 
+def service_detail2(request):
+    searchText = request.GET.get("data")
+    service_list = Service.objects.filter(Q(serviceName=searchText))
+    if service_list.count() == 0:
+        return HttpResponse("찾으시는 제품이 없습니다.")
+    service = service_list[0]
+    return HttpResponseRedirect('/dbApp/resource/service/'+str(service.id)+'/')
+
+
 # 언제 어디서든 자산번호 클릭하면 나옵니다.
 def asset_detail(request):
     searchText = request.GET.get("data")
