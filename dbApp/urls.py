@@ -24,7 +24,7 @@ urlpatterns = [
     url(r'^(?P<asset_type>[\w]+)/save/(?P<id>[\w]+)/$', views.save_one_asset, name='save_one_asset'),
     url(r'^(?P<asset_type>[\w]+)/location/(?P<manage_num>[\w]+)/$', views.get_location, name='get_location'),
 
-
+    url(r'^service/detail/$', views.service_detail2, name='service_detail'),
 
     url(r'^switch/$', views.switch_asset, name='switch_asset'),
     url(r'^switch/detail/$', views.switch_detail, name='switch_detail'),
