@@ -1,9 +1,26 @@
 {% extends 'dbApp/navigation_bar.html' %}
 {% block head %}
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<style>
+    #container {
+      display: flex;
+    }
+    #box-left {
+      flex-basis: 80px;
+    }
+    #box-center {
+      flex: 1;
+      text-align: center;
+    }
+    #box-right {
+      flex-basis: 150px;
+      text-align: right;
+    }
+</style>
 {% endblock head %}
 
 {% block content %}
+
     <script>
         $(document).ready(function () {
             $(".btn-circle").click(function () {
@@ -27,8 +44,6 @@
         </div>
         <div class="clearfix"></div>
     </div>
-    <kk></kk>
-    </div>
     <div class="container">
         <h2 class="page-header">서비스 정보</h2>
         <div class="center-block add-buttons-container">
@@ -37,7 +52,12 @@
             <p class="form-button btn btn-circle btn-primary selected" target="tape_info">TAPE</p>
         </div>
         <div class="container detail_info"  id="server_info">
-            <h2 class="sub-header">서버</h2>
+            <h2 class="sub-header">
+<div id='container'>
+    <div id='box-left'>서버</div>
+    <div id='box-center'>  </div>
+    <div id='box-right'>서버추가</div>
+</div></h2>
             <table class="table table-striped">
                 <thead>
                 <tr>

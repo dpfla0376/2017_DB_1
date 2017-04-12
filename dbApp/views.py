@@ -601,6 +601,7 @@ def rack_info(request):
         temp_subDict['manageSpec'] = server.manageSpec
         temp_subDict['ip'] = server.ip
         temp_subDict['size'] = server.size
+        temp_subDict['color'] = '255,255,255'
         if len(server.services) is not 0:
             temp_serverservice = server.services[0]
             temp = temp_serverservice.Use
@@ -984,6 +985,7 @@ def rack_detail(request):
         temp_subDict['core'] = server.core
         temp_subDict['ip'] = server.ip
         temp_subDict['size'] = server.size
+        temp_subDict['color'] = '255,255,255'
         if len(server.services) is not 0:
             temp_serverservice = server.services[0]
             temp = temp_serverservice.Use
