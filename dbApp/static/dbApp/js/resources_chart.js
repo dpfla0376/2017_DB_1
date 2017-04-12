@@ -299,7 +299,7 @@ function drawChart1() {
             );
             var options = {
                 title: 'Storage',
-                hAxis: {title: 'Year', titleTextStyle: {color: 'red'}}
+                hAxis: {title: '', titleTextStyle: {color: 'red'}}
             };
             var chart = new google.visualization.ColumnChart(document.getElementById('chart_div2'));
             chart.draw(data, options);

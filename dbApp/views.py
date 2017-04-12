@@ -15,7 +15,7 @@ from datetime import datetime
 
 import json, time, jwt
 
-is_test = True
+is_test = False
 # import json, jwt, time
 # Create your views here.
 
@@ -322,7 +322,7 @@ def storage_total(request):
 
     storage_list = {}
     for row in db_storage_list:
-        spec = row['manageSpec']
+        spec = row['storageAssetName']
 
         if not spec in storage_list:
             storage_list[spec] = {
@@ -456,7 +456,7 @@ def service_storage(request):
 
     storage_list = {}
     for row in db_storage_list:
-        spec = row['manageSpec']
+        spec = row['storageAssetName']
         #        if not hasattr(storage_list, spec):
         if not spec in storage_list:
             storage_list[spec] = {
@@ -510,11 +510,12 @@ def service_detail(request, pk):
     #############################로그인#############################
     cursor = connection.cursor()
     cursor.execute(
-        'SELECT * FROM `dbApp_asset`INNER JOIN `dbApp_server` ON dbApp_asset.id = dbApp_server.assetInfo_id ' +
-        'INNER JOIN `dbApp_serverlocation` ON dbApp_serverlocation.server_pk_id = dbApp_server.id ' +
-        'INNER JOIN `dbApp_rack` ON dbApp_rack.id = dbApp_serverlocation.rack_pk_id ' +
-        'INNER JOIN dbApp_serverservice ON dbApp_serverservice.server_id = dbApp_server.id ' +
-        'WHERE dbApp_serverservice.service_id = ' + pk)
+        'SELECT assetNum, s.manageNum,acquisitionDate, s.manageSpec, location, core, ip, assetName, standard, maintenanceYear, realLocation, isInRack, ss.Use ' +
+        'FROM `dbApp_asset` a INNER JOIN `dbApp_server` s ON a.id = s.assetInfo_id '+
+        'INNER JOIN `dbApp_serverlocation` sl ON sl.server_pk_id = s.id ' +
+        'INNER JOIN `dbApp_rack` r ON r.id = sl.rack_pk_id ' +
+        'INNER JOIN dbApp_serverservice ss ON ss.server_id = s.id ' +
+        'WHERE ss.service_id = ' + pk)
     server_list = dictFetchall(cursor)
     for server in server_list:
         if server['isInRack'] == 0:
