@@ -249,20 +249,16 @@ def service_resources(request):  # 서비스의 리소스를 보여준다.
     return render(request, 'dbApp/service_resources.html', context)
 
 
-def storage(request):
+def storage_detail(request):
+    searchText = request.GET.get("data")
+
     cursor = connection.cursor()
     cursor.execute(
-        'SELECT * FROM `dbApp_asset`INNER JOIN `dbApp_server` ON dbApp_asset.id = dbApp_server.assetInfo_id ' +
-        'INNER JOIN `dbApp_serverlocation` ON dbApp_serverlocation.server_pk_id = dbApp_server.id ' +
-        'INNER JOIN `dbApp_rack` ON dbApp_rack.id = dbApp_serverlocation.rack_pk_id ')
-    server_list = dictFetchall(cursor)
-    for server in server_list:
-        if server['isInRack'] == 0:
-            server['location'] = server['realLocation']
-        if server['Use']:
-            server['Use'] = True
-        else:
-            server['Use'] = False
+        'SELECT * FROM `dbApp_asset` ' +
+                   'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.assetInfo_id = dbApp_asset.id ' +
+                    'WHERE dbApp_storageasset.manageNum = ' + '\"'+searchText+'\"')
+    storage_list = dictFetchall(cursor)
+    return render(request, 'dbApp/storage_detail.html',{'storage_list': storage_list[0]})
 
 
 def storage_asset(request):
@@ -270,7 +266,7 @@ def storage_asset(request):
     cursor.execute('SELECT * FROM `dbApp_asset` ' +
                    'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.assetInfo_id = dbApp_asset.id ')
     storage_list = dictFetchall(cursor)
-    return render(request, 'dbApp/storage_asset.html', {'storage_list': storage_list});
+    return render(request, 'dbApp/storage_asset.html', {'storage_list': storage_list})
 
 
 def storage_total(request):
