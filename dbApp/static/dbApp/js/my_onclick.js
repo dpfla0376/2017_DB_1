@@ -141,12 +141,28 @@ function td_click_edit(type, id) {
         var size_data = size.innerHTML;
 
         manage_spec.innerHTML = "<input type='text' id='manage-spec-input-" + id + "' value='" + manage_spec_data + "'>";
-        // location.innerHTML = "<input type='text' id='loaction-input-" + id + "' value='" + location_data + "'>";
+        // location.innerHTML = "<input type='text' id='location-input-" + id + "' value='" + location_data + "'>";
         size.innerHTML = "<input type='number' id='size-input-" + id + "' value='" + size_data + "'>";
-
     }
-    document.getElementById("edit-button-" + id).style.display = "none";
-    document.getElementById("save-button-" + id).style.display = "block";
+    else if (type == "alloc_size") {
+        var alloc_size = document.getElementById("alloc-size-" + id);
+
+        var alloc_size_data = alloc_size.innerHTML;
+        var current_alloc_size = $("#alloc-size-" + id).find('a').html();
+
+        alloc_size.innerHTML = "<input type='text' id='alloc-size-input-" + id + "' value='" + current_alloc_size + "'>";
+        alloc_size.innerHTML += "<br><a id='save-button-" + id + "' style='cursor:hand'>저장</a >"
+
+        $("#save-button-"+id).click(
+            function(){
+                 td_click_save_new_alloc(id);
+            }
+        );
+    }
+    if (type != "alloc_size") {
+        document.getElementById("edit-button-" + id).style.display = "none";
+        document.getElementById("save-button-" + id).style.display = "block";
+    }
 }
 
 function make_asset_inputs(id) {
@@ -240,6 +256,28 @@ function make_server_inputs(id, dict) {
     location.innerHTML += "<br><input type='radio' name='radio' value='etc' id='location-etc-radio-" + id + "'>기타";
     location.innerHTML += "<br><input type='text' id='location-etc-input-" + id + "' value='" + real_location + "' placeholder='예)지하 창고'>";
 
+}
+function td_click_save_new_alloc(id){
+      var alloc_size = document.getElementById("alloc-size-input-" + id);
+        var updated = {
+            'alloc_size' : alloc_size.value
+        }
+      $.ajaxSetup({
+        headers: {"X-CSRFToken": getCookie("csrftoken")}
+    });
+
+    $.ajax({
+        url: '/dbApp/alloc/save/' + id + "/",
+        type: 'POST',
+        data: updated,
+        success: function (result) {
+            alert("저장되었습니다. 페이지를 새로고침합니다.");
+            location.href = "/dbApp/storage/total/"
+        },
+        fail: function (result) {
+            alert("fail");
+        }
+    });
 }
 function td_click_save(type, id) {
 

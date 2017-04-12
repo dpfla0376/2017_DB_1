@@ -35,8 +35,10 @@
                                         style="vertical-align : middle">{{ disk.diskSpec }}</td>
                                     <td rowspan="{{ disk.diskCount }}"
                                         style="vertical-align : middle">{{ disk.storageForm }}</td>
-                                    <td rowspan="{{ disk.diskCount }}"
-                                        style="vertical-align : middle">{{ disk.allocUnitSize }}</td>
+                                    <td id="alloc-size-{{ disk.manageNum }}" rowspan="{{ disk.diskCount }}"
+                                        style="vertical-align : middle"><a style="cursor:hand" title="변경하려면 클릭하세요."
+                                                                           onclick='td_click_edit("alloc_size", "{{ disk.manageNum }}")'>{{ disk.allocUnitSize }}</a>
+                                    </td>
                                     <td rowspan="{{ disk.diskCount }}"
                                         style="vertical-align : middle">{{ disk.vol }}</td>
                                     <td rowspan="{{ disk.diskCount }}"

@@ -300,6 +300,7 @@ def storage_total(request):
         disk = row['diskSpec']
         if not disk in storage_list[spec]['enrollList'][enroll]['diskList']:
             storage_list[spec]['enrollList'][enroll]['diskList'][disk] = {
+                'manageNum':row['manageNum'],
                 'diskSpec': disk,
                 'list': [],
                 'vol': row['Vol'],
@@ -1077,6 +1078,12 @@ def save_asset(request, asset_num):
 
 
 @csrf_exempt
+def save_new_alloc_size(request, id):
+    print(id + "/" + request.POST.get("alloc-size"))
+    return HttpResponse("ok")
+
+
+@csrf_exempt
 def save_one_asset(request, asset_type, id):
     if asset_type == "server":
         int_rackLocation = request.POST.get("rackLocation")
@@ -1152,7 +1159,6 @@ def save_one_asset(request, asset_type, id):
         target.size = request.POST.get("size")
         target.save()
     elif asset_type == "asset":
-        print("save_asset")
         target_asset = Asset.objects.filter(assetNum=id).first()
         target_asset.acquisitionDate = request.POST.get("acquisitionDate")
         target_asset.assetName = request.POST.get("assetName")
