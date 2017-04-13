@@ -836,7 +836,12 @@ def asset_detail(request):
         temp_list.append(temp_dict)
     asset_switch_list = temp_list
 
-    asset_storage_list = StorageAsset.objects.filter(assetInfo=asset.id)
+    cursor = connection.cursor()
+    cursor.execute(
+        'SELECT * FROM `dbApp_asset` ' +
+        'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.assetInfo_id = dbApp_asset.id ' +
+        'WHERE dbApp_storageasset.assetInfo_id = ' + '\"' + str(asset.id) + '\"')
+    asset_storage_list = dictFetchall(cursor)
 
     asset_temp_list = Rack.objects.filter(assetInfo=asset.id)
     temp_list = []

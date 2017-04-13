@@ -76,15 +76,14 @@
                         <th>관리번호</th>
                         <th>관리스펙</th>
                         <th>위치</th>
-                        <th>IP</th>
-                        <th>ON/OFF</th>
+                        <th>규격</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for storage in asset_storage_list %}
                         <tr>
                             <td><a style="cursor:hand" data-toggle="modal" data-target="#"
-                                            href="/dbApp/switch/detail/?data={{ storage.manageNum }}">{{ storage.manageNum }}</a></td>
+                                            href="/dbApp/storage/detail/?data={{ storage.manageNum }}">{{ storage.manageNum }}</a></td>
                             <td>{{ storage.manageSpec }}</td>
                             <td><a style="cursor:hand"
                                     onclick="td_click_detail_rack(this)">{{ storage.location }}</a></td>
