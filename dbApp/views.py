@@ -550,20 +550,33 @@ def service_detail(request, pk):
     #############################로그인#############################
     cursor = connection.cursor()
     cursor.execute(
-        'SELECT assetNum, s.manageNum,acquisitionDate, s.manageSpec, location, core, ip, assetName, standard, maintenanceYear, realLocation, isInRack, ss.Use ' +
+        'SELECT assetNum, s.manageNum,acquisitionDate, s.manageSpec, core, ip, assetName, standard, maintenanceYear, realLocation, isInRack, ss.Use ' +
+        'FROM `dbApp_asset` a INNER JOIN `dbApp_server` s ON a.id = s.assetInfo_id ' +
+        'INNER JOIN `dbApp_serverlocation` sl ON sl.server_pk_id = s.id ' +
+        'INNER JOIN dbApp_serverservice ss ON ss.server_id = s.id ' +
+        'WHERE ss.service_id = ' + pk)
+    server_list = dictFetchall(cursor)
+
+    cursor.execute(
+        'SELECT s.manageNum, location '+
         'FROM `dbApp_asset` a INNER JOIN `dbApp_server` s ON a.id = s.assetInfo_id ' +
         'INNER JOIN `dbApp_serverlocation` sl ON sl.server_pk_id = s.id ' +
         'INNER JOIN `dbApp_rack` r ON r.id = sl.rack_pk_id ' +
         'INNER JOIN dbApp_serverservice ss ON ss.server_id = s.id ' +
         'WHERE ss.service_id = ' + pk)
-    server_list = dictFetchall(cursor)
+    location_list = dictFetchall(cursor)
+    location = ''
     for server in server_list:
-        if server['isInRack'] == 0:
-            server['location'] = server['realLocation']
-        if server['Use']:
-            server['Use'] = True
-        else:
-            server['Use'] = False
+        for lo in location_list:
+            if lo['manageNum'] == server['manageNum']:
+                if server['isInRack'] == 0:
+                    location = server['realLocation']
+                else:
+                    location = lo['location']
+                if server['Use']:
+                    server['Use'] = True
+                else:
+                    server['Use'] = False
 
     cursor.execute('SELECT * FROM `dbApp_storage` ' +
                    'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id ' +
@@ -589,8 +602,9 @@ def service_detail(request, pk):
                                                          'SAN': disk_SAN,
                                                          'NAS': disk_NAS,
                                                          'TAPE': disk_TAPE,
-                                                         'username':user.first_name
-                                                         });
+                                                         'username': user.first_name,
+                                                         'location': location
+                                                         })
 
 
 def service_add_server(request, pk):
@@ -990,7 +1004,7 @@ def add_switches(request, new_asset):
                                            isInRack=False,
                                            size=request.POST.get("switch_size"),
                                            serviceOn=False,
-                                           ip="127.0.0.1")
+                                           ip=None)
         this_switch_manage_num += 1
 
         SwitchLocation.objects.create(
@@ -1495,8 +1509,14 @@ def save_one_asset(request, asset_type, id):
             try:
                 target_rack = rack.first()
                 servers_in_rack = ServerLocation.objects.filter(rack_pk=target_rack.id, rackLocation=int_rackLocation)
-                if servers_in_rack.count() != 0:
-                  raise Rack.DoesNotExist
+                switches_in_rack = SwitchLocation.objects.filter(rack=target_rack.id, rackLocation=int_rackLocation)
+                if servers_in_rack.count() != 0 :
+                        print("Something is IN_RACK")
+                        something = ServerLocation.objects.filter(server_pk=my_server.id)
+                        if something.count() == 0:
+                            raise Rack.DoesNotExist
+                if switches_in_rack.count() != 0 :
+                    raise Rack.DoesNotExist
             except Rack.DoesNotExist:
                 print("NOT SAVED")
                 return HttpResponse("error", status=404)
@@ -1545,9 +1565,15 @@ def save_one_asset(request, asset_type, id):
             try:
                 target_rack = rack.first()
                 switches_in_rack = SwitchLocation.objects.filter(rack=target_rack.id, rackLocation=int_rackLocation)
-                if switches_in_rack.count() != 0:
+                servers_in_rack = ServerLocation.objects.filter(rack_pk=target_rack.id, rackLocation=int_rackLocation)
+                if servers_in_rack.count() != 0:
                     print("NOT SAVED")
                     raise Rack.DoesNotExist
+                if switches_in_rack.count() != 0:
+                    print("Something is IN_RACK")
+                    something = SwitchLocation.objects.filter(switch=my_switch.id)
+                    if something.count() == 0:
+                        raise Rack.DoesNotExist
             except Rack.DoesNotExist:
                 return HttpResponse("error", status=404)
             my_switch.isInRack = True

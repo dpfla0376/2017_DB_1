@@ -195,7 +195,6 @@ function make_asset_inputs(id) {
     var month = temp[0];
     temp = temp[1].split('일');
     var day = temp[0];
-    alert(year + '-' + pad(month, 2) + '-' + pad(day, 2));
 
     acq_date.innerHTML = "<input type='date' id='acq-date-input-" + id + "' value='" + year + '-' + pad(month, 2) + '-' + pad(day, 2) + "'>";
     name.innerHTML = "<input type='text' id='name-input-" + id + "' value='" + name_data + "'>";
