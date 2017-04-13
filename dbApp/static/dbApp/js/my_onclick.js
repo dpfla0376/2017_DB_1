@@ -67,8 +67,8 @@ function deleteRequest(url, id, id_name) {
         success: function (result) {
             $("#" + id_name + id).remove();
         },
-        fail: function (error) {
-            alert("fail");
+        error: function (error) {
+            alert("수정할 수 없습니다.");
         }
     });
 }
@@ -195,9 +195,9 @@ function make_asset_inputs(id) {
     var month = temp[0];
     temp = temp[1].split('일');
     var day = temp[0];
-    alert(year + '-' + pad(month,2) + '-' + pad(day,2));
+    alert(year + '-' + pad(month, 2) + '-' + pad(day, 2));
 
-    acq_date.innerHTML = "<input type='date' id='acq-date-input-" + id + "' value='" +year + '-' + pad(month,2) + '-' + pad(day,2) + "'>";
+    acq_date.innerHTML = "<input type='date' id='acq-date-input-" + id + "' value='" + year + '-' + pad(month, 2) + '-' + pad(day, 2) + "'>";
     name.innerHTML = "<input type='text' id='name-input-" + id + "' value='" + name_data + "'>";
     standard.innerHTML = "<input type='text' id='standard-input-" + id + "' value='" + standard_data + "'>";
     acq_cost.innerHTML = "<input type='number' id='acq-cost-input-" + id + "' value='" + acq_cost_data + "'>";
@@ -233,13 +233,13 @@ function make_switch_inputs(id, dict) {
     onoff.innerHTML = "<input type='text' id='onoff-input-" + id + "' value='" + onoff_data + "'>";
     size.innerHTML = "<input type='number' id='size-input-" + id + "' value='" + size_data + "'>";
 
-    if(dict['is_in_rack'] == true)
+    if (dict['is_in_rack'] == true)
         location.innerHTML = "<input type='radio' checked='' name='radio' value='in' id='location-radio-" + id + "'>위치";
     else
         location.innerHTML = "<input type='radio' name='radio' value='in' id='location-radio-" + id + "'>위치";
     location.innerHTML += "<br><input type='text' id='location-in-input-" + id + "' value='" + rack_manage_num + "' placeholder='랙 번호'>";
     location.innerHTML += "<br><input type='number' id='location-at-input-" + id + "'  value='" + rack_location + "' placeholder='해당 위치'>";
-    if(dict['is_in_rack'] == true)
+    if (dict['is_in_rack'] == true)
         location.innerHTML += "<br><input type='radio' name='radio' value='etc' id='location-etc-radio-" + id + "'>기타";
     else
         location.innerHTML += "<br><input type='radio' checked='' name='radio' value='etc' id='location-etc-radio-" + id + "'>기타";
@@ -272,13 +272,13 @@ function make_server_inputs(id, dict) {
     core.innerHTML = "<input type='number' id='core-input-" + id + "' value='" + core_data + "'>";
     ip.innerHTML = "<input type='text' id='ip-input-" + id + "' value='" + ip_data + "'>";
     size.innerHTML = "<input type='number' id='size-input-" + id + "' value='" + size_data + "'>";
-    if(dict['is_in_rack'] == true)
+    if (dict['is_in_rack'] == true)
         location.innerHTML = "<input type='radio' checked='' name='radio' value='in' id='location-radio-" + id + "'>위치";
     else
         location.innerHTML = "<input type='radio' name='radio' value='in' id='location-radio-" + id + "'>위치";
     location.innerHTML += "<br><input type='text' id='location-in-input-" + id + "' value='" + rack_manage_num + "' placeholder='랙 번호'>";
     location.innerHTML += "<br><input type='number' id='location-at-input-" + id + "'  value='" + rack_location + "' placeholder='해당 위치'>";
-    if(dict['is_in_rack'] == true)
+    if (dict['is_in_rack'] == true)
         location.innerHTML += "<br><input type='radio' name='radio' value='etc' id='location-etc-radio-" + id + "'>기타";
     else
         location.innerHTML += "<br><input type='radio' checked='' name='radio' value='etc' id='location-etc-radio-" + id + "'>기타";
@@ -300,10 +300,9 @@ function td_click_save_new_alloc(id) {
         data: updated,
         success: function (result) {
             alert("저장되었습니다. 페이지를 새로고침합니다.");
-             $("#" + id).reload();
             location.href = "/dbApp/storage/total/"
         },
-        fail: function (result) {
+        fail: function (error) {
             alert("fail");
         }
     });
@@ -334,8 +333,8 @@ function td_click_save(type, id) {
             alert("저장되었습니다. 페이지를 새로고침합니다.");
             location.href = "/dbApp/" + type + "/"
         },
-        fail: function (result) {
-            alert("fail");
+        error: function (error) {
+            alert("수정할 수 없습니다.");
         }
     });
 
