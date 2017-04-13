@@ -75,7 +75,7 @@
                     <th>IP</th>
                     <th>자산명</th>
                     <th>규격</th>
-                    <th>삭제</th>
+                    <th>서비스 삭제</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -93,7 +93,8 @@
                             <td>{{ server.ip }}</td>
                             <td> {{ server.assetName }} </td>
                             <td> {{ server.standard }} </td>
-                            <td><a style="cursor:hand" onclick='td_click_delete_server("{{ server.managenum }}")'>삭제</a></td>
+                            <td><a style="cursor:hand"
+                                   onclick='td_click_delete_server_service("{{ server.id }}")'>삭제</a></td>
                         </tr>
                     {% endfor %} {% endif %}
                 </tbody>
@@ -119,6 +120,7 @@
                     <th>Vol(TB)</th>
                     <th>할당량(TB)</th>
                     <th>용도</th>
+                    <th>서비스 삭제</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -132,6 +134,8 @@
                             <td>{{ storage.Vol }}</td>
                             <td>{{ storage.allocSize }}</td>
                             <td>{{ storage.usage }}</td>
+                            <td><a style="cursor:hand"
+                                   onclick='td_click_delete_storage_service("{{ storage.id }}")'>삭제</a></td>
                         </tr>
                     {% endfor %} {% endif %}
                 </tbody>
@@ -156,6 +160,7 @@
                     <th>Vol(TB)</th>
                     <th>할당량(TB)</th>
                     <th>용도</th>
+                    <th>서비스 삭제</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -169,6 +174,9 @@
                             <td>{{ storage.Vol }}</td>
                             <td>{{ storage.allocSize }}</td>
                             <td>{{ storage.usage }}</td>
+                            <td><a style="cursor:hand"
+                                   onclick='td_click_delete_storage_service("{{ storage.id }}")'>삭제</a></td>
+
                         </tr>
                     {% endfor %} {% endif %}
                 </tbody>

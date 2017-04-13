@@ -37,6 +37,20 @@ function td_click_delete_asset(assetNum) {
     });
 }
 
+function td_click_delete_server_service(asset_id ) {
+    myConfirm("삭제하시겠습니까?", function () {
+        deleteRequest("/dbApp/server/service/delete/", asset_id, "one-asset-id-");
+    });
+    window.location.reload(true);
+}
+
+function td_click_delete_storage_service(asset_id ) {
+    myConfirm("삭제하시겠습니까?", function () {
+        deleteRequest("/dbApp/storage/service/delete/", asset_id, "one-asset-id-");
+    });
+    window.location.reload(true);
+}
+
 function td_click_delete_server(manageNum) {
     myConfirm("삭제하시겠습니까?", function () {
         deleteRequest("/dbApp/server/delete/", manageNum, "one-asset-id-");

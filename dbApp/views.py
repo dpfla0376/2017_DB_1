@@ -133,7 +133,6 @@ def make_rack_dict_list(rack_list):
         temp_list.append(temp_dict)
     return temp_list
 
-
 # API
 def api_graph_storage_total(request):
     cursor = connection.cursor()
@@ -218,7 +217,6 @@ def sign_in(request):
 def sign_out(request):
     request.session.clear()
     return HttpResponseRedirect('/dbApp/')
-
 
 def welcome(request):
     return render(request, 'dbApp/welcome_page.html', {})
@@ -330,6 +328,7 @@ def storage_detail(request):
     return render(request, 'dbApp/storage_detail.html', {'storage_list': storage_list[0], 'username': user.first_name})
 
 
+
 def storage_asset(request):
     #############################로그인#############################
     user = getUser(request.session)  # 여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
@@ -407,7 +406,7 @@ def storage_total(request):
             'usage': row['usage']
         })
     print(storage_list)
-    return render(request, 'dbApp/storage_total.html', {'storage_list': storage_list, 'username': user.first_name});
+    return render(request, 'dbApp/storage_total.html', {'storage_list': storage_list,'username':user.first_name});
 
 
 def check_in_list(mylist, mystring):
@@ -428,7 +427,7 @@ def service_storage2(request):
     #############################로그인#############################
     user = getUser(request.session)  # 여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
     if user is None:
-        return HttpResponseRedirect('/dbApp/')
+       return HttpResponseRedirect('/dbApp/')
     context = {'username': user.first_name}
 
     #############################로그인#############################
@@ -541,7 +540,7 @@ def service_storage(request):
             'serviceName': row['serviceName'],
             'usage': row['usage']
         })
-    return render(request, 'dbApp/storage_service.html', {'storage_list': storage_list, 'username': user.first_name});
+    return render(request, 'dbApp/storage_service.html', {'storage_list': storage_list,'username':user.first_name});
 
 
 def service_detail(request, pk):
@@ -552,7 +551,7 @@ def service_detail(request, pk):
     #############################로그인#############################
     cursor = connection.cursor()
     cursor.execute(
-        'SELECT assetNum, s.manageNum,acquisitionDate, s.manageSpec, core, ip, assetName, standard, maintenanceYear, realLocation, isInRack, ss.Use ' +
+        'SELECT assetNum, s.id, s.manageNum,acquisitionDate, s.manageSpec, core, ip, assetName, standard, maintenanceYear, realLocation, isInRack, ss.Use ' +
         'FROM `dbApp_asset` a INNER JOIN `dbApp_server` s ON a.id = s.assetInfo_id ' +
         'INNER JOIN `dbApp_serverlocation` sl ON sl.server_pk_id = s.id ' +
         'INNER JOIN dbApp_serverservice ss ON ss.server_id = s.id ' +
@@ -560,7 +559,7 @@ def service_detail(request, pk):
     server_list = dictFetchall(cursor)
 
     cursor.execute(
-        'SELECT s.manageNum, location '+
+        'SELECT s.manageNum, location ' +
         'FROM `dbApp_asset` a INNER JOIN `dbApp_server` s ON a.id = s.assetInfo_id ' +
         'INNER JOIN `dbApp_serverlocation` sl ON sl.server_pk_id = s.id ' +
         'INNER JOIN `dbApp_rack` r ON r.id = sl.rack_pk_id ' +
@@ -609,12 +608,11 @@ def service_detail(request, pk):
                                                          })
 
 
-
 def service_add_server(request, pk):
     #############################로그인#############################
     user = getUser(request.session)  # 여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
     if user is None:
-        return HttpResponseRedirect('/dbApp/')
+       return HttpResponseRedirect('/dbApp/')
     context = {'username': user.first_name}
 
     #############################로그인#############################
@@ -627,8 +625,8 @@ def service_add_server(request, pk):
         if len(server.services) == 0:
             server_list2.append(server)
 
-    context['server_asset_list'] = make_server_dict_list(server_list2)
-    context['service'] = pk
+    context['server_asset_list']= make_server_dict_list(server_list2)
+    context['service']=pk
 
     return render(request, 'dbApp/service_add_server.html', context)
 
@@ -649,17 +647,16 @@ def service_add_server_api(request, pk, manage_num):
     return HttpResponseRedirect('/dbApp/resource/service/' + str(pk) + '/addserver/')
 
 
-def service_add_san(request, pk):
+def service_add_san(request,pk):
     #############################로그인#############################
-    user = getUser(request.session)  # 여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
+    user = getUser(request.session) #여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
     if user is None:
-        return HttpResponseRedirect('/dbApp/')
+       return HttpResponseRedirect('/dbApp/')
     context = {'username': user.first_name}
     #############################로그인#############################
 
     my_prefetch = Prefetch('storage_service', to_attr="services")
-    storage_list = Storage.objects.select_related('storageAsset').filter(
-        storageAsset__storageForm='SAN').prefetch_related(my_prefetch)
+    storage_list = Storage.objects.select_related('storageAsset').filter(storageAsset__storageForm='SAN').prefetch_related(my_prefetch)
     storage_list2 = list()
     for storage in storage_list:
         remain_size = storage.Vol
@@ -670,55 +667,53 @@ def service_add_san(request, pk):
     storage_list = list()
     for storage in storage_list2:
         temp_san_dict = {}
-        temp_san_dict['managenum'] = storage.id
-        temp_san_dict['name'] = storage.storageAssetName
-        temp_san_dict['enrolldate'] = storage.enrollDate
-        temp_san_dict['spec'] = storage.diskSpec
-        temp_san_dict['format'] = storage.storageAsset.storageForm
-        temp_san_dict['alloc_size'] = storage.allocUnitSize
-        temp_san_dict['vol'] = storage.Vol
+        temp_san_dict['managenum']=storage.id
+        temp_san_dict['name']=storage.storageAssetName
+        temp_san_dict['enrolldate']=storage.enrollDate
+        temp_san_dict['spec']=storage.diskSpec
+        temp_san_dict['format']=storage.storageAsset.storageForm
+        temp_san_dict['alloc_size']=storage.allocUnitSize
+        temp_san_dict['vol']=storage.Vol
         remain_size = storage.Vol
         for storageservice in storage.services:
             remain_size -= storageservice.allocSize
         if remain_size > 0:
-            temp_san_dict['remain_size'] = remain_size
+            temp_san_dict['remain_size']=remain_size
         storage_list.append(temp_san_dict)
-    context['storage_asset_list'] = storage_list
-    context['service'] = pk
+    context['storage_asset_list']= storage_list
+    context['service']=pk
     return render(request, 'dbApp/service_add_san.html', context)
 
 
-def service_add_san_api(request, pk, managenum):
+def service_add_san_api(request,pk,managenum):
     #############################로그인#############################
-    user = getUser(request.session)  # 여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
+    user = getUser(request.session) #여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
     if user is None:
-        return HttpResponseRedirect('/dbApp/')
+       return HttpResponseRedirect('/dbApp/')
     #############################로그인#############################
     storage = Storage.objects.get(id=managenum)
-    remain_size = storage.Vol
+    remain_size=storage.Vol
     for storageservice in StorageService.objects.filter(storage=storage):
         remain_size -= storageservice.allocSize
     service = Service.objects.get(id=pk)
-    if remain_size * 1000 > storage.allocUnitSize * int(request.POST['count']):
+    if remain_size*1000 > storage.allocUnitSize*int(request.POST['count']):
         try:
-            StorageService.objects.get(storage=storage, service=service, usage=request.POST['usage'])
+            StorageService.objects.get(storage=storage,service=service,usage=request.POST['usage'])
         except:
-            StorageService.objects.create(storage=storage, service=service, usage=request.POST['usage'],
-                                          allocSize=storage.allocUnitSize * int(request.POST['count']) / 1000)
-    return HttpResponseRedirect('/dbApp/resource/service/' + str(pk) + '/addsan/')
+            StorageService.objects.create(storage=storage,service=service,usage=request.POST['usage'],allocSize=storage.allocUnitSize*int(request.POST['count'])/1000)
+    return HttpResponseRedirect('/dbApp/resource/service/'+str(pk)+'/addsan/')
 
 
-def service_add_nas(request, pk):
+def service_add_nas(request,pk):
     #############################로그인#############################
-    user = getUser(request.session)  # 여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
+    user = getUser(request.session) #여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
     if user is None:
-        return HttpResponseRedirect('/dbApp/')
+       return HttpResponseRedirect('/dbApp/')
     context = {'username': user.first_name}
     #############################로그인#############################
 
     my_prefetch = Prefetch('storage_service', to_attr="services")
-    storage_list = Storage.objects.select_related('storageAsset').filter(
-        storageAsset__storageForm='NAS').prefetch_related(my_prefetch)
+    storage_list = Storage.objects.select_related('storageAsset').filter(storageAsset__storageForm='NAS').prefetch_related(my_prefetch)
     storage_list2 = list()
     for storage in storage_list:
         remain_size = storage.Vol
@@ -729,44 +724,42 @@ def service_add_nas(request, pk):
     storage_list = list()
     for storage in storage_list2:
         temp_san_dict = {}
-        temp_san_dict['managenum'] = storage.id
-        temp_san_dict['name'] = storage.storageAssetName
-        temp_san_dict['enrolldate'] = storage.enrollDate
-        temp_san_dict['spec'] = storage.diskSpec
-        temp_san_dict['format'] = storage.storageAsset.storageForm
-        temp_san_dict['alloc_size'] = storage.allocUnitSize
-        temp_san_dict['vol'] = storage.Vol
+        temp_san_dict['managenum']=storage.id
+        temp_san_dict['name']=storage.storageAssetName
+        temp_san_dict['enrolldate']=storage.enrollDate
+        temp_san_dict['spec']=storage.diskSpec
+        temp_san_dict['format']=storage.storageAsset.storageForm
+        temp_san_dict['alloc_size']=storage.allocUnitSize
+        temp_san_dict['vol']=storage.Vol
         remain_size = storage.Vol
         for storageservice in storage.services:
             remain_size -= storageservice.allocSize
         if remain_size > 0:
-            temp_san_dict['remain_size'] = remain_size
+            temp_san_dict['remain_size']=remain_size
         storage_list.append(temp_san_dict)
-    context['storage_asset_list'] = storage_list
-    context['service'] = pk
+    context['storage_asset_list']= storage_list
+    context['service']=pk
     return render(request, 'dbApp/service_add_nas.html', context)
 
 
-def service_add_nas_api(request, pk, managenum):
+def service_add_nas_api(request,pk,managenum):
     #############################로그인#############################
-    user = getUser(request.session)  # 여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
+    user = getUser(request.session) #여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
     if user is None:
-        return HttpResponseRedirect('/dbApp/')
+       return HttpResponseRedirect('/dbApp/')
     context = {'username': user.first_name}
     #############################로그인#############################
     storage = Storage.objects.get(id=managenum)
-    remain_size = storage.Vol
+    remain_size=storage.Vol
     for storageservice in StorageService.objects.filter(storage=storage):
         remain_size -= storageservice.allocSize
     service = Service.objects.get(id=pk)
-    if remain_size * 1000 > int(request.POST['count']):
+    if remain_size*1000 > int(request.POST['count']):
         try:
-            StorageService.objects.get(storage=storage, service=service, usage=request.POST['usage'])
+            StorageService.objects.get(storage=storage,service=service,usage=request.POST['usage'])
         except:
-            StorageService.objects.create(storage=storage, service=service, usage=request.POST['usage'],
-                                          allocSize=int(request.POST['count']) / 1000)
-    return HttpResponseRedirect('/dbApp/resource/service/' + str(pk) + '/addnas/')
-
+            StorageService.objects.create(storage=storage,service=service,usage=request.POST['usage'],allocSize=int(request.POST['count'])/1000)
+    return HttpResponseRedirect('/dbApp/resource/service/'+str(pk)+'/addnas/')
 
 def storage_use(request):
     # server_list = ServerService.objects.all()
@@ -783,7 +776,7 @@ def rack_info(request):
     #############################로그인#############################
     user = getUser(request.session)  # 여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
     if user is None:
-        return HttpResponseRedirect('/dbApp/')
+       return HttpResponseRedirect('/dbApp/')
     context = {'username': user.first_name}
 
     #############################로그인#############################
@@ -872,8 +865,8 @@ def rack_info(request):
         for inrack in rack['list']:
             position[(inrack['drawIndex']) - 1] = inrack
         data.append({'data': list(reversed(position)), 'rack': rack})
-    context['rack_list'] = rack_total
-    context['data'] = data
+    context['rack_list']= rack_total
+    context['data']= data
     print("--- %s seconds ---" % (time.time() - start_time))
     return render(request, 'dbApp/rack_info.html', context)
 
@@ -882,12 +875,12 @@ def insert_asset(request):
     #############################로그인#############################
     user = getUser(request.session)  # 여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
     if user is None:
-        return HttpResponseRedirect('/dbApp/')
+       return HttpResponseRedirect('/dbApp/')
     context = {'username': user.first_name}
 
     #############################로그인#############################
     asset_total_list = Asset.objects.all()
-    context['asset_total_list'] = asset_total_list
+    context['asset_total_list']= asset_total_list
     return render(request, 'dbApp/asset_total.html', context)
 
 
@@ -895,7 +888,7 @@ def add(request, add_type):
     #############################로그인#############################
     user = getUser(request.session)  # 여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
     if user is None:
-        return HttpResponseRedirect('/dbApp/')
+       return HttpResponseRedirect('/dbApp/')
     context = {'username': user.first_name}
 
     #############################로그인#############################
@@ -930,7 +923,7 @@ def add(request, add_type):
             if request.POST.get("rack_button") == "on":
                 add_racks(request, new_asset)
 
-            context['messages'] = '완료되었습니다.'
+            context['messages']= '완료되었습니다.'
             return render(request, 'dbApp/add_asset.html', context)
 
         elif add_type == "service":
@@ -944,16 +937,16 @@ def add(request, add_type):
                 context['messages'] = '이미 있는 서비스 입니다.'
             except Service.DoesNotExist:
                 Service.objects.create(serviceName=request.POST.get("service_name"),
-                                       makeDate=request.POST.get("service_make_date"),
-                                       color=rgb)
+                                                  makeDate=request.POST.get("service_make_date"),
+                                                  color=rgb)
                 context['messages'] = '완료되었습니다.'
 
             return render(request, 'dbApp/add_service.html', context)
     else:
         if add_type == "asset":
-            return render(request, 'dbApp/add_asset.html', context)
+            return render(request, 'dbApp/add_asset.html',context)
         elif add_type == "service":
-            return render(request, 'dbApp/add_service.html', context)
+            return render(request, 'dbApp/add_service.html',context)
 
 
 def add_servers(request, new_asset):
@@ -961,7 +954,7 @@ def add_servers(request, new_asset):
     #############################로그인#############################
     user = getUser(request.session)  # 여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
     if user is None:
-        return HttpResponseRedirect('/dbApp/')
+       return HttpResponseRedirect('/dbApp/')
     context = {'username': user.first_name}
 
     #############################로그인#############################
@@ -994,7 +987,7 @@ def add_switches(request, new_asset):
     #############################로그인#############################
     user = getUser(request.session)  # 여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
     if user is None:
-        return HttpResponseRedirect('/dbApp/')
+       return HttpResponseRedirect('/dbApp/')
     context = {'username': user.first_name}
 
     #############################로그인#############################
@@ -1027,7 +1020,7 @@ def add_racks(request, new_asset):
     #############################로그인#############################
     user = getUser(request.session)  # 여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
     if user is None:
-        return HttpResponseRedirect('/dbApp/')
+       return HttpResponseRedirect('/dbApp/')
     context = {'username': user.first_name}
 
     #############################로그인#############################
@@ -1053,7 +1046,7 @@ def add_storages(request, new_asset):
     #############################로그인#############################
     user = getUser(request.session)  # 여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
     if user is None:
-        return HttpResponseRedirect('/dbApp/')
+       return HttpResponseRedirect('/dbApp/')
     context = {'username': user.first_name}
 
     #############################로그인#############################
@@ -1100,7 +1093,7 @@ def asset_detail(request):
     #############################로그인#############################
     user = getUser(request.session)  # 여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
     if user is None:
-        return HttpResponseRedirect('/dbApp/')
+       return HttpResponseRedirect('/dbApp/')
     context = {'username': user.first_name}
 
     #############################로그인#############################
@@ -1176,8 +1169,7 @@ def asset_detail(request):
         temp_list.append(temp_dict)
     asset_rack_list = temp_list
     context = {'asset_list': asset, 'asset_server_list': asset_server_list, 'asset_switch_list': asset_switch_list,
-               'asset_storage_list': asset_storage_list, 'asset_rack_list': asset_rack_list,
-               'username': user.first_name}
+               'asset_storage_list': asset_storage_list, 'asset_rack_list': asset_rack_list,'username':user.first_name}
     return render(request, 'dbApp/asset_detail.html', context)
 
 
@@ -1186,7 +1178,7 @@ def rack_detail(request):
     #############################로그인#############################
     user = getUser(request.session)  # 여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
     if user is None:
-        return HttpResponseRedirect('/dbApp/')
+       return HttpResponseRedirect('/dbApp/')
     context = {'username': user.first_name}
 
     #############################로그인#############################
@@ -1284,8 +1276,8 @@ def rack_detail(request):
         for inrack in rack['list']:
             position[(inrack['drawIndex']) - 1] = inrack
         data.append({'data': list(reversed(position)), 'rack': rack})
-    context['rack_list'] = rack_total
-    context['data'] = data
+    context['rack_list']= rack_total
+    context['data']=data
     return render(request, 'dbApp/rack_detail.html', context)
 
 
@@ -1293,7 +1285,7 @@ def server_detail(request):
     #############################로그인#############################
     user = getUser(request.session)  # 여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
     if user is None:
-        return HttpResponseRedirect('/dbApp/')
+       return HttpResponseRedirect('/dbApp/')
     context = {'username': user.first_name}
 
     #############################로그인#############################
@@ -1331,7 +1323,7 @@ def server_detail(request):
     else:
         temp_dict['location'] = temp_location.realLocation
 
-    context['server_list'] = temp_dict
+    context['server_list']= temp_dict
     return render(request, 'dbApp/server_detail.html', context)
 
 
@@ -1339,7 +1331,7 @@ def switch_detail(request):
     #############################로그인#############################
     user = getUser(request.session)  # 여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
     if user is None:
-        return HttpResponseRedirect('/dbApp/')
+       return HttpResponseRedirect('/dbApp/')
     context = {'username': user.first_name}
 
     #############################로그인#############################
@@ -1375,41 +1367,37 @@ def search_assets(request):
     #############################로그인#############################
     user = getUser(request.session)  # 여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
     if user is None:
-        return HttpResponseRedirect('/dbApp/')
+       return HttpResponseRedirect('/dbApp/')
     context = {'username': user.first_name}
 
     #############################로그인#############################
 
     searchText = request.GET.get("searchText")
 
-    # 에셋 쿼리
+    #에셋 쿼리
     asset_prefetch_server = Prefetch('server', to_attr='servers')
     asset_prefetch_switch = Prefetch('switch', to_attr='switches')
     asset_prefetch_storageasset = Prefetch('storageasset', to_attr='storages')
     asset_prefetch_rack = Prefetch('rack', to_attr='racks')
-    asset_total_list = Asset.objects.all().prefetch_related(asset_prefetch_server, asset_prefetch_switch,
-                                                            asset_prefetch_storageasset,
-                                                            asset_prefetch_rack).filter(
-        Q(assetNum__icontains=searchText) | Q(assetName__icontains=searchText) | Q(standard__icontains=searchText) | Q(
-            purchaseLocation__icontains=searchText))
+    asset_total_list = Asset.objects.all().prefetch_related(asset_prefetch_server, asset_prefetch_switch, asset_prefetch_storageasset,
+                                                            asset_prefetch_rack).filter(Q(assetNum__icontains=searchText) | Q(assetName__icontains=searchText) | Q(standard__icontains=searchText) | Q(purchaseLocation__icontains=searchText))
     search_asset_list = make_asset_dict_list(asset_total_list)
     context['asset_total_list'] = search_asset_list
 
-    # 서버 쿼리
-    server_prefetch_server = Prefetch('ss_server', queryset=ServerService.objects.select_related('service'),
-                                      to_attr="services")
+    #서버 쿼리
+    server_prefetch_server = Prefetch('ss_server', queryset=ServerService.objects.select_related('service'), to_attr="services")
     server_asset_num_query = Q(assetInfo__assetNum__icontains=searchText)
     server_manage_num_query = Q(manageNum__icontains=searchText)
     server_manage_spec_query = Q(manageSpec__icontains=searchText)
     server_location_query1 = Q(location__rack_pk__location__icontains=searchText)
     server_location_query2 = Q(location__realLocation__icontains=searchText)
     server_ip_query = Q(ip__icontains=searchText)
-    server_search_list = Server.objects.select_related('assetInfo', 'location', 'location__rack_pk').filter(
+    server_search_list = Server.objects.select_related('assetInfo','location','location__rack_pk').filter(
         server_asset_num_query | server_manage_num_query |
         server_manage_spec_query | server_location_query1 |
         server_location_query2 | server_ip_query
     ).prefetch_related(server_prefetch_server)
-    context['server_asset_list'] = make_server_dict_list(server_search_list)
+    context['server_asset_list']=make_server_dict_list(server_search_list)
 
     # 스위치 쿼리
     switch_asset_num_query = Q(assetInfo__assetNum__icontains=searchText)
@@ -1520,7 +1508,7 @@ def save_one_asset(request, asset_type, id):
                 return HttpResponse("error", status=404)
             try:
                 target_rack = rack.first()
-                upper_range = int(int_rackLocation) + int(request.POST.get("size"))
+                servers_in_rack = ServerLocation.objects.filter(rack_pk=target_rack.id, rackLocation=int_rackLocation)
                 switches_in_rack = SwitchLocation.objects.filter(rack=target_rack.id, rackLocation=int_rackLocation)
                 servers_in_rack = ServerLocation.objects.filter(rack_pk=target_rack.id, rackLocation=int_rackLocation)
 
@@ -1642,6 +1630,20 @@ def delete_asset(request, pk):
     except Asset.DoesNotExist:
         return HttpResponse("error", 404)
     assets.delete()
+    return HttpResponse("ok")
+
+
+def delete_service(request, type, asset_id):
+    print("delete one asset in service")
+    cursor = connection.cursor()
+    if type == "server":
+        cursor.execute(
+            'DELETE FROM `dbApp_serverservice` ' +
+            'WHERE dbApp_serverservice.server_id = ' + asset_id)
+    else:
+        cursor.execute(
+            'DELETE FROM `dbApp_storageservice` ' +
+            'WHERE dbApp_storageservice.storage_id = ' + asset_id)
     return HttpResponse("ok")
 
 

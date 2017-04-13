@@ -21,6 +21,7 @@ urlpatterns = [
     url(r'^server/detail/$', views.server_detail, name='server_detail'),
     url(r'^alloc/save/(?P<id>[\w]+)/$', views.save_new_alloc_size, name='save_new_alloc_size'),
     url(r'^(?P<asset_type>[\w]+)/delete/(?P<manage_num>[\w]+)/$', views.delete_one_asset, name='delete_one_asset'),
+    url(r'^(?P<type>[\w]+)/service/delete/(?P<asset_id>[\w]+)/$', views.delete_service, name='delete_service'),
     url(r'^(?P<asset_type>[\w]+)/edit/(?P<manage_num>[\w]+)/$', views.edit_one_asset, name='edit_one_asset'),
     url(r'^(?P<asset_type>[\w]+)/save/(?P<id>[\w]+)/$', views.save_one_asset, name='save_one_asset'),
     url(r'^(?P<asset_type>[\w]+)/location/(?P<manage_num>[\w]+)/$', views.get_location, name='get_location'),
