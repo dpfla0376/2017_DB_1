@@ -39,8 +39,6 @@
                 <th>위치</th>
                 <th>IP</th>
                 <th>ON/OFF</th>
-                <th>수정</th>
-                <th>삭제</th>
             </tr>
             </thead>
             <tbody>
@@ -49,7 +47,7 @@
                     <td>{{ switch_list.manageSpec }}</td>
                     <td><a style="cursor:hand" onclick="td_click_detail_rack(this)">{{ switch_list.location }}</a></td>
                     <td>{{ switch_list.ip }}</td>
-                    <td>{{ switch_list.use }}</td>
+                    <td>{{ switch_list.onOff }}</td>
                 </tr>
             </tbody>
         </table>

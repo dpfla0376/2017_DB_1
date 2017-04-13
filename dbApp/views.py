@@ -87,6 +87,7 @@ def make_server_dict_list(server_list):
                 temp_dict['onoff'] = "On"
             else:
                 temp_dict['onoff'] = "Off"
+        else: temp_dict['onoff'] = "None"
 
         temp_location = server.location
         if temp_location.rack_pk is not None:
@@ -266,6 +267,7 @@ def server_asset(request):
     server_asset_list = Server.objects.select_related('location', 'assetInfo', 'location__rack_pk').prefetch_related(
         my_prefetch).all()
     context['server_asset_list']= make_server_dict_list(server_asset_list)
+    print(context)
     temppp = render(request, 'dbApp/server_asset.html', context)
     print("--- %s seconds ---" % (time.time() - start_time))
     return temppp
@@ -1297,6 +1299,9 @@ def server_detail(request):
             temp_dict['use'] = "Off"
         temp_service = temp_serverservice.service
         temp_dict['serviceName'] = temp_service.serviceName
+    else:
+        temp_dict['use'] = "None"
+        temp_dict['serviceName'] = "None"
     temp_location = server.location
     if temp_location.rack_pk is not None:
         temp_dict['location'] = temp_location.rack_pk.location
@@ -1339,7 +1344,7 @@ def switch_detail(request):
         temp_dict['onOff'] = 'On'
     else:
         temp_dict['onOff'] = 'Off'
-
+    print(temp_dict)
     context['switch_list']=temp_dict
     return render(request, 'dbApp/switch_detail.html', context)
 
