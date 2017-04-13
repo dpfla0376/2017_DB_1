@@ -1,6 +1,6 @@
 # README #
 
-리드미가 요로코롬 되어있지요
+Please read carefully before you use our program
 
 ### environment ###
  - python3
