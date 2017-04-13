@@ -6,10 +6,10 @@ from django.contrib.auth.models import User
 """
 class User(models.Model):
     user_pk = models.IntegerField()
-	userID = models.CharField(max_length=45)
+    userID = models.CharField(max_length=45)
     name = models.CharField(max_length=45)
     email = models.CharField(max_length=45)
-	password = models.CharField(max_length=45)
+    password = models.CharField(max_length=45)
 """
 
 
@@ -101,6 +101,7 @@ class StorageService(models.Model):
     allocSize = models.FloatField()
     usage = models.CharField(max_length=45)
     uses = models.BooleanField(default=1)
+
 
 class UserService(models.Model):
     user = models.ForeignKey(User)

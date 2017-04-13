@@ -51,11 +51,12 @@
                         <li><a href="/dbApp/rack/total">Rack Total View</a></li>
                     </ul>
                 </li>
+                <li><a href="/dbApp/resource/">Service</a></li>
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Add<span class="caret"></span></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Manage<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
-                        <li><a href="{% url 'add' add_type="asset"%}">Asset</a></li>
-                        <li><a href="{% url 'add' add_type="service"%}">Service</a></li>
+                        <li><a href="{% url 'add' add_type="asset"%}">New Asset</a></li>
+                        <li><a href="{% url 'add' add_type="service"%}">New Service</a></li>
                     </ul>
                 </li>
 
@@ -68,9 +69,17 @@
                 <button type="button" class="btn btn-default">search</button>
             </form>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="#">OOO님</a></li>
-                <li><a href="#">Log out</a></li>
-                <li><a href="#">Setting</a></li>
+{#                <script language="JavaScript">#}
+{#                    if ({{ username }}){#}
+{#                        document.write('<li><a href="#">{{ username }}님</a></li>')#}
+{#                    }#}
+{#                    else{#}
+{#                        document.write('<li><a href="#">000님</a></li>')#}
+{#                    }#}
+{#                </script>#}
+                <li><a href="#">{{ username }}님</a></li>
+                <li><a href="/dbApp/sign_out/">Log out</a></li>
+
             </ul>
         </div>
         <!--/.nav-collapse -->

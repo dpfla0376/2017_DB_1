@@ -1,9 +1,26 @@
 {% extends 'dbApp/navigation_bar.html' %}
 {% block head %}
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<style>
+    #container {
+      display: flex;
+    }
+    #box-left {
+      flex-basis:200px;
+    }
+    #box-center {
+      flex: 1;
+      text-align: center;
+    }
+    #box-right {
+      flex-basis: 40px;
+      text-align: right;
+    }
+</style>
 {% endblock head %}
 
 {% block content %}
+
     <script>
         $(document).ready(function () {
             $(".btn-circle").click(function () {
@@ -27,17 +44,20 @@
         </div>
         <div class="clearfix"></div>
     </div>
-    <kk></kk>
-    </div>
     <div class="container">
         <h2 class="page-header">서비스 정보</h2>
         <div class="center-block add-buttons-container">
             <p class="form-button btn btn-circle btn-danger selected" target="server_info">SERVER</p>
-            <p class="form-button btn btn-circle btn-warning selected" target="disk_info">DISE_TOTAL</p>
+            <p class="form-button btn btn-circle btn-warning selected" target="disk_info">DISK_TOTAL</p>
             <p class="form-button btn btn-circle btn-primary selected" target="tape_info">TAPE</p>
         </div>
         <div class="container detail_info"  id="server_info">
-            <h2 class="sub-header">서버</h2>
+            <h2 class="sub-header">
+<div id='container'>
+    <div id='box-left'>서버</div>
+    <div id='box-center'>  </div>
+    <button id='box-right' style="text-align: center" onclick="location.href='/dbApp/resource/service/{{ service }}/addserver'" >+</button>
+</div></h2>
             <table class="table table-striped">
                 <thead>
                 <tr>
@@ -58,11 +78,11 @@
                 {% if server_asset_list %}
                     {% for server in server_asset_list %}
                         <tr>
-                            <td>{{ server.assetNum }}</td>
-                            <td>{{ server.manageNum }}</td>
+                            <td onclick="td_click_detail_asset(this)">{{ server.assetNum }}</td>
+                            <td onclick="td_click_detail_server(this)">{{ server.manageNum }}</td>
                             <td>{{ server.manageSpec }}</td>
                             <td>{{ server.acquisitionDate }}</td>
-                            <td>{{ server.location }}</td>
+                            <td onclick="td_click_detail_rack(this)">{{ server.location }}</td>
                             <td>{{ server.core }}</td>
                             <td>{{ server.ip }}</td>
                             <td> {{ server.assetName }} </td>
@@ -75,7 +95,11 @@
             </table>
         </div>
         <div class="container detail_info" style="display: none" id="disk_info">
-            <h2 class="sub-header">SAN</h2>
+            <h2 class="sub-header"><div id='container'>
+    <div id='box-left'>SAN</div>
+    <div id='box-center'>  </div>
+    <button id='box-right' style="text-align: center" onclick="location.href='/dbApp/resource/service/{{ service }}/addsan'" >+</button>
+</div></h2>
             <table class="table table-striped">
                 <thead>
                 <tr>
@@ -103,7 +127,11 @@
                     {% endfor %} {% endif %}
                 </tbody>
             </table>
-            <h2 class="sub-header">NAS</h2>
+            <h2 class="sub-header"><div id='container'>
+    <div id='box-left'>NAS</div>
+    <div id='box-center'>  </div>
+   <button id='box-right' style="text-align: center" onclick="location.href='/dbApp/resource/service/{{ service }}/addnas'" >+</button>
+</div></h2>
 
             <table class="table table-striped">
                 <thead>
@@ -135,7 +163,11 @@
 
         </div>
         <div class="container detail_info" style="display: none" id="tape_info">
-            <h2 class="sub-header">TAPE</h2>
+            <h2 class="sub-header"><div id='container'>
+    <div id='box-left'>TAPE</div>
+    <div id='box-center'>  </div>
+    <div id='box-right'>추가</div>
+</div></h2>
             <table class="table table-striped">
                 <thead>
                 <tr>

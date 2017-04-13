@@ -17,7 +17,9 @@ function td_click_detail_rack(tdObj) {
     location.href = "/dbApp/rack/detail/?data=" + txt;
 }
 function td_click_detail_asset(tdObj) {
+    console.log(tdObj);
     var txt = tdObj.text;
+
     location.href = "/dbApp/asset/detail/?data=" + txt;
 }
 function td_click_detail_switch(tdObj) {
@@ -137,16 +139,33 @@ function td_click_edit(type, id) {
         var location = document.getElementById("location-" + id);
 
         var manage_spec_data = manage_spec.innerHTML;
-        //var location_data = location.innerHTML;
+        var location_data = location.innerHTML;
+        var current_location_data = $("#location-" + id).find('a').html();
         var size_data = size.innerHTML;
 
         manage_spec.innerHTML = "<input type='text' id='manage-spec-input-" + id + "' value='" + manage_spec_data + "'>";
-        // location.innerHTML = "<input type='text' id='loaction-input-" + id + "' value='" + location_data + "'>";
+        location.innerHTML = "<input type='text' id='location-input-" + id + "' value='" + current_location_data + "'>";
         size.innerHTML = "<input type='number' id='size-input-" + id + "' value='" + size_data + "'>";
-
     }
-    document.getElementById("edit-button-" + id).style.display = "none";
-    document.getElementById("save-button-" + id).style.display = "block";
+    else if (type == "alloc_size") {
+        var alloc_size = document.getElementById("alloc-size-" + id);
+
+        var alloc_size_data = alloc_size.innerHTML;
+        var current_alloc_size = $("#alloc-size-" + id).find('a').html();
+
+        alloc_size.innerHTML = "<input type='text' id='alloc-size-input-" + id + "' value='" + current_alloc_size + "'>";
+        alloc_size.innerHTML += "<br><a id='save-button-" + id + "' style='cursor:hand'>저장</a >"
+
+        $("#save-button-" + id).click(
+            function () {
+                td_click_save_new_alloc(id);
+            }
+        );
+    }
+    if (type != "alloc_size") {
+        document.getElementById("edit-button-" + id).style.display = "none";
+        document.getElementById("save-button-" + id).style.display = "block";
+    }
 }
 
 function make_asset_inputs(id) {
@@ -164,7 +183,21 @@ function make_asset_inputs(id) {
     var purchase_data = purchase.innerHTML;
     var maintenance_data = maintenance.innerHTML;
 
-    acq_date.innerHTML = "<input type='date' id='acq-date-input-" + id + "' value='" + acq_date_data + "'>";
+    function pad(n, width, z) {
+        z = z || '0';
+        n = n + '';
+        return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+    }
+
+    var temp = acq_date_data.split('년 ');
+    var year = temp[0];
+    temp = temp[1].split('월 ');
+    var month = temp[0];
+    temp = temp[1].split('일');
+    var day = temp[0];
+    alert(year + '-' + pad(month,2) + '-' + pad(day,2));
+
+    acq_date.innerHTML = "<input type='date' id='acq-date-input-" + id + "' value='" +year + '-' + pad(month,2) + '-' + pad(day,2) + "'>";
     name.innerHTML = "<input type='text' id='name-input-" + id + "' value='" + name_data + "'>";
     standard.innerHTML = "<input type='text' id='standard-input-" + id + "' value='" + standard_data + "'>";
     acq_cost.innerHTML = "<input type='number' id='acq-cost-input-" + id + "' value='" + acq_cost_data + "'>";
@@ -200,11 +233,16 @@ function make_switch_inputs(id, dict) {
     onoff.innerHTML = "<input type='text' id='onoff-input-" + id + "' value='" + onoff_data + "'>";
     size.innerHTML = "<input type='number' id='size-input-" + id + "' value='" + size_data + "'>";
 
-
-    location.innerHTML = "<input type='radio' name='radio' value='in' id='location-radio-" + id + "'>위치";
+    if(dict['is_in_rack'] == true)
+        location.innerHTML = "<input type='radio' checked='' name='radio' value='in' id='location-radio-" + id + "'>위치";
+    else
+        location.innerHTML = "<input type='radio' name='radio' value='in' id='location-radio-" + id + "'>위치";
     location.innerHTML += "<br><input type='text' id='location-in-input-" + id + "' value='" + rack_manage_num + "' placeholder='랙 번호'>";
     location.innerHTML += "<br><input type='number' id='location-at-input-" + id + "'  value='" + rack_location + "' placeholder='해당 위치'>";
-    location.innerHTML += "<br><input type='radio' name='radio' value='etc' id='location-etc-radio-" + id + "'>기타";
+    if(dict['is_in_rack'] == true)
+        location.innerHTML += "<br><input type='radio' name='radio' value='etc' id='location-etc-radio-" + id + "'>기타";
+    else
+        location.innerHTML += "<br><input type='radio' checked='' name='radio' value='etc' id='location-etc-radio-" + id + "'>기타";
     location.innerHTML += "<br><input type='text' id='location-etc-input-" + id + "' value='" + real_location + "' placeholder='예)지하 창고'>";
 }
 function make_server_inputs(id, dict) {
@@ -234,12 +272,41 @@ function make_server_inputs(id, dict) {
     core.innerHTML = "<input type='number' id='core-input-" + id + "' value='" + core_data + "'>";
     ip.innerHTML = "<input type='text' id='ip-input-" + id + "' value='" + ip_data + "'>";
     size.innerHTML = "<input type='number' id='size-input-" + id + "' value='" + size_data + "'>";
-    location.innerHTML = "<input type='radio' name='radio' value='in' id='location-radio-" + id + "'>위치";
+    if(dict['is_in_rack'] == true)
+        location.innerHTML = "<input type='radio' checked='' name='radio' value='in' id='location-radio-" + id + "'>위치";
+    else
+        location.innerHTML = "<input type='radio' name='radio' value='in' id='location-radio-" + id + "'>위치";
     location.innerHTML += "<br><input type='text' id='location-in-input-" + id + "' value='" + rack_manage_num + "' placeholder='랙 번호'>";
     location.innerHTML += "<br><input type='number' id='location-at-input-" + id + "'  value='" + rack_location + "' placeholder='해당 위치'>";
-    location.innerHTML += "<br><input type='radio' name='radio' value='etc' id='location-etc-radio-" + id + "'>기타";
+    if(dict['is_in_rack'] == true)
+        location.innerHTML += "<br><input type='radio' name='radio' value='etc' id='location-etc-radio-" + id + "'>기타";
+    else
+        location.innerHTML += "<br><input type='radio' checked='' name='radio' value='etc' id='location-etc-radio-" + id + "'>기타";
     location.innerHTML += "<br><input type='text' id='location-etc-input-" + id + "' value='" + real_location + "' placeholder='예)지하 창고'>";
 
+}
+function td_click_save_new_alloc(id) {
+    var alloc_size = document.getElementById("alloc-size-input-" + id);
+    var updated = {
+        'alloc_size': alloc_size.value
+    }
+    $.ajaxSetup({
+        headers: {"X-CSRFToken": getCookie("csrftoken")}
+    });
+
+    $.ajax({
+        url: '/dbApp/alloc/save/' + id + "/",
+        type: 'POST',
+        data: updated,
+        success: function (result) {
+            alert("저장되었습니다. 페이지를 새로고침합니다.");
+             $("#" + id).reload();
+            location.href = "/dbApp/storage/total/"
+        },
+        fail: function (result) {
+            alert("fail");
+        }
+    });
 }
 function td_click_save(type, id) {
 
@@ -290,12 +357,12 @@ function get_corrected_storage(id) {
 
 function get_corrected_rack(id) {
     var manage_spec = document.getElementById("manage-spec-input-" + id);
-    //var location = document.getElementById("location-input-" + id);
+    var location = document.getElementById("location-input-" + id);
     var size = document.getElementById("size-input-" + id);
 
     var corrected_rack = {
         'manageSpec': manage_spec.value,
-        //  'location': location.value,
+        'location': location.value,
         'size': size.value
     };
     return corrected_rack;
