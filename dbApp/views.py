@@ -45,6 +45,30 @@ def getUser(session):
         return None
 
 
+def make_asset_dict_list(asset_list):
+    temp_list = []
+    for asset in asset_list:
+        server_num = len(asset.servers)
+        switch_num = len(asset.switches)
+        storage_num = len(asset.storages)
+        rack_num = len(asset.racks)
+        temp_dict = dict()
+        temp_dict['assetNum'] = asset.assetNum
+        temp_dict['acquisitionDate'] = asset.acquisitionDate
+        temp_dict['assetName'] = asset.assetName
+        temp_dict['standard'] = asset.standard
+        temp_dict['acquisitionCost'] = asset.acquisitionCost
+        temp_dict['purchaseLocation'] = asset.purchaseLocation
+        temp_dict['maintenanceYear'] = asset.maintenanceYear
+        temp_dict['serverNum'] = server_num
+        temp_dict['switchNum'] = switch_num
+        temp_dict['storageNum'] = storage_num
+        temp_dict['rackNum'] = rack_num
+        temp_dict['totalNum'] = server_num + switch_num + storage_num + rack_num
+        temp_list.append(temp_dict)
+    return temp_list
+
+
 def make_server_dict_list(server_list):
     temp_list = list()
     for server in server_list:
@@ -72,6 +96,41 @@ def make_server_dict_list(server_list):
         temp_list.append(temp_dict)
     return temp_list
 
+
+def make_switch_dict_list(switch_list):
+    temp_list = []
+    for switch in switch_list:
+        temp_dict = {}
+        temp_dict['assetNum'] = switch.assetInfo.assetNum
+        temp_dict['manageNum'] = switch.manageNum
+        temp_dict['manageSpec'] = switch.manageSpec
+        temp_dict['size'] = switch.size
+        temp_dict['ip'] = switch.ip
+        temp_location = switch.location
+        if temp_location.rack is not None:
+            temp_dict['location'] = temp_location.rack.location
+        else:
+            temp_dict['location'] = temp_location.realLocation
+        temp = switch.serviceOn
+        if (temp == True):
+            temp_dict['onOff'] = 'On'
+        else:
+            temp_dict['onOff'] = 'Off'
+        temp_list.append(temp_dict)
+    return temp_list
+
+
+def make_rack_dict_list(rack_list):
+    temp_list = []
+    for rack in rack_list:
+        temp_dict = {}
+        temp_dict['assetNum'] = rack.assetInfo.assetNum
+        temp_dict['manageNum'] = rack.manageNum
+        temp_dict['manageSpec'] = rack.manageSpec
+        temp_dict['size'] = rack.size
+        temp_dict['location'] = rack.location
+        temp_list.append(temp_dict)
+    return temp_list
 
 # API
 def api_graph_storage_total(request):
@@ -176,27 +235,8 @@ def asset_total(request):
     rack_prefetch = Prefetch('rack', to_attr='racks')
     asset_total_list = Asset.objects.all().prefetch_related(server_prefetch, switch_prefetch, storage_prefetch,
                                                             rack_prefetch)
-    temp_list = []
-    for asset in asset_total_list:
-        server_num = len(asset.servers)
-        switch_num = len(asset.switches)
-        storage_num = len(asset.storages)
-        rack_num = len(asset.racks)
-        temp_dict = dict()
-        temp_dict['assetNum'] = asset.assetNum
-        temp_dict['acquisitionDate'] = asset.acquisitionDate
-        temp_dict['assetName'] = asset.assetName
-        temp_dict['standard'] = asset.standard
-        temp_dict['acquisitionCost'] = asset.acquisitionCost
-        temp_dict['purchaseLocation'] = asset.purchaseLocation
-        temp_dict['maintenanceYear'] = asset.maintenanceYear
-        temp_dict['serverNum'] = server_num
-        temp_dict['switchNum'] = switch_num
-        temp_dict['storageNum'] = storage_num
-        temp_dict['rackNum'] = rack_num
-        temp_dict['totalNum'] = server_num + switch_num + storage_num + rack_num
-        temp_list.append(temp_dict)
-    context['asset_total_list']= temp_list
+
+    context['asset_total_list']= make_asset_dict_list(asset_total_list)
     return render(request, 'dbApp/asset_total.html', context)
 
 
@@ -208,28 +248,8 @@ def switch_asset(request):
     context = {'username': user.first_name}
 
     #############################로그인#############################
-    switch_asset_list = Switch.objects.all()
-    temp_list = []
-    for switch in switch_asset_list:
-        temp_dict = {}
-        temp_dict['assetNum'] = switch.assetInfo.assetNum
-        temp_dict['manageNum'] = switch.manageNum
-        temp_dict['manageSpec'] = switch.manageSpec
-        temp_dict['size'] = switch.size
-        temp_dict['ip'] = switch.ip
-        temp_location = switch.location
-        if temp_location.rack is not None:
-            temp_dict['location'] = temp_location.rack.location
-        else:
-            temp_dict['location'] = temp_location.realLocation
-        temp = switch.serviceOn
-        if (temp == True):
-            temp_dict['onOff'] = 'On'
-        else:
-            temp_dict['onOff'] = 'Off'
-
-        temp_list.append(temp_dict)
-    context['switch_asset_list']= temp_list
+    switch_asset_list = Switch.objects.select_related('assetInfo','location','location__rack').all()
+    context['switch_asset_list']= make_switch_dict_list(switch_asset_list)
     return render(request, 'dbApp/switch_asset.html', context)
 
 
@@ -261,18 +281,8 @@ def rack_asset(request):
     context = {'username': user.first_name}
 
     #############################로그인#############################
-    rack_asset_list = Rack.objects.all()
-    temp_list = []
-    for rack in rack_asset_list:
-        temp_dict = {}
-        temp_dict['assetNum'] = rack.assetInfo.assetNum
-        temp_dict['manageNum'] = rack.manageNum
-        temp_dict['manageSpec'] = rack.manageSpec
-        temp_dict['size'] = rack.size
-        temp_dict['location'] = rack.location
-        temp_list.append(temp_dict)
-    print(temp_list)
-    context['rack_asset_list']=temp_list
+    rack_asset_list = Rack.objects.select_related('assetInfo').all()
+    context['rack_asset_list']=make_rack_dict_list(rack_asset_list)
     return render(request, 'dbApp/rack_asset.html', context)
 
 
@@ -844,9 +854,6 @@ def rack_info(request):
     return render(request, 'dbApp/rack_info.html', context)
 
 
-#    return HttpResponse(json.dumps(context))
-
-
 def insert_asset(request):
     #############################로그인#############################
     user = getUser(request.session)  # 여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
@@ -1338,40 +1345,65 @@ def switch_detail(request):
 
 
 def search_assets(request):
+    #############################로그인#############################
+    user = getUser(request.session)  # 여기부터 아래까지 총 3줄이 로그인 검증 부분입니당
+    if user is None:
+       return HttpResponseRedirect('/dbApp/')
+    context = {'username': user.first_name}
+
+    #############################로그인#############################
+
     searchText = request.GET.get("searchText")
-    print(searchText)
 
-    server_prefetch = Prefetch('server', to_attr='servers')
-    switch_prefetch = Prefetch('switch', to_attr='switches')
-    storage_prefetch = Prefetch('storageasset', to_attr='storages')
-    rack_prefetch = Prefetch('rack', to_attr='racks')
-    asset_total_list = Asset.objects.all().prefetch_related(server_prefetch, switch_prefetch, storage_prefetch,
-                                                            rack_prefetch).filter(Q(assetNum__icontains=searchText) | Q(acquisitionDate__icontains=searchText) | Q(assetName__icontains=searchText) | Q(standard__icontains=searchText) | Q(acquisitionCost__icontains=searchText) | Q(purchaseLocation__icontains=searchText))
-    temp_list = []
-    for asset in asset_total_list:
-        server_num = len(asset.servers)
-        switch_num = len(asset.switches)
-        storage_num = len(asset.storages)
-        rack_num = len(asset.racks)
-        temp_dict = dict()
-        temp_dict['assetNum'] = asset.assetNum
-        temp_dict['acquisitionDate'] = asset.acquisitionDate
-        temp_dict['assetName'] = asset.assetName
-        temp_dict['standard'] = asset.standard
-        temp_dict['acquisitionCost'] = asset.acquisitionCost
-        temp_dict['purchaseLocation'] = asset.purchaseLocation
-        temp_dict['maintenanceYear'] = asset.maintenanceYear
-        temp_dict['serverNum'] = server_num
-        temp_dict['switchNum'] = switch_num
-        temp_dict['storageNum'] = storage_num
-        temp_dict['rackNum'] = rack_num
-        temp_dict['totalNum'] = server_num + switch_num + storage_num + rack_num
-        temp_list.append(temp_dict)
-    search_asset_list = temp_list
-    
-    
+    #에셋 쿼리
+    asset_prefetch_server = Prefetch('server', to_attr='servers')
+    asset_prefetch_switch = Prefetch('switch', to_attr='switches')
+    asset_prefetch_storageasset = Prefetch('storageasset', to_attr='storages')
+    asset_prefetch_rack = Prefetch('rack', to_attr='racks')
+    asset_total_list = Asset.objects.all().prefetch_related(asset_prefetch_server, asset_prefetch_switch, asset_prefetch_storageasset,
+                                                            asset_prefetch_rack).filter(Q(assetNum__icontains=searchText) | Q(assetName__icontains=searchText) | Q(standard__icontains=searchText) | Q(purchaseLocation__icontains=searchText))
+    search_asset_list = make_asset_dict_list(asset_total_list)
+    context['asset_total_list'] = search_asset_list
 
-    context = { 'asset_list' : search_asset_list }
+    #서버 쿼리
+    server_prefetch_server = Prefetch('ss_server', queryset=ServerService.objects.select_related('service'), to_attr="services")
+    server_asset_num_query = Q(assetInfo__assetNum__icontains=searchText)
+    server_manage_num_query = Q(manageNum__icontains=searchText)
+    server_manage_spec_query = Q(manageSpec__icontains=searchText)
+    server_location_query1 = Q(location__rack_pk__location__icontains=searchText)
+    server_location_query2 = Q(location__realLocation__icontains=searchText)
+    server_ip_query = Q(ip__icontains=searchText)
+    server_search_list = Server.objects.select_related('assetInfo','location','location__rack_pk').filter(
+        server_asset_num_query | server_manage_num_query |
+        server_manage_spec_query | server_location_query1 |
+        server_location_query2 | server_ip_query
+    ).prefetch_related(server_prefetch_server)
+    context['server_asset_list']=make_server_dict_list(server_search_list)
+
+    # 스위치 쿼리
+    switch_asset_num_query = Q(assetInfo__assetNum__icontains=searchText)
+    switch_manage_num_query = Q(manageNum__icontains=searchText)
+    switch_manage_spec_query = Q(manageSpec__icontains=searchText)
+    switch_location_query1 = Q(location__rack__location__icontains=searchText)
+    switch_location_query2 = Q(location__realLocation__icontains=searchText)
+    switch_ip_query = Q(ip__icontains=searchText)
+    switch_asset_list = Switch.objects.select_related('assetInfo', 'location', 'location__rack').filter(
+        switch_asset_num_query | switch_manage_num_query |
+        switch_manage_spec_query | switch_location_query1 |
+        switch_location_query2 | switch_ip_query
+    )
+    context['switch_asset_list'] = make_switch_dict_list(switch_asset_list)
+
+    # 랙 쿼리
+    rack_asset_num_query = Q(assetInfo__assetNum__icontains=searchText)
+    rack_manage_num_query = Q(manageNum__icontains=searchText)
+    rack_manage_spec_query = Q(manageSpec__icontains=searchText)
+    rack_location_query = Q(location__icontains=searchText)
+    rack_asset_list = Rack.objects.select_related('assetInfo').filter(
+        rack_asset_num_query | rack_manage_num_query |
+        rack_manage_spec_query | rack_location_query
+    )
+    context['rack_asset_list'] = make_rack_dict_list(rack_asset_list)
     return render(request, 'dbApp/searchResult.html', context)
 
 

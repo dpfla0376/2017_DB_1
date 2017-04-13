@@ -38,10 +38,6 @@
                         <li><a href="/dbApp/storage/">Storage</a></li>
                         <li><a href="/dbApp/storage/total">Storage Total</a></li>
                         <li><a href="/dbApp/storage/service">Storage Service</a></li>
-                        <!--<li class="divider"></li>
-                        <li class="dropdown-header">Nav header</li>
-                        <li><a href="#">Separated link</a></li>
-                        <li><a href="#">One more separated link</a></li>-->
                     </ul>
                 </li>
                 <li class="dropdown">
@@ -62,21 +58,13 @@
 
 
             </ul>
-            <form class="navbar-form navbar-left" role="search" method="post">
+            <form class="navbar-form navbar-left" role="search" action="/dbApp/search/" method="get">
                 <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Search" id="id-nav-search-text" name="nav-search-text">
+                    <input type="text" class="form-control" placeholder="Search" name="searchText">
                 </div>
-                <button type="submit" class="btn btn-default" id="id-nav-search-button" name="nav-search-button" href="/dbApp/search/">search</button>
+                <button type="submit" class="btn btn-default" style="cursor:hand">search</button>
             </form>
             <ul class="nav navbar-nav navbar-right">
-{#                <script language="JavaScript">#}
-{#                    if ({{ username }}){#}
-{#                        document.write('<li><a href="#">{{ username }}님</a></li>')#}
-{#                    }#}
-{#                    else{#}
-{#                        document.write('<li><a href="#">000님</a></li>')#}
-{#                    }#}
-{#                </script>#}
                 <li><a href="#">{{ username }}님</a></li>
                 <li><a href="/dbApp/sign_out/">Log out</a></li>
 
