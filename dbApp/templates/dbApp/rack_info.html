@@ -1,6 +1,15 @@
 {% extends 'dbApp/navigation_bar.html' %}
 {% load define %}
 {% block head %}
+    <script type="text/javascript">
+		var fnPrint = function() {
+		    var temp = document.body.innerHTML
+			document.body.innerHTML = selectArea.innerHTML;
+			window.print();
+			document.body.innerHTML = temp
+		};
+	</script>
+
     <style type="text/css">
         .tb {
             text-align: center;
@@ -23,10 +32,27 @@
             text-align: center;
             display: inline-block;
         }
+        .floating {
+            background-color:#cccccc;
+            border:2px solid #000;
+            position: fixed;
+            right: 50%;
+            top: 180px;
+            margin-right: -615px;
+            text-align:center;
+            width:70px;
+            border-radius: 8px;
+            -webkit-border-radius: 8px;
+         }
+        .floating div:nth-child(1){
+           border:2px solid #ff3535;
+           border-radius: 8px;
+        }
     </style>
 {% endblock %}
 {% block content %}
-    <div style="width:200%; height:100%; overflow-x:scroll ">
+
+    <div style="width:200%; height:100%; overflow-x:scroll" id="selectArea">
         {% if rack_list %}
             {% for rack in data %}
                 <div class="table-wrapper">
@@ -109,27 +135,14 @@
                             }
                             //-->
                         </script>
-                        {#                        {% for data in rack.data %}#}
-                        {#                            {% if data %}#}
-                        {#                                <tr style="background-color:rgb({{ data.color }})">#}
-                        {#                                    <td>{{ forloop.counter|getReverse }}</td>#}
-                        {#                                    <td>{{ data.ip }}</td>#}
-                        {#                                    <td>{{ data.manageNum }}</td>#}
-                        {#                                    <td>{{ data.manageSpec }}</td>#}
-                        {#                                </tr>#}
-                        {#                            {% else %}#}
-                        {#                                <tr>#}
-                        {#                                    <td>{{ forloop.counter|getReverse }}</td>#}
-                        {#                                    <td></td>#}
-                        {#                                    <td></td>#}
-                        {#                                    <td></td>#}
-                        {#                                </tr>#}
-                        {#                            {% endif %}#}
-                        {#                        {% endfor %}#}
                         </tbody>
                     </table>
                 </div>
             {% endfor %}
         {% endif %}
+    </div>
+
+     <div class="floating">
+    <!--StartFragment--><a type="button" onclick="fnPrint()">프린트하기</a>
     </div>
 {% endblock content %}
