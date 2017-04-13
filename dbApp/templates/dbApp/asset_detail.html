@@ -67,7 +67,36 @@
             </div>
         {% endif %}
 
-        <h2 style="padding-bottom: 5px; margin: 40px 0 5px;">Storage</h2>
+        {% if asset_storage_list %}
+            <h2 style="padding-bottom: 5px; margin: 40px 0 5px;">Storage</h2>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>관리번호</th>
+                        <th>관리스펙</th>
+                        <th>위치</th>
+                        <th>규격</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for storage in asset_storage_list %}
+                        <tr>
+                            <td><a style="cursor:hand" data-toggle="modal" data-target="#"
+                                            href="/dbApp/storage/detail/?data={{ storage.manageNum }}">{{ storage.manageNum }}</a></td>
+                            <td>{{ storage.manageSpec }}</td>
+                            <td><a style="cursor:hand"
+                                    onclick="td_click_detail_rack(this)">{{ storage.location }}</a></td>
+                            <td>{{ storage.ip }}</td>
+                            <td>{{ storage.onOff }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+
+
 
         {% if asset_rack_list %}
             <h2 style="padding-bottom: 5px; margin: 40px 0 5px;">Rack</h2>
