@@ -85,15 +85,28 @@
                                     document.write('<td style="background-color:white; color:black">');
                                     document.write(racknum.toString());
                                     document.write("</td>");
-                                    document.write('<td  rowspan="' + rackdatalist[i].size.toString() + '">');
-                                    document.write(rackdatalist[i].ip);
-                                    document.write("</td>");
-                                    document.write('<td  rowspan="' + rackdatalist[i].size.toString() + '">');
-                                    document.write(rackdatalist[i].manageNum);
-                                    document.write("</td>");
-                                    document.write('<td  rowspan="' + rackdatalist[i].size.toString() + '">');
-                                    document.write(rackdatalist[i].manageSpec);
-                                    document.write("</td>");
+                                    if(rackdatalist[i].serviceName != null) {
+                                        document.write('<td  rowspan="' + rackdatalist[i].size.toString() + '" title="' + rackdatalist[i].serviceName + '">');
+                                        document.write(rackdatalist[i].ip);
+                                        document.write("</td>");
+                                        document.write('<td  rowspan="' + rackdatalist[i].size.toString() + '" title="' + rackdatalist[i].serviceName + '">');
+                                        document.write(rackdatalist[i].manageNum);
+                                        document.write("</td>");
+                                        document.write('<td  rowspan="' + rackdatalist[i].size.toString() + '" title="' + rackdatalist[i].serviceName + '">');
+                                        document.write(rackdatalist[i].manageSpec);
+                                        document.write("</td>");
+                                    }
+                                    else {
+                                        document.write('<td  rowspan="' + rackdatalist[i].size.toString() + '">');
+                                        document.write(rackdatalist[i].ip);
+                                        document.write("</td>");
+                                        document.write('<td  rowspan="' + rackdatalist[i].size.toString() + '">');
+                                        document.write(rackdatalist[i].manageNum);
+                                        document.write("</td>");
+                                        document.write('<td  rowspan="' + rackdatalist[i].size.toString() + '">');
+                                        document.write(rackdatalist[i].manageSpec);
+                                        document.write("</td>");
+                                    }
                                     count = rackdatalist[i].size - 1;
                                     colorr = rackdatalist[i].color;
                                 }

@@ -794,7 +794,11 @@ def rack_info(request):
         temp_subDict['ip'] = switch.ip
         temp_subDict['use'] = switch.serviceOn
         temp_subDict['size'] = switch.size
-        temp_subDict['color'] = '255, 204, 255'
+        if (temp_subDict['use'] == True):
+            temp_subDict['color'] = '255, 204, 255'
+        else:
+            temp_subDict['color'] = '255, 255, 204'
+        temp_subDict['serviceName'] = ''
         temp_location = switch.location
         if temp_location.rack is not None:
             temp_subDict['rack_pk'] = temp_location.rack.manageNum
@@ -1192,7 +1196,11 @@ def rack_detail(request):
         temp_subDict['ip'] = switch.ip
         temp_subDict['use'] = switch.serviceOn
         temp_subDict['size'] = switch.size
-        temp_subDict['color'] = '255, 204, 255'
+        if (temp_subDict['use'] == True):
+            temp_subDict['color'] = '255, 204, 255'
+        else:
+            temp_subDict['color'] = '255, 255, 204'
+        temp_subDict['serviceName'] = ''
         temp = switch.serviceOn
         if (temp == True):
             temp_subDict['onOff'] = 'On'
