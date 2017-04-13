@@ -579,13 +579,13 @@ def service_detail(request, pk):
                 else:
                     server['Use'] = False
 
-    cursor.execute('SELECT * FROM `dbApp_storage` ' +
+    cursor.execute('SELECT dbApp_storageservice.id, manageSpec,enrollDate, diskSpec, allocUnitSize, Vol, allocSize, dbApp_storageservice.usage FROM `dbApp_storage` ' +
                    'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id ' +
                    'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id ' +
                    'where dbApp_storageasset.storageForm = \'SAN\' ' +
                    'and dbApp_storageservice.service_id = ' + pk)
     disk_SAN = dictFetchall(cursor)
-    cursor.execute('SELECT * FROM `dbApp_storage` ' +
+    cursor.execute('SELECT dbApp_storageservice.id, manageSpec,enrollDate, diskSpec, allocUnitSize, Vol, allocSize, dbApp_storageservice.usage FROM `dbApp_storage` ' +
                    'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id ' +
                    'INNER JOIN `dbApp_storageservice` ON dbApp_storageservice.storage_id = dbApp_storage.id ' +
                    'where dbApp_storageasset.storageForm = \'NAS\' ' +
@@ -1639,11 +1639,11 @@ def delete_service(request, type, asset_id):
     if type == "server":
         cursor.execute(
             'DELETE FROM `dbApp_serverservice` ' +
-            'WHERE dbApp_serverservice.server_id = ' + asset_id)
+            'WHERE dbApp_serverservice.id = ' + asset_id)
     else:
         cursor.execute(
             'DELETE FROM `dbApp_storageservice` ' +
-            'WHERE dbApp_storageservice.storage_id = ' + asset_id)
+            'WHERE dbApp_storageservice.id = ' + asset_id)
     return HttpResponse("ok")
 
 
