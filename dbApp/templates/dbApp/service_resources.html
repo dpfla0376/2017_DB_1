@@ -13,9 +13,9 @@
             <div class="col-md-6">
                 <div id="doughnutChart" class="chart"></div>
                 <script type="text/javascript">
-                    $('#doughnutChart').click(function () {
+                    /*$('#doughnutChart').click(function () {
                         window.location = './service';
-                    });
+                    });*/
                 </script>
             </div>
             <div class="col-md-6">
@@ -27,7 +27,7 @@
         {% if service_list %}
             {% for service in service_list %}
                 <div class="row">
-                    <div class="col-md-12">{{ service.name }}</div>
+                    <H2><div class="col-md-12">{{ service.name }}</div></H2>
                     <div class="clearfix"></div>
                 </div>
                 <div class="row">

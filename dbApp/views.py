@@ -87,6 +87,7 @@ def make_server_dict_list(server_list):
                 temp_dict['onoff'] = "On"
             else:
                 temp_dict['onoff'] = "Off"
+        else: temp_dict['onoff'] = "None"
 
         temp_location = server.location
         if temp_location.rack_pk is not None:
@@ -267,7 +268,9 @@ def server_asset(request):
     my_prefetch = Prefetch('ss_server', queryset=ServerService.objects.select_related('service'), to_attr="services")
     server_asset_list = Server.objects.select_related('location', 'assetInfo', 'location__rack_pk').prefetch_related(
         my_prefetch).all()
+
     context['server_asset_list'] = make_server_dict_list(server_asset_list)
+
     temppp = render(request, 'dbApp/server_asset.html', context)
     print("--- %s seconds ---" % (time.time() - start_time))
     return temppp
@@ -549,20 +552,33 @@ def service_detail(request, pk):
     #############################로그인#############################
     cursor = connection.cursor()
     cursor.execute(
-        'SELECT assetNum, s.manageNum,acquisitionDate, s.manageSpec, location, core, ip, assetName, standard, maintenanceYear, realLocation, isInRack, ss.Use ' +
+        'SELECT assetNum, s.manageNum,acquisitionDate, s.manageSpec, core, ip, assetName, standard, maintenanceYear, realLocation, isInRack, ss.Use ' +
+        'FROM `dbApp_asset` a INNER JOIN `dbApp_server` s ON a.id = s.assetInfo_id ' +
+        'INNER JOIN `dbApp_serverlocation` sl ON sl.server_pk_id = s.id ' +
+        'INNER JOIN dbApp_serverservice ss ON ss.server_id = s.id ' +
+        'WHERE ss.service_id = ' + pk)
+    server_list = dictFetchall(cursor)
+
+    cursor.execute(
+        'SELECT s.manageNum, location '+
         'FROM `dbApp_asset` a INNER JOIN `dbApp_server` s ON a.id = s.assetInfo_id ' +
         'INNER JOIN `dbApp_serverlocation` sl ON sl.server_pk_id = s.id ' +
         'INNER JOIN `dbApp_rack` r ON r.id = sl.rack_pk_id ' +
         'INNER JOIN dbApp_serverservice ss ON ss.server_id = s.id ' +
         'WHERE ss.service_id = ' + pk)
-    server_list = dictFetchall(cursor)
+    location_list = dictFetchall(cursor)
+    location = ''
     for server in server_list:
-        if server['isInRack'] == 0:
-            server['location'] = server['realLocation']
-        if server['Use']:
-            server['Use'] = True
-        else:
-            server['Use'] = False
+        for lo in location_list:
+            if lo['manageNum'] == server['manageNum']:
+                if server['isInRack'] == 0:
+                    location = server['realLocation']
+                else:
+                    location = lo['location']
+                if server['Use']:
+                    server['Use'] = True
+                else:
+                    server['Use'] = False
 
     cursor.execute('SELECT * FROM `dbApp_storage` ' +
                    'INNER JOIN `dbApp_storageasset` ON dbApp_storageasset.id = dbApp_storage.storageAsset_id ' +
@@ -588,8 +604,10 @@ def service_detail(request, pk):
                                                          'SAN': disk_SAN,
                                                          'NAS': disk_NAS,
                                                          'TAPE': disk_TAPE,
-                                                         'username': user.first_name
-                                                         });
+                                                         'username': user.first_name,
+                                                         'location': location
+                                                         })
+
 
 
 def service_add_server(request, pk):
@@ -1304,6 +1322,9 @@ def server_detail(request):
             temp_dict['use'] = "Off"
         temp_service = temp_serverservice.service
         temp_dict['serviceName'] = temp_service.serviceName
+    else:
+        temp_dict['use'] = "None"
+        temp_dict['serviceName'] = "None"
     temp_location = server.location
     if temp_location.rack_pk is not None:
         temp_dict['location'] = temp_location.rack_pk.location
@@ -1346,7 +1367,6 @@ def switch_detail(request):
         temp_dict['onOff'] = 'On'
     else:
         temp_dict['onOff'] = 'Off'
-
     context['switch_list'] = temp_dict
     return render(request, 'dbApp/switch_detail.html', context)
 
