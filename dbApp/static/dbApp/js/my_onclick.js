@@ -340,6 +340,13 @@ function td_click_save(type, id) {
     });
 
 }
+
+
+function to_click_search(obj) {
+    var txt = tdObj.text;
+    location.href = "/dbApp/search/?data=" + txt;
+}
+
 function get_corrected_storage(id) {
     var manage_spec = document.getElementById("manage-spec-input-" + id);
     var location = document.getElementById("location-input-" + id);

@@ -1312,7 +1312,39 @@ def switch_detail(request):
 def search_assets(request):
     searchText = request.GET.get("searchText")
     print(searchText)
-    return render(request, 'dbApp/searchResult.html', {})
+
+    server_prefetch = Prefetch('server', to_attr='servers')
+    switch_prefetch = Prefetch('switch', to_attr='switches')
+    storage_prefetch = Prefetch('storageasset', to_attr='storages')
+    rack_prefetch = Prefetch('rack', to_attr='racks')
+    asset_total_list = Asset.objects.all().prefetch_related(server_prefetch, switch_prefetch, storage_prefetch,
+                                                            rack_prefetch).filter(Q(assetNum__icontains=searchText) | Q(acquisitionDate__icontains=searchText) | Q(assetName__icontains=searchText) | Q(standard__icontains=searchText) | Q(acquisitionCost__icontains=searchText) | Q(purchaseLocation__icontains=searchText))
+    temp_list = []
+    for asset in asset_total_list:
+        server_num = len(asset.servers)
+        switch_num = len(asset.switches)
+        storage_num = len(asset.storages)
+        rack_num = len(asset.racks)
+        temp_dict = dict()
+        temp_dict['assetNum'] = asset.assetNum
+        temp_dict['acquisitionDate'] = asset.acquisitionDate
+        temp_dict['assetName'] = asset.assetName
+        temp_dict['standard'] = asset.standard
+        temp_dict['acquisitionCost'] = asset.acquisitionCost
+        temp_dict['purchaseLocation'] = asset.purchaseLocation
+        temp_dict['maintenanceYear'] = asset.maintenanceYear
+        temp_dict['serverNum'] = server_num
+        temp_dict['switchNum'] = switch_num
+        temp_dict['storageNum'] = storage_num
+        temp_dict['rackNum'] = rack_num
+        temp_dict['totalNum'] = server_num + switch_num + storage_num + rack_num
+        temp_list.append(temp_dict)
+    search_asset_list = temp_list
+    
+    
+
+    context = { 'asset_list' : search_asset_list }
+    return render(request, 'dbApp/searchResult.html', context)
 
 
 def edit_asset(request, asset_num):
